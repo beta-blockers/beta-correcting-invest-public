@@ -36,14 +36,18 @@ def edit(path, change):
 
 def test_the_repository_catalog_passes():
     result = catalog.check(ROOT, now())
-    assert result["status"] == "verified" and (result["themes"], result["authors"], result["products"]) == (1, 1, 1)
-    assert all(edition["expired"] for edition in result["editions"])
+    assert result["status"] == "verified"
+    # Real authors, products and unexpired demo editions may be added to the public catalog.
+    assert result["themes"] == len(read(ROOT / "catalog" / "themes.json")["themes"])
+    assert result["authors"] == len(read(ROOT / "catalog" / "authors.json")["authors"])
+    assert result["products"] == len(list((ROOT / "catalog" / "products").glob("*.json")))
 
 
 def test_fictional_repository_passes_and_reports_expired(repo, capsys):
     code, output = call(capsys, ["catalog", "check", repo])
     assert code == 0 and output["editions"] == [{"product_id": "demo-product", "quarter": "2020-Q1",
                                                  "edition_id": "demo-product-2020-q1", "expired": True}]
+    assert (output["themes"], output["authors"], output["products"]) == (1, 1, 1)
 
 
 def theme(change):
