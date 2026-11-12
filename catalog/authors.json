@@ -17,3 +17,17 @@
     }
   ]
 }
+{
+  "author_id": "nxyziggy",
+  "display_name": "nxyziggy",
+  "keys": [
+    {
+      "key_id": "nxyziggy-2026-11",
+      "public_key": "I2rHjhhhijZm2CS/dmP9fEww5yWG9w9RDAkUrGxeibA=",
+      "fingerprint_sha256": "6cfa4ba8207816e255de56c4d865f5a3cc8a687bdc9c19b8925e05efb4119412",
+      "status": "active",
+      "valid_from": "2026-11-12",
+      "packages": ["uschips"]
+    }
+  ]
+}
