@@ -14,3 +14,14 @@
     }
   ]
 }
+{
+  "theme_id": "us-chips-ira",
+  "title": "Recipients of US CHIPS and Science Act and Inflation Reduction Act support",
+  "geographies": ["US"],
+  "policy_ids": ["US-CHIPS-and-Science-Act", "US-Inflation-Reduction-Act"],
+  "status": "researched",
+  "author_ids": ["nxyziggy"],
+  "product_ids": ["uschips"],
+  "committed_on": "2026-11-12",
+  "latest_public_quarter": null
+}
