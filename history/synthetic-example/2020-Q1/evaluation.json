@@ -1,0 +1,62 @@
+{
+  "format": "public-pilot-evaluation-v1",
+  "key_id": "synthetic-demo-2020",
+  "payload": {
+    "package_id": "synthetic-example",
+    "edition_id": "synthetic-example-2020-q1",
+    "author_id": "synthetic-author",
+    "package_sha256": "0aa977a30bef492bccb4ed4c31379dd9a955069d6e6fc023403a4fd711c69fbe",
+    "as_of": "2019-12-31T00:00:00+00:00",
+    "method": {
+      "name": "Fictional three-pillar score",
+      "version": "1.0",
+      "description": "Invented for the demonstration. Each pillar is scored from 0 to 100 and the composite is their average. Companies at or above include_min are selected; a company below exit_below is sold."
+    },
+    "thresholds": {
+      "include_min": "55",
+      "exit_below": "40"
+    },
+    "companies": {
+      "DEMOA": {
+        "rank": 1,
+        "composite": "72.4",
+        "components": {
+          "pillar_1": "80.0",
+          "pillar_2": "70.2",
+          "pillar_3": "67.0"
+        },
+        "decision": "include",
+        "weight": "0.45",
+        "note": "Fictional: highest composite."
+      },
+      "DEMOB": {
+        "rank": 2,
+        "composite": "61.3",
+        "components": {
+          "pillar_1": "62.1",
+          "pillar_2": "60.3",
+          "pillar_3": "61.5"
+        },
+        "decision": "include",
+        "weight": "0.35",
+        "note": ""
+      },
+      "DEMOC": {
+        "rank": 3,
+        "composite": "37.9",
+        "components": {
+          "pillar_1": "31.2",
+          "pillar_2": "32.5",
+          "pillar_3": "50"
+        },
+        "decision": "exit",
+        "weight": "0",
+        "note": "Fictional: below exit_below; kept in the universe so that a holder can sell it."
+      }
+    },
+    "defaults_disclosed": [
+      "pillar_3 for DEMOC is the neutral value 50 because no fictional filing was available."
+    ]
+  },
+  "signature": "yO2NUiKCVahWYKXfQ+KUGdff2Jzq/xXhlEFzsvaBqRd5XQQ/z3z6lKwmq0ylxMYDFxNk6O/GzTREBlGBRpo/BQ=="
+}

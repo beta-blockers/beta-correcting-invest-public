@@ -1,0 +1,13 @@
+{
+  "format": "public-pilot-release-v1",
+  "key_id": "synthetic-demo-2020",
+  "package_id": "synthetic-example",
+  "snapshot": "edition.snapshot.json",
+  "files": {
+    "REPORT.md": "04a39ab57d8ab8e519676120be91475584c38c73160f64c0d7b03c8f99e6ca56",
+    "account.fixture.json": "295da2163b5a6bb816e1a2b69cb5ae9fe2a9fb091a1c3a016e210091e712fe85",
+    "edition.snapshot.json": "3496b0219619d97b4e7dcc2df7e4b7b6af4b523a1c1bf8a505ec4e65ad3b0aa7",
+    "evaluation.json": "b27542e78b5e31bf87b60b8b60b7c25f589be0191ceb7f1463ddcc81c952b845"
+  },
+  "signature": "78gK/m+V+falJ8dyycvstUdtr0OjzKKeJVgwrSvOc71OgzvVYtTmBtbbKo+mG9wsSFvEq6rc7xlR9JWcyUE1BA=="
+}

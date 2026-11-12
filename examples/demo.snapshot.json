@@ -1,0 +1,32 @@
+{
+  "format": "public-pilot-envelope-v1",
+  "kind": "snapshot",
+  "key_id": "synthetic-example-key",
+  "payload": {
+    "package_id": "synthetic-example",
+    "edition_id": "demo-1",
+    "author_id": "synthetic-author",
+    "engine_major": 1,
+    "purpose": "demo",
+    "published_at": "2020-01-02T00:00:00+00:00",
+    "information_cutoff": "2020-01-01T00:00:00+00:00",
+    "valid_until": "2100-01-01T00:00:00+00:00",
+    "geographies": [
+      "SYNTHETIC"
+    ],
+    "policy_ids": [
+      "fictional-policy"
+    ],
+    "universe": [
+      "DEMOA",
+      "DEMOB"
+    ],
+    "targets": {
+      "DEMOA": "0.4",
+      "DEMOB": "0.4"
+    },
+    "research": "Fictional example only. DEMOA and DEMOB are invented symbols; these weights are hand-written test data. This contains no US CHIPS research, eligibility decisions, or investment recommendation.",
+    "evidence": []
+  },
+  "signature": "Xv3qqehg8oG6+20zoBpN7moV0tH4WPrVbMCiM3xyDmlpTLh+SD5QH02MjNh4Ao7PN+p2ImQ46llUuf0NWRrOCQ=="
+}

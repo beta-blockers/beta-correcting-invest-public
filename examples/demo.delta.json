@@ -1,0 +1,20 @@
+{
+  "format": "public-pilot-envelope-v1",
+  "kind": "delta",
+  "key_id": "synthetic-example-key",
+  "payload": {
+    "package_id": "synthetic-example",
+    "base_sha256": "ea7f4875c04997283b9fd51b0e69e43de2df2ae86a6c455c47da2209a2859904",
+    "result_sha256": "dd8d20ec60929d3d2ae48a57a425286f285932028b07de89d082df4ad8345530",
+    "replace": {
+      "edition_id": "demo-2",
+      "published_at": "2020-01-03T00:00:00+00:00",
+      "targets": {
+        "DEMOA": "0.45",
+        "DEMOB": "0.35"
+      },
+      "research": "Fictional second edition. The example changes supplied weights and leaves 20 percent cash before whole-share rounding. No research is generated."
+    }
+  },
+  "signature": "I2eX6OgndfehfksKYOLObV9OK9XV8wRW9Jcx5MqH+Yf3vPg/XmRm9JA3kYAxZJKYU884CrY8vGZv2m3l9LA3Bw=="
+}

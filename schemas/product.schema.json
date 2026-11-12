@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Catalog product entry",
+  "description": "Structure only: required and forbidden members, types, enumerations, string patterns, and length and count limits. A document this schema accepts can still be refused by the engine, because the engine's relational and time-based rules cannot be expressed here; the Python validator in public_pilot is authoritative. Not expressed here: that the file is named <product_id>.json; that the theme and author resolve and list this product; that public_history_path is history/<product_id>. Authoritative: public_pilot.catalog, run by `public-pilot catalog check`.",
+  "$comment": "Patterns end in $(?!\\n) so that regular-expression engines whose $ also matches before a final newline still require a whole-string match. JSON Schema counts 1.0 as an integer; the engine requires integer literals.",
+  "type": "object",
+  "required": [
+    "format",
+    "product_id",
+    "theme_id",
+    "author_id",
+    "cadence",
+    "universe_size",
+    "methodology_summary",
+    "public_history_path",
+    "review_status"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "public-pilot-product-v1"
+    },
+    "product_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$(?!\\n)"
+    },
+    "theme_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$(?!\\n)"
+    },
+    "author_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$(?!\\n)"
+    },
+    "cadence": {
+      "enum": [
+        "quarterly"
+      ]
+    },
+    "universe_size": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100
+    },
+    "methodology_summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 5000
+    },
+    "public_history_path": {
+      "type": "string",
+      "pattern": "^history/[A-Za-z0-9][A-Za-z0-9._-]{0,95}$(?!\\n)"
+    },
+    "review_status": {
+      "enum": [
+        "author_published"
+      ]
+    }
+  }
+}

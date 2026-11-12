@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "public-pilot"
+version = "0.3.0"
+description = "Verify, author and preview signed research packages; paper trading only"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = ["cryptography>=44", "httpx>=0.28,<0.29"]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10", "jsonschema>=4.18,<5"]
+
+[project.scripts]
+public-pilot = "public_pilot.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

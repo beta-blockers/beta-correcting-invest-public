@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Signed package envelope, version 1",
+  "description": "Structure only: required and forbidden members, types, enumerations, string patterns, and length and count limits. A document this schema accepts can still be refused by the engine, because the engine's relational and time-based rules cannot be expressed here; the Python validator in public_pilot is authoritative. Not expressed here: the Ed25519 signature; the trust grant for key_id, its package and author scope and allow_paper; and the non-structural rules of the payload. Authoritative: public_pilot.packages.resolve_chain, run by `public-pilot verify` and `install`.",
+  "$comment": "Patterns end in $(?!\\n) so that regular-expression engines whose $ also matches before a final newline still require a whole-string match. JSON Schema counts 1.0 as an integer; the engine requires integer literals.",
+  "type": "object",
+  "required": [
+    "format",
+    "kind",
+    "key_id",
+    "payload",
+    "signature"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "public-pilot-envelope-v1"
+    },
+    "kind": {
+      "enum": [
+        "snapshot",
+        "delta"
+      ]
+    },
+    "key_id": {
+      "type": "string"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$(?!\\n)"
+    }
+  },
+  "if": {
+    "properties": {
+      "kind": {
+        "const": "snapshot"
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "payload": {
+        "$ref": "snapshot-payload.schema.json"
+      }
+    }
+  },
+  "else": {
+    "properties": {
+      "payload": {
+        "$ref": "delta-payload.schema.json"
+      }
+    }
+  }
+}

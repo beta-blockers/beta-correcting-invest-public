@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Signed release inventory, version 1",
+  "description": "Structure only: required and forbidden members, types, enumerations, string patterns, and length and count limits. A document this schema accepts can still be refused by the engine, because the engine's relational and time-based rules cannot be expressed here; the Python validator in public_pilot is authoritative. Not expressed here: the signature and the key's trust for package_id; that every listed file exists with this hash and no other file does, apart from the root release.json; that the snapshot is listed and resolves; that file names are valid UTF-8. Authoritative: public_pilot.bundles, run by `public-pilot verify-bundle`.",
+  "$comment": "Patterns end in $(?!\\n) so that regular-expression engines whose $ also matches before a final newline still require a whole-string match. JSON Schema counts 1.0 as an integer; the engine requires integer literals.",
+  "type": "object",
+  "required": [
+    "format",
+    "key_id",
+    "package_id",
+    "snapshot",
+    "files",
+    "signature"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "public-pilot-release-v1"
+    },
+    "key_id": {
+      "type": "string"
+    },
+    "package_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$(?!\\n)"
+    },
+    "snapshot": {
+      "$ref": "#/$defs/path"
+    },
+    "files": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 500,
+      "propertyNames": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/path"
+          },
+          {
+            "not": {
+              "const": "release.json"
+            }
+          }
+        ]
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$(?!\\n)"
+      }
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$(?!\\n)"
+    }
+  },
+  "$defs": {
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^(?!\\.\\.?(/|$))(?!.*/\\.\\.?(/|$))[^/\\\\\\u0000-\\u001f\\u007f]+(/[^/\\\\\\u0000-\\u001f\\u007f]+)*$(?!\\n)"
+    }
+  }
+}

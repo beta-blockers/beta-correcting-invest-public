@@ -1,0 +1,11 @@
+{
+  "format": "public-pilot-product-v1",
+  "product_id": "synthetic-example",
+  "theme_id": "synthetic-theme",
+  "author_id": "synthetic-author",
+  "cadence": "quarterly",
+  "universe_size": 3,
+  "methodology_summary": "Fictional demonstration product. Its scores, selections and weights are invented test data for the invented symbols DEMOA, DEMOB and DEMOC and describe no real company, program or investment.",
+  "public_history_path": "history/synthetic-example",
+  "review_status": "author_published"
+}

@@ -1,0 +1,39 @@
+{
+  "format": "public-pilot-envelope-v1",
+  "kind": "snapshot",
+  "key_id": "synthetic-demo-2020",
+  "payload": {
+    "package_id": "synthetic-example",
+    "edition_id": "synthetic-example-2020-q1",
+    "author_id": "synthetic-author",
+    "engine_major": 1,
+    "purpose": "demo",
+    "published_at": "2020-01-06T13:00:00+00:00",
+    "information_cutoff": "2019-12-31T00:00:00+00:00",
+    "valid_until": "2020-04-01T00:00:00+00:00",
+    "geographies": [
+      "SYNTHETIC"
+    ],
+    "policy_ids": [
+      "fictional-policy"
+    ],
+    "universe": [
+      "DEMOA",
+      "DEMOB",
+      "DEMOC"
+    ],
+    "targets": {
+      "DEMOA": "0.45",
+      "DEMOB": "0.35"
+    },
+    "research": "Fictional past quarter for demonstration. DEMOA, DEMOB and DEMOC are invented symbols and every score, decision and weight is invented test data; nothing here describes a real company or program, and nothing here is investment advice. DEMOA and DEMOB are selected. DEMOC scored below the exit threshold and stays in the universe with no target so that a holder can sell it. The remaining 20 percent of the allocation stays in cash. The edition expired on 2020-04-01 and can only be read.",
+    "evidence": [
+      {
+        "title": "Fictional policy award notice",
+        "url": "https://example.com/fictional-policy/awards",
+        "published_at": "2019-12-16T00:00:00+00:00"
+      }
+    ]
+  },
+  "signature": "Hjytjku9JvrV7MhkDPXFkE6IUACL3qiQTG3ypI06Ee5zPH4QnDGvfZDZhqe08SJgHjcIK0l8XGdsz0RWtB+PDQ=="
+}

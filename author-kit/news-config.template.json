@@ -1,0 +1,16 @@
+{
+  "product_id": "example-product",
+  "package_id": "example-product",
+  "monitor_from": "2020-04-01",
+  "epoch_end": "2020-06-30",
+  "timezone": "America/New_York",
+  "symbols": {
+    "DEMOA": {"cik": null, "aliases": ["Demo Alpha Industries", "DEMOA"]},
+    "DEMOB": {"cik": null, "aliases": ["Demo Beta Materials", "DEMOB"]},
+    "DEMOC": {"cik": null, "aliases": ["Demo Gamma Systems", "DEMOC"]}
+  },
+  "sources": {
+    "example-filings": {"enabled": true},
+    "example-newswire": {"enabled": false}
+  }
+}

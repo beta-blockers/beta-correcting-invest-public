@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Signed evaluation document, version 1",
+  "description": "Structure only: required and forbidden members, types, enumerations, string patterns, and length and count limits. A document this schema accepts can still be refused by the engine, because the engine's relational and time-based rules cannot be expressed here; the Python validator in public_pilot is authoritative. Not expressed here: the signature and the key's trust for package_id and author_id; package_sha256 must equal the hash of the bound snapshot payload and the identifiers must match it; companies must equal its universe; each weight must equal its target, or 0; ranks must be a permutation of 1 to n in descending composite order; the as_of timestamp syntax. Authoritative: public_pilot.evaluation, run by `public-pilot verify-evaluation`.",
+  "$comment": "Patterns end in $(?!\\n) so that regular-expression engines whose $ also matches before a final newline still require a whole-string match. JSON Schema counts 1.0 as an integer; the engine requires integer literals.",
+  "type": "object",
+  "required": [
+    "format",
+    "key_id",
+    "payload",
+    "signature"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "public-pilot-evaluation-v1"
+    },
+    "key_id": {
+      "type": "string"
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "package_id",
+        "edition_id",
+        "author_id",
+        "package_sha256",
+        "as_of",
+        "method",
+        "thresholds",
+        "companies",
+        "defaults_disclosed"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "package_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$(?!\\n)"
+        },
+        "edition_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$(?!\\n)"
+        },
+        "author_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$(?!\\n)"
+        },
+        "package_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$(?!\\n)"
+        },
+        "as_of": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "method": {
+          "type": "object",
+          "required": [
+            "name",
+            "version",
+            "description"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            "description": {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 20000
+            }
+          }
+        },
+        "thresholds": {
+          "type": "object",
+          "maxProperties": 40,
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{0,63}$(?!\\n)"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/decimal"
+          }
+        },
+        "companies": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 100,
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9.-]{0,9}$(?!\\n)"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/company"
+          }
+        },
+        "defaults_disclosed": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        }
+      }
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$(?!\\n)"
+    }
+  },
+  "$defs": {
+    "decimal": {
+      "type": "string",
+      "pattern": "^-?(0|[1-9][0-9]{0,14})(\\.[0-9]{1,18})?$(?!\\n)"
+    },
+    "company": {
+      "type": "object",
+      "required": [
+        "rank",
+        "composite",
+        "components",
+        "decision",
+        "weight",
+        "note"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "rank": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "composite": {
+          "$ref": "#/$defs/decimal"
+        },
+        "components": {
+          "type": "object",
+          "maxProperties": 40,
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{0,63}$(?!\\n)"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/decimal"
+          }
+        },
+        "decision": {
+          "enum": [
+            "include",
+            "exclude",
+            "exit",
+            "reentry",
+            "zero_weight"
+          ]
+        },
+        "weight": {
+          "type": "string",
+          "pattern": "^(0(\\.[0-9]{1,18})?|1(\\.0{1,18})?)$(?!\\n)"
+        },
+        "note": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 2000
+        }
+      }
+    }
+  }
+}

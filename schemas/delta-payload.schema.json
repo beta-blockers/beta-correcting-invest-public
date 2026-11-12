@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Delta payload, package format version 1",
+  "description": "Structure only: required and forbidden members, types, enumerations, string patterns, and length and count limits. A document this schema accepts can still be refused by the engine, because the engine's relational and time-based rules cannot be expressed here; the Python validator in public_pilot is authoritative. Not expressed here: base_sha256 must equal the hash of the installed edition and result_sha256 the hash of the result; package_id must match the base; the result must be a valid snapshot payload that changes the edition ID, advances publication and keeps the cutoff from moving backwards. Authoritative: public_pilot.packages.resolve_chain.",
+  "$comment": "Patterns end in $(?!\\n) so that regular-expression engines whose $ also matches before a final newline still require a whole-string match. JSON Schema counts 1.0 as an integer; the engine requires integer literals.",
+  "type": "object",
+  "required": [
+    "package_id",
+    "base_sha256",
+    "result_sha256",
+    "replace"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "package_id": {
+      "$ref": "snapshot-payload.schema.json#/$defs/identifier"
+    },
+    "base_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$(?!\\n)"
+    },
+    "result_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$(?!\\n)"
+    },
+    "replace": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "edition_id": {
+          "$ref": "snapshot-payload.schema.json#/$defs/identifier"
+        },
+        "engine_major": {
+          "const": 1
+        },
+        "published_at": {
+          "$ref": "snapshot-payload.schema.json#/$defs/timestamp"
+        },
+        "information_cutoff": {
+          "$ref": "snapshot-payload.schema.json#/$defs/timestamp"
+        },
+        "valid_until": {
+          "$ref": "snapshot-payload.schema.json#/$defs/timestamp"
+        },
+        "geographies": {
+          "$ref": "snapshot-payload.schema.json#/$defs/scope"
+        },
+        "policy_ids": {
+          "$ref": "snapshot-payload.schema.json#/$defs/scope"
+        },
+        "universe": {
+          "$ref": "snapshot-payload.schema.json#/$defs/universe"
+        },
+        "targets": {
+          "$ref": "snapshot-payload.schema.json#/$defs/targets"
+        },
+        "research": {
+          "$ref": "snapshot-payload.schema.json#/$defs/research"
+        },
+        "evidence": {
+          "$ref": "snapshot-payload.schema.json#/$defs/evidence"
+        }
+      }
+    }
+  }
+}

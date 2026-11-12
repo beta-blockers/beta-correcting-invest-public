@@ -1,0 +1,16 @@
+{
+  "format": "public-pilot-themes-v1",
+  "themes": [
+    {
+      "theme_id": "synthetic-theme",
+      "title": "Fictional demonstration theme",
+      "geographies": ["SYNTHETIC"],
+      "policy_ids": ["fictional-policy"],
+      "status": "researched",
+      "author_ids": ["synthetic-author"],
+      "product_ids": ["synthetic-example"],
+      "committed_on": "2020-01-01",
+      "latest_public_quarter": "2020-Q1"
+    }
+  ]
+}

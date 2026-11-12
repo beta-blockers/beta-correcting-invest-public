@@ -1,0 +1,19 @@
+{
+  "account_id": "synthetic-offline-account",
+  "cash": "1000",
+  "equity": "1000",
+  "positions": {},
+  "observed_at": "2020-01-06T15:00:00+00:00",
+  "market_open": true,
+  "open_orders": [],
+  "quotes": {
+    "DEMOA": {"bid": "99.9", "ask": "100", "at": "2020-01-06T15:00:00+00:00"},
+    "DEMOB": {"bid": "49.95", "ask": "50", "at": "2020-01-06T15:00:00+00:00"},
+    "DEMOC": {"bid": "19.98", "ask": "20", "at": "2020-01-06T15:00:00+00:00"}
+  },
+  "assets": {
+    "DEMOA": {"tradable": true},
+    "DEMOB": {"tradable": true},
+    "DEMOC": {"tradable": true}
+  }
+}

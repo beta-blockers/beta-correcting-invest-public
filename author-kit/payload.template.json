@@ -1,0 +1,25 @@
+{
+  "package_id": "example-product",
+  "edition_id": "example-product-2020-q2",
+  "author_id": "example-author",
+  "engine_major": 1,
+  "purpose": "demo",
+  "published_at": "2020-04-01T13:00:00+00:00",
+  "information_cutoff": "2020-03-27T00:00:00+00:00",
+  "valid_until": "2020-07-01T00:00:00+00:00",
+  "geographies": ["SYNTHETIC"],
+  "policy_ids": ["fictional-grant-program"],
+  "universe": ["DEMOA", "DEMOB", "DEMOC"],
+  "targets": {
+    "DEMOA": "0.40",
+    "DEMOB": "0.35"
+  },
+  "research": "Fictional template edition. DEMOA, DEMOB and DEMOC are invented symbols and every value here is invented. DEMOA and DEMOB are selected; DEMOC stays in the universe with no target so that a holder can sell it. The remaining 25 percent of the allocation stays in cash. This is not research about any real company and not investment advice.",
+  "evidence": [
+    {
+      "title": "Fictional grant program award notice",
+      "url": "https://example.com/fictional-grant-program/awards",
+      "published_at": "2020-03-20T00:00:00+00:00"
+    }
+  ]
+}

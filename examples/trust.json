@@ -1,0 +1,10 @@
+{
+  "synthetic-example-key": {
+    "public_key": "4yofaEXdGdGy0S3VUDDhU5Z+FCQ1j7h76KIDiQTkfIg=",
+    "author_id": "synthetic-author",
+    "packages": [
+      "synthetic-example"
+    ],
+    "allow_paper": false
+  }
+}

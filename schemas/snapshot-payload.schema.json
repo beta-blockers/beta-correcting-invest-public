@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Snapshot payload, package format version 1",
+  "description": "Structure only: required and forbidden members, types, enumerations, string patterns, and length and count limits. A document this schema accepts can still be refused by the engine, because the engine's relational and time-based rules cannot be expressed here; the Python validator in public_pilot is authoritative. Not expressed here: information_cutoff <= published_at <= now < valid_until; timestamp syntax and time zones; the decimal syntax of target weights; weights between 0 and 1 that sum to at most 1; targets within the universe; evidence dated no later than the cutoff; the evidence URL's host and credentials. Authoritative: public_pilot.packages.validate_payload, run by `public-pilot validate`.",
+  "$comment": "Patterns end in $(?!\\n) so that regular-expression engines whose $ also matches before a final newline still require a whole-string match. JSON Schema counts 1.0 as an integer; the engine requires integer literals.",
+  "type": "object",
+  "required": [
+    "package_id",
+    "edition_id",
+    "author_id",
+    "engine_major",
+    "purpose",
+    "published_at",
+    "information_cutoff",
+    "valid_until",
+    "geographies",
+    "policy_ids",
+    "universe",
+    "targets",
+    "research",
+    "evidence"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "package_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "edition_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "author_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "engine_major": {
+      "const": 1
+    },
+    "purpose": {
+      "enum": [
+        "demo",
+        "paper"
+      ]
+    },
+    "published_at": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "information_cutoff": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "valid_until": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "geographies": {
+      "$ref": "#/$defs/scope"
+    },
+    "policy_ids": {
+      "$ref": "#/$defs/scope"
+    },
+    "universe": {
+      "$ref": "#/$defs/universe"
+    },
+    "targets": {
+      "$ref": "#/$defs/targets"
+    },
+    "research": {
+      "$ref": "#/$defs/research"
+    },
+    "evidence": {
+      "$ref": "#/$defs/evidence"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$(?!\\n)"
+    },
+    "timestamp": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "scope": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    "symbol": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9.-]{0,9}$(?!\\n)"
+    },
+    "universe": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/symbol"
+      }
+    },
+    "weight": {
+      "type": [
+        "string",
+        "integer"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "targets": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "$ref": "#/$defs/symbol"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/weight"
+      }
+    },
+    "research": {
+      "type": "string",
+      "maxLength": 500000
+    },
+    "evidence": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "type": "object",
+        "required": [
+          "title",
+          "url",
+          "published_at"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 2048,
+            "pattern": "^[\\u0000-\\u0020]*[Hh][\\t\\n\\r]*[Tt][\\t\\n\\r]*[Tt][\\t\\n\\r]*[Pp][\\t\\n\\r]*[Ss][\\t\\n\\r]*:[\\t\\n\\r]*/[\\t\\n\\r]*/"
+          },
+          "published_at": {
+            "$ref": "#/$defs/timestamp"
+          }
+        }
+      }
+    }
+  }
+}

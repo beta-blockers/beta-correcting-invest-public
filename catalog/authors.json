@@ -1,0 +1,19 @@
+{
+  "format": "public-pilot-authors-v1",
+  "authors": [
+    {
+      "author_id": "synthetic-author",
+      "display_name": "Synthetic Author (fictional)",
+      "keys": [
+        {
+          "key_id": "synthetic-demo-2020",
+          "public_key": "HMNJLo6KlXwkDQSfrlskBngfC08jHST5WSXl4moTt9o=",
+          "fingerprint_sha256": "65f43160a8800f09b9efb49e63179a0d0ef8a902ea12a67eb1e5ad72248c2b47",
+          "status": "active",
+          "valid_from": "2020-01-01",
+          "packages": ["synthetic-example"]
+        }
+      ]
+    }
+  ]
+}
