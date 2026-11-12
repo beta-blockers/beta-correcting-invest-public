@@ -4,24 +4,41 @@
     {
       "theme_id": "synthetic-theme",
       "title": "Fictional demonstration theme",
-      "geographies": ["SYNTHETIC"],
-      "policy_ids": ["fictional-policy"],
+      "geographies": [
+        "SYNTHETIC"
+      ],
+      "policy_ids": [
+        "fictional-policy"
+      ],
       "status": "researched",
-      "author_ids": ["synthetic-author"],
-      "product_ids": ["synthetic-example"],
+      "author_ids": [
+        "synthetic-author"
+      ],
+      "product_ids": [
+        "synthetic-example"
+      ],
       "committed_on": "2020-01-01",
       "latest_public_quarter": "2020-Q1"
+    },
+    {
+      "theme_id": "us-chips-ira",
+      "title": "Recipients of US CHIPS and Science Act and Inflation Reduction Act support",
+      "geographies": [
+        "US"
+      ],
+      "policy_ids": [
+        "US-CHIPS-and-Science-Act",
+        "US-Inflation-Reduction-Act"
+      ],
+      "status": "researched",
+      "author_ids": [
+        "nxyziggy"
+      ],
+      "product_ids": [
+        "uschips"
+      ],
+      "committed_on": "2026-11-12",
+      "latest_public_quarter": null
     }
   ]
-}
-{
-  "theme_id": "us-chips-ira",
-  "title": "Recipients of US CHIPS and Science Act and Inflation Reduction Act support",
-  "geographies": ["US"],
-  "policy_ids": ["US-CHIPS-and-Science-Act", "US-Inflation-Reduction-Act"],
-  "status": "researched",
-  "author_ids": ["nxyziggy"],
-  "product_ids": ["uschips"],
-  "committed_on": "2026-11-12",
-  "latest_public_quarter": null
 }
