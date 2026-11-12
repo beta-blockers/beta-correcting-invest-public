@@ -1,0 +1,11 @@
+{
+  "format": "public-pilot-product-v1",
+  "product_id": "uschips",
+  "theme_id": "us-chips-ira",
+  "author_id": "nxyziggy",
+  "cadence": "quarterly",
+  "universe_size": 10,
+  "methodology_summary": "Companies in this product have received or applied for support under the US CHIPS and Science Act or the Inflation Reduction Act. Each quarter the author scores every company in the universe on three pillars, following the method described in MIT LEAD's Research to Trades: execution (financial and operating results, and how the company uses public support), industrial-policy support (the type and scale of awards), and the company's position in its industrial network. The pillars combine into a composite score. Companies with low composite scores exit, and target weights for the remaining companies are derived from their scores. Inputs without reliable data are set to neutral values and listed in each edition's evaluation. Between editions, licensees can run a news addon that changes when rebalances are triggered; it never changes target weights. Editions are author-published and not yet independently reviewed.",
+  "public_history_path": "history/uschips",
+  "review_status": "author_published"
+}
