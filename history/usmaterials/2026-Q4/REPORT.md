@@ -1,23 +1,36 @@
 # USMaterialsPilot: Q4 2026 free sample
 
-This signed demo contains a **25-company research subset with 18 positive targets**, reconstructed now
-using company evidence available by **October 31, 2026**. It follows the existing Materials provisional
-scoring formulas with the disclosed subset change. It supports reading and fictional offline previews.
-It cannot place paper orders. It is not an investment recommendation.
+This free research sample shows how USMaterialsPilot evaluates companies exposed to US industrial
+policy in **minerals, metals, batteries and nuclear supply chains**. It assesses **25 companies** using
+public evidence available by **October 31, 2026** and produces **18 positive portfolio targets** under
+the provisional method explained below. The report brings together the investment theme, scoring
+assumptions, financial inputs, company evidence and complete signed results in one place.
 
 ## What this sample represents
 
-The company dossiers were assembled in November and included later results and governance pages.
-Their original scores and weights could not simply be relabeled as October research. This edition uses
-earlier disclosures, recomputes CEO tenure through October 31 and calculates new subset scores and weights.
-It is **not the deployed pilot, current holdings or a portfolio operated on October 31**. The original
-candidate list and provisional methodology were themselves selected after the cutoff; this retrospective
-application does not establish a contemporaneous strategy record or independent validation.
+The sample illustrates a research process: identify companies with relevant policy exposure, assess
+their ability to execute, distinguish the terms of their selected public support, and examine their
+position in industrial supply chains. It lets readers inspect how those judgments become scores,
+which companies pass the initial screen, and how the surviving companies receive target weights.
+The company-level inputs and source links make the assumptions open to scrutiny.
+
+The broader Materials candidate list contains 28 names. This edition scores the 25 with the inputs
+required for this sample; XE, EOSE and OKLO remain unscored for the reasons below. Of the 25 scored
+companies, 18 pass the initial screen and seven retain zero target weight. This is an initial research
+screen with disclosed neutral assumptions, rather than a completed quarterly update.
+
+The universe, method and research were assembled after October 31. The sample is therefore a
+**retrospective application to evidence available by that date**, not a portfolio record established
+or operated on October 31. It does not represent the deployed pilot or current account holdings.
+It is a signed demonstration for reading and fictional offline previews: it cannot place paper
+orders and is not an investment recommendation. Research is author-published without independent review.
 
 - Research boundary: October 31, 2026, end of day in New York.
 - Latest retained company source: October 29, 2026. The boundary excludes later evidence; it does not
   mean every company issued a new disclosure that day or that all intervening news was reviewed.
-- Publication: 2026-11-13T02:23:09.619181+00:00. Reconstruction is performed at publication, not backdated.
+- Original edition publication: 2026-11-13T02:23:09.619181+00:00.
+- Report wording revised: November 13, 2026. The signed snapshot and evaluation, including all scores,
+  ranks, decisions and target weights, are unchanged. The release inventory authenticates this report.
 - Valid until: January 1, 2027, 05:00 UTC. Demo restrictions apply before and after that deadline.
 - Evidence dates are known at day precision and serialized as the end of that UTC day; exact release
   times are not asserted. Financial period ends are separate from source publication dates.
@@ -41,31 +54,42 @@ These three names are outside the signed universe. Their omission is not a model
 decision, and this sample does not provide a preview for an account holding an outside-universe security.
 All seven scored names that fail the initial screen remain in the universe with zero target weight.
 
-## Changes needed for the cutoff
-
-| Company | Reconstruction |
-| --- | --- |
-| ALB | Removes November 4 results and the later CGP3 milestone. Operating and policy judgments use the annual filing and earlier award/governance disclosures. |
-| FLNC | Removes November 2 CEO change and November website captures. Uses Julian Nebreda from September 1, 2022, and four independent directors among twelve, reconciled from the January proxy and June/September replacements. |
-| SLDP | Removes November 3 results. Uses annual disclosures and the executed DOE assistance agreement. |
-| CBT | Replaces FY2026 results published November 2 with aligned FY2025 statements. The proxy documents two departing directors, and the July announcement supports the October 1 CEO/director succession: eight independent of nine. |
-| AMPX | Supports FY2025 figures directly with the March 10-K. The April proxy documents Hsieh's retirement and reduction to six directors; no November website is needed. |
-| LEU | Replaces September TTM disclosed in November with June TTM available August 5. The earlier annual capital denominator was nonpositive; the positive June denominator is explicitly calculated below. |
-| BWXT | Removes November 2 results; retains annual financials and pre-cutoff manufacturing-contract evidence. |
-| GEV | Uses April board disclosures and a dated March government-role biography. October 28 results remain eligible. |
-| XE | Leaves mandatory governance unresolved and the company unscored, as described above. |
-
-Other scored companies retain existing inputs only where their supporting sources are dated by the
-boundary. Qualitative judgments are reused or reassessed now against that bounded record; their
-authorship is not backdated. November market quotes are omitted. No broker or news-monitor state is used.
-
 ## Selection and weighting
 
 The conceptual background is [MIT LEAD's three-pillar framework](https://mitleadtrades.substack.com/p/performative-beta-trap-correcting).
 This link points to the current article, not a frozen October copy. The existing provisional formulas
 below specify the implementation used here; later article changes are not imported.
 
-Retrospective application of the existing provisional Materials formulas to a disclosed 25-company subset. The observation boundary is October 31, 2026; the latest retained company document is dated October 29. P1 weights P1a through P1f by 0.25, 0.25, 0.20, 0.12, 0.10 and 0.08. P3 = 0.60*P3a + 0.40*P3b. The composite is clamped to [0,1] from (P1+0.01)^0.30 * (P2+0.01)^0.55 * (P3+0.01)^0.15, using the zero-age anchor and four-decimal intermediate rounding. This is an initial screen, not a completed quarterly update. Include only composites strictly above the 25-company 25th percentile (linear interpolation), 0.5063. AA equals the threshold and is excluded. The 18 survivors receive P3-proportional weights in one sleeve, with iterative redistribution above a 35% cap. No cap binds. Targets are floored to ten decimal places, leaving 0.0000000009 cash. Equal P3 values explain repeated weights; composite rank does not size positions. The source-only calculation omits operational market-eligibility checks because no price-dependent score is active and this demo cannot trade. The report lists financial bases, scoring inputs, sources and the XE gap.
+Three pillars summarize the research. Each is scored on a 0-to-1 scale; these are model scores,
+not probabilities or expected investment returns.
+
+| Pillar | What it assesses | How to read this sample |
+| --- | --- | --- |
+| P1: execution and governance | Subsidy utilization, return on invested capital (ROIC), capital-expenditure execution, analyst-consensus narrative, governance and political economy. | Several components use a disclosed neutral 0.5 treatment because comparable evidence is unavailable. A neutral value is an assumption, not an observed operating result. |
+| P2: selected policy support | The selected instrument's amount, type and policy impairment. | A grant, loan, guarantee, tax credit, equity investment or procurement commitment has its own treatment. An announced amount is not necessarily cash received. |
+| P3: industrial-network position | Supply-chain position and substitutability (P3a), combined with innovation (P3b). | The network review has a defined scope and innovation is neutral at 0.5. This pillar determines relative position sizes after the initial screen. |
+
+P1 weights P1a through P1f by 0.25, 0.25, 0.20, 0.12, 0.10 and 0.08, respectively.
+P3 = 0.60*P3a + 0.40*P3b. The composite is clamped to [0,1] from
+`(P1+0.01)^0.30 * (P2+0.01)^0.55 * (P3+0.01)^0.15`, using the zero-age anchor and
+four-decimal intermediate rounding.
+
+1. **Screen the 25 scored companies.** Include only composites strictly above their 25th percentile,
+   calculated by linear interpolation: **0.5063**. AA equals the threshold and is excluded.
+2. **Weight the 18 survivors in proportion to P3.** All are in one allocation group, or sleeve.
+   The method redistributes any weight above a 35% position cap; no cap binds in this sample.
+3. **Retain exact targets.** Targets are floored to ten decimal places, leaving 0.0000000009 as the
+   cash-weight rounding residual. The signed table at the end contains the exact values.
+
+The resulting targets are approximately **7.07% for LEU, 4.04% for CENX, and 5.56% for each of the
+other 16 selected companies**. Repeated weights reflect equal P3 scores. Composite rank determines
+selection, not position size: the highest-ranked company need not have the largest weight.
+AA, FLNC, ULBI, GEV, BWXT, TMQ and UAMY receive zero target weight.
+
+All scoring inputs are drawn from the dated evidence and disclosed assumptions below. No market
+quote enters a score under this sample's neutral consensus treatment. The calculation omits
+operational market-eligibility checks; the separate offline preview uses fictional prices and
+tradability flags and cannot submit orders.
 
 The general method evaluates quarterly and requires sustained recovery before reentry. This initial
 sample fabricates no completed-quarter observations, exit history or reentries. Its exclude decisions
