@@ -121,7 +121,8 @@ VALID = {
     "release": [RELEASE],
     "news-config": [NEWS],
     "themes": [THEMES, {**THEMES, "themes": []}],
-    "authors": [AUTHORS],
+    # A key may list no products: an author registered with a theme before their first product.
+    "authors": [AUTHORS, changed(AUTHORS, lambda d: d["authors"][0]["keys"][0].update(packages=[]))],
     "product": [PRODUCT],
 }
 
@@ -194,7 +195,6 @@ STRUCTURAL = {
         changed(AUTHORS, lambda d: d["authors"][0]["keys"][0].update(public_key="not-a-key")),
         changed(AUTHORS, lambda d: d["authors"][0]["keys"][0].update(public_key=NONCANONICAL_KEY)),
         changed(AUTHORS, lambda d: d["authors"][0]["keys"][0].update(fingerprint_sha256="A" * 64)),
-        changed(AUTHORS, lambda d: d["authors"][0]["keys"][0].update(packages=[])),
         changed(AUTHORS, lambda d: d["authors"][0].update(keys=[])), {**AUTHORS, "format": "v0"}],
     "product": [
         {**PRODUCT, "review_status": "reviewed"}, {**PRODUCT, "universe_size": 0}, {**PRODUCT, "cadence": "monthly"},
@@ -319,3 +319,19 @@ def test_evaluation_template_matches_the_payload_part_of_its_schema():
     document = {"format": "public-pilot-evaluation-v1", "key_id": "example-author-2020", "payload": payload,
                 "signature": "A" * 86 + "=="}
     assert schema("evaluation").is_valid(document)
+
+
+def test_a_key_without_products_needs_a_theme_listing_its_author_which_only_python_checks(tmp_path):
+    authors = changed(AUTHORS, lambda d: d["authors"][0]["keys"][0].update(packages=[]))
+    assert schema("authors").is_valid(authors) and accepted(catalog.validate_authors, authors)
+    themes = changed(THEMES, lambda d: d["themes"][0].update(author_ids=[], product_ids=[],
+                                                              latest_public_quarter=None))
+    write(tmp_path / "catalog" / "themes.json", themes)
+    write(tmp_path / "catalog" / "authors.json", authors)
+    (tmp_path / "catalog" / "products").mkdir()
+    with pytest.raises(Refused, match="^Key demo-key lists no products, which is allowed only while a theme lists "
+                                      "author demo-author$"):
+        catalog.check_static(tmp_path)
+    write(tmp_path / "catalog" / "themes.json", changed(themes, lambda d: d["themes"][0].update(
+        author_ids=["demo-author"])))
+    assert catalog.check_static(tmp_path)[1]["demo-author"]["keys"][0]["packages"] == []

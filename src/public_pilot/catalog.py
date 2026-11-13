@@ -113,7 +113,8 @@ def validate_authors(document):
                     "Invalid fingerprint: lowercase SHA-256 hex")
             require(key["status"] in KEY_STATUSES, "Key status must be active, retired or revoked")
             calendar_date(key["valid_from"], "valid_from date")
-            identifier_list(key["packages"], "key package", minimum=1)
+            # Empty for an author registered with a theme before their first product: see check_static.
+            identifier_list(key["packages"], "key package")
     authors_ids = [author["author_id"] for author in authors]
     require(len(authors_ids) == len(set(authors_ids)), "Duplicate author ID")
     keys = [key for author in authors for key in author["keys"]]
@@ -206,10 +207,17 @@ def check_static(root):
         for product_id in theme["product_ids"]:
             owner = products[product_id]["theme_id"]
             require(owner == theme_id, f"Theme {theme_id} lists product {product_id}, which belongs to theme {owner}")
+    listed = {author_id for theme in themes.values() for author_id in theme["author_ids"]}
     for author in authors.values():
         for key in author["keys"]:
             require(fingerprint(key["public_key"]) == key["fingerprint_sha256"],
                     f"Fingerprint mismatch for key {key['key_id']}")
+            # A key that lists no products registers an author before their first product. It is accepted only
+            # while a theme lists the author, and it grants nothing: trust files and history editions use only
+            # keys that list the product in question.
+            require(key["packages"] or author["author_id"] in listed,
+                    f"Key {key['key_id']} lists no products, which is allowed only while a theme lists author "
+                    f"{author['author_id']}")
             for package in key["packages"]:
                 require(package in products and products[package]["author_id"] == author["author_id"],
                         f"Key {key['key_id']} lists {package}, which is not a product of author {author['author_id']}")

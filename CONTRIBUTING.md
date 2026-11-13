@@ -51,8 +51,10 @@ Before opening a pull request, run the tests, `public-pilot catalog check`,
    request.
 3. In one pull request:
    - append your author entry, with that public key, to
-     `catalog/authors.json`. The file is append-only: entries are never
-     deleted or edited, except that a key's `status` may change;
+     `catalog/authors.json`, and set the key's `packages` to `[]`: you have
+     no product yet. The file is append-only: entries are never deleted or
+     edited, except that a key's `status` may change and products may be
+     appended to its `packages`;
    - append your theme to `catalog/themes.json` with `status` set to
      `committed`, your author ID in `author_ids`, today's date in
      `committed_on`, no `product_ids` yet, and `latest_public_quarter` set to
@@ -60,9 +62,27 @@ Before opening a pull request, run the tests, `public-pilot catalog check`,
 4. Run `public-pilot catalog check` and open the pull request. Describe the
    industry, the geographies and the public programs the theme covers.
 
+A key that lists no products is accepted only while a theme lists its author,
+and it grants nothing: no trust file lists it for any product, so nothing it
+signs verifies, and no edition under `history/` may be signed with it.
+
+## Registering your first product
+
+When your first product is ready, in one pull request:
+
+- add `catalog/products/<product_id>.json` with your theme and author IDs, as
+  [docs/CATALOG.md](docs/CATALOG.md) describes;
+- append the product ID to your theme's `product_ids`;
+- append the product ID to your key's `packages`. From then on the key may sign
+  that product's editions, and no others.
+
+Run `public-pilot catalog check` again. The authoring guide runs both pull
+requests with a fictional author, in
+[Registering before your first product](docs/AUTHORING.md#registering-before-your-first-product),
+and its walkthrough shows how to publish an edition.
+
 A theme moves to `in_progress` while research is under way and to `researched`
-once a product has published at least one edition. Products and their public
-history are added as described in the authoring guide.
+once a product has published at least one edition.
 
 ## Submissions are data
 

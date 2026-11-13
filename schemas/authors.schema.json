@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Catalog of authors and their public keys",
-  "description": "Structure only: required and forbidden members, types, enumerations, string patterns, and length and count limits. A document this schema accepts can still be refused by the engine, because the engine's relational and time-based rules cannot be expressed here; the Python validator in public_pilot is authoritative. Not expressed here: unique author IDs, key IDs and public keys; that each fingerprint is the SHA-256 of its key; that a key's packages are products of its author; calendar validity of valid_from; the append-only rule. Authoritative: public_pilot.catalog, run by `public-pilot catalog check`.",
+  "description": "Structure only: required and forbidden members, types, enumerations, string patterns, and length and count limits. A document this schema accepts can still be refused by the engine, because the engine's relational and time-based rules cannot be expressed here; the Python validator in public_pilot is authoritative. Not expressed here: unique author IDs, key IDs and public keys; that each fingerprint is the SHA-256 of its key; that a key's packages are products of its author; that a key with no packages belongs to an author whom a theme lists; calendar validity of valid_from; the append-only rule. Authoritative: public_pilot.catalog, run by `public-pilot catalog check`.",
   "$comment": "Patterns end in $(?!\\n) so that regular-expression engines whose $ also matches before a final newline still require a whole-string match. JSON Schema counts 1.0 as an integer; the engine requires integer literals.",
   "type": "object",
   "required": [
@@ -75,7 +75,7 @@
                 },
                 "packages": {
                   "type": "array",
-                  "minItems": 1,
+                  "minItems": 0,
                   "maxItems": 100,
                   "uniqueItems": true,
                   "items": {
