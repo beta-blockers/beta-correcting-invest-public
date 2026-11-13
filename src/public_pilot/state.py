@@ -161,3 +161,16 @@ class Store:
     def record(self, identity, idx, observation):
         self.db.execute("UPDATE orders SET observation=? WHERE plan_id=? AND idx=?",
                         (canonical(observation).decode(), identity, idx))
+
+    def reject(self, identity, idx, observation):
+        """A submission the broker rejected outright: record its answer and halt the plan in one transaction, so the
+        attempt is never left looking uncertain."""
+        self.db.execute("BEGIN IMMEDIATE")
+        try:
+            self.db.execute("UPDATE orders SET observation=? WHERE plan_id=? AND idx=?",
+                            (canonical(observation).decode(), identity, idx))
+            self.db.execute("UPDATE plans SET status='halted' WHERE id=?", (identity,))
+            self.db.execute("COMMIT")
+        except BaseException:
+            self.db.execute("ROLLBACK")
+            raise

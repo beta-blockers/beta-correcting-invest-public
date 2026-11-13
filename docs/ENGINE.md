@@ -163,8 +163,14 @@ Only `execute-paper` submits orders; only `cancel-paper` requests cancellation.
 There is no background scheduler. Use a dedicated paper account without other
 strategies or manual orders while a plan is running. A preview is valid for 120
 seconds. A `pending` result means the run is unfinished: repeat `execute-paper`
-for the **same** plan. Do not delete state or create a replacement plan while a
-submission is uncertain. See [operations](OPERATIONS.md) for recovery.
+for the **same** plan. A `halted` result names the stock whose order stopped the
+plan, for example one the broker rejected for insufficient buying power; preview a
+fresh plan. Do not delete state or create a replacement plan while a submission
+is uncertain. See [operations](OPERATIONS.md) for recovery.
+
+Without `--max-order`, a single order is at most USD 1,000. One share must fit in
+an order, so a plan can buy shares priced up to about USD 1,000; the preview
+refuses a plan that needs a dearer share and names that stock.
 
 ## Scope and limits
 
@@ -177,8 +183,11 @@ submission is uncertain. See [operations](OPERATIONS.md) for recovery.
   positive target weight to permit its planned sale.
 - Missing, stale, future, crossed, or overly wide quotes stop planning or new
   submissions. IEX is the selected feed, not a claim of consolidated-market coverage.
+  A refusal that concerns one stock begins with its symbol.
 - A lost submission response is reconciled by client order ID. If its outcome
   cannot be established, the runtime stops; it never guesses that resending is safe.
+  A rejection the engine recognizes as creating no order, such as insufficient
+  buying power, halts the plan instead.
 - Package expiry or a changed edition blocks new submissions. Cancellation stays
   available even after package expiry or publisher-key revocation. After a key is
   removed from the trust file, a full snapshot signed with a trusted key replaces
