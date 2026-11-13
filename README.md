@@ -16,7 +16,25 @@ research to more industries and regions. It provides a common engine that
 reads research packages, the tools to write one, and an index of who is
 researching what.
 
-## 2. What you will find here
+## 2. Try the free USCHIPS sample
+
+[Read the USCHIPS Q4 2026 research report](history/uschips/2026-Q4/REPORT.md)
+to see ten companies assessed for US CHIPS Act and Inflation Reduction Act
+exposure, with their scores, inclusion or exit decisions, and seven portfolio
+target weights. Reading the report needs no installation or account.
+
+[Verify the signed files and preview the portfolio locally](docs/SAMPLE.md)
+with the sample's fictional account and quotes. This is a frozen research
+demo for reading and offline previews. It cannot place Alpaca paper orders,
+even before its expiry date. The report describes its observation dates,
+methodology, neutral factors and evidence limitations.
+
+[Inspect the dated evidence supplement](docs/USCHIPS-Q4-2026-EVIDENCE-20261112.md)
+for primary-source links covering all ten companies, PLUG's financing judgment,
+selected financial inputs and remaining gaps. This selective, unsigned companion
+identifies the original edition by its verified payload hash.
+
+## 3. What you will find here
 
 **Catalog**
 - `catalog/themes.json`: every industry and theme that has been researched,
@@ -24,8 +42,8 @@ researching what.
 - `catalog/authors.json`: every author and the public keys they sign with.
 - `catalog/products/`: one entry per research product.
 
-**Free past quarters** (`history/`)
-For each product, past quarterly evaluations: the companies assessed, each
+**Free samples and past quarters** ([index](history/INDEX.md))
+For each product, published quarterly evaluations: the companies assessed, each
 company's scores and rank, and the resulting portfolio selection and weights.
 Each edition and its scores are signed by their author, so you can check where
 they came from and that they are unchanged.
@@ -37,9 +55,9 @@ they came from and that they are unchanged.
 - Key generation, signing and validation commands for authors.
 - Templates for a package, an evaluation and a news configuration, with a
   complete fictional example.
-- An authoring guide (`docs/AUTHORING.md`).
+- An [authoring guide](docs/AUTHORING.md).
 
-## 3. Limits you should know
+## 4. Limits you should know
 
 - **Paper trading only.** The engine connects to Alpaca's paper endpoint and
   has no live-trading mode.
@@ -49,7 +67,7 @@ they came from and that they are unchanged.
   will be added later and will be shown in the catalog when it exists.
 - **Nothing here is investment advice.**
 
-## 4. Current research
+## 5. Current research
 
 Current-quarter research is provided to firms that license a product. They
 receive read access to a private repository for that product, with ongoing
@@ -58,14 +76,15 @@ engine reads. Licence fees go to the package's author; the platform keeps a
 small share to maintain the engine and review packages. The code that produces
 an author's research is not part of what is delivered.
 
-## 5. Contributing a new theme
+## 6. Contributing a new theme
 
-1. Read `docs/AUTHORING.md` and `CONTRIBUTING.md`.
+1. Read [docs/AUTHORING.md](docs/AUTHORING.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 2. Propose your theme by pull request to `catalog/themes.json`.
 3. Generate a signing key and ask for it to be listed in `catalog/authors.json`.
 4. Build, validate and sign your package with the commands in this repository.
 
-## 6. Getting started
+## 7. Getting started
 
-See `docs/ENGINE.md` to try the fictional example in a few commands, with no
-account or credentials.
+Start with the [free sample walkthrough](docs/SAMPLE.md) to inspect real-company
+research and preview it offline. See the [engine guide](docs/ENGINE.md) for
+the fictional example and for using a separate author-supplied paper edition.

@@ -177,3 +177,42 @@ def test_a_revision_that_is_not_a_commit_fails(repo, revision):
     result = scan_at(repo, revision)
     assert result.returncode == 1 and "is not a commit" in result.stderr
     assert not (repo / "elsewhere").exists()
+
+
+COMPANION = "docs/" + WORD.upper() + "-Q4-2026-EVIDENCE-20261112.md"
+
+
+@pytest.mark.parametrize("relative", ["README.md", "docs/SAMPLE.md", COMPANION])
+def test_public_sample_entry_points_can_name_the_product(repo, relative):
+    add(repo, relative, f"Read the {WORD.upper()} sample.\n")
+    result = scan(repo)
+    assert result.returncode == 0, result.stderr
+
+
+@pytest.mark.parametrize("relative", ["README.md", "docs/SAMPLE.md", COMPANION])
+def test_public_sample_entry_points_keep_sensitive_content_checks(repo, relative):
+    secret_marker = "PRIVATE" + " KEY"
+    add(repo, relative, f"{WORD.upper()}\n{secret_marker}\n{PERSONAL}\n")
+    result = scan(repo)
+    assert result.returncode == 1
+    assert f"{relative}:2: forbidden string {secret_marker}" in result.stderr
+    assert f"{relative}:3: email address that is not a GitHub noreply" in result.stderr
+    assert PERSONAL not in result.stderr
+
+
+@pytest.mark.parametrize("relative", ["docs/SAMPLE-extra.md", "docs/README.md",
+                                      COMPANION.replace("20261112", "20261113"),
+                                      "docs/nested/" + COMPANION.removeprefix("docs/"),
+                                      COMPANION + ".backup"])
+def test_product_documentation_exceptions_are_exact_paths(repo, relative):
+    add(repo, relative, f"{WORD.upper()}\n")
+    result = scan(repo)
+    assert result.returncode == 1 and f"{relative}:1: {WORD} outside" in result.stderr
+
+
+@pytest.mark.parametrize("label, line", FORBIDDEN)
+def test_evidence_companion_keeps_every_forbidden_content_check(repo, label, line):
+    add(repo, COMPANION, f"{WORD.upper()} evidence.\n{line}\n")
+    result = scan(repo)
+    assert result.returncode == 1
+    assert f"{COMPANION}:2: forbidden string {label}" in result.stderr
