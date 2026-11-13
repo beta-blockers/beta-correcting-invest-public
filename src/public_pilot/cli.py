@@ -16,6 +16,9 @@ from .packages import resolve_chain, resolve_historical, validate_payload
 from .planning import Limits, build_plan
 from .state import Store
 
+# The command line's per-order limit, in USD. One share must fit in a single order.
+DEFAULT_MAX_ORDER = "1000"
+
 
 def parser():
     result = argparse.ArgumentParser(description="Load completed research and preview or execute a paper portfolio")
@@ -32,7 +35,9 @@ def parser():
     preview.add_argument("package_id")
     preview.add_argument("--offline", metavar="FILE", help="Synthetic observation file; result cannot execute")
     preview.add_argument("--allocation", default="1000")
-    preview.add_argument("--max-order", default="250")
+    preview.add_argument("--max-order", default=DEFAULT_MAX_ORDER,
+                         help="Largest single order in USD. One share must fit in an order, so this is also the "
+                              f"highest share price a plan can buy (default {DEFAULT_MAX_ORDER})")
     preview.add_argument("--max-turnover", default="1000")
     preview.add_argument("--max-weight", default="0.5")
     for name in ("execute-paper", "cancel-paper"):
@@ -222,7 +227,9 @@ def run(args):
                 payload, _ = store.load_package(args.package_id, trust, instant, check_freshness=False)
                 return payload
             if args.command == "preview":
-                require(not store.outstanding(), "Reconcile or cancel the outstanding execution first")
+                unresolved = [row["id"] for row in store.outstanding()]
+                require(not unresolved, "Reconcile or cancel the outstanding execution first: plan " +
+                        ", ".join(unresolved))
                 # Offline plans can never execute, so they may read an expired edition with any trusted key.
                 # A live plan can: it needs a current edition and paper permission, whatever the purpose.
                 live = not args.offline

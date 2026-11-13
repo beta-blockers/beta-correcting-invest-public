@@ -10,7 +10,7 @@ from .common import decimal, digest, fields, iso, require, timestamp
 @dataclass(frozen=True)
 class Limits:
     allocation_usd: str = "1000"
-    max_order_usd: str = "250"
+    max_order_usd: str = "250"  # library default; the command line's is cli.DEFAULT_MAX_ORDER
     max_turnover_usd: str = "1000"
     max_position_weight: str = "0.5"
     collar_bps: int = 25
@@ -30,14 +30,14 @@ class Limits:
 
 def quote(snapshot, symbol, instant, limits):
     raw = snapshot["quotes"].get(symbol)
-    require(isinstance(raw, dict), "Missing quote")
+    require(isinstance(raw, dict), f"{symbol}: Missing quote")
     bid, ask = decimal(raw["bid"]), decimal(raw["ask"])
-    require(0 < bid <= ask, "Invalid or crossed quote")
+    require(0 < bid <= ask, f"{symbol}: Invalid or crossed quote")
     age = (instant - timestamp(raw["at"])).total_seconds()
-    require(0 <= age <= limits.quote_max_age_seconds, "Stale or future quote")
+    require(0 <= age <= limits.quote_max_age_seconds, f"{symbol}: Stale or future quote")
     require((ask - bid) / ((ask + bid) / 2) * 10_000 <= limits.max_spread_bps,
-            "Quote spread exceeds limit")
-    require(snapshot["assets"].get(symbol, {}).get("tradable") is True, "Asset is not tradable")
+            f"{symbol}: Quote spread exceeds limit")
+    require(snapshot["assets"].get(symbol, {}).get("tradable") is True, f"{symbol}: Asset is not tradable")
     return bid, ask
 
 
@@ -46,10 +46,16 @@ def positions(snapshot):
     for symbol, raw in snapshot["positions"].items():
         qty = decimal(raw)
         require(qty >= 0 and qty == qty.to_integral_value(),
-                "Only long, whole-share positions are supported")
+                f"{symbol}: Only long, whole-share positions are supported")
         if qty:
             result[symbol] = int(qty)
     return result
+
+
+def order_symbols(orders):
+    """The symbols of broker orders, for naming them in a refusal."""
+    names = sorted({str(o["symbol"]) for o in orders if isinstance(o, dict) and o.get("symbol")})
+    return f": {', '.join(names)}" if names else ""
 
 
 def account_ok(snapshot, instant):
@@ -64,11 +70,14 @@ def account_ok(snapshot, instant):
 def build_plan(payload, snapshot, limits, instant, *, offline=False, activation=None):
     limits.validate()
     account_ok(snapshot, instant)
-    require(not snapshot["open_orders"], "Resolve existing broker orders before planning")
+    require(not snapshot["open_orders"],
+            "Resolve existing broker orders before planning" + order_symbols(snapshot["open_orders"]))
     held = positions(snapshot)
-    require(set(held) <= set(payload["universe"]), "Foreign positions outside this research universe")
-    require(all(decimal(w) <= decimal(limits.max_position_weight) for w in payload["targets"].values()),
-            "Research exceeds the customer's concentration limit")
+    foreign = sorted(set(held) - set(payload["universe"]))
+    require(not foreign, f"Foreign positions outside this research universe: {', '.join(foreign)}")
+    concentrated = sorted(s for s, w in payload["targets"].items()
+                          if decimal(w) > decimal(limits.max_position_weight))
+    require(not concentrated, f"Research exceeds the customer's concentration limit: {', '.join(concentrated)}")
     allocation = min(decimal(limits.allocation_usd), decimal(snapshot["equity"]))
     active = set(payload["universe"])
     if activation is not None:
@@ -108,9 +117,10 @@ def build_plan(payload, snapshot, limits, instant, *, offline=False, activation=
         price = buy_price if side == "buy" else bid * (1 - collar)
         if side == "sell":
             price = price.quantize(Decimal("0.01") if price >= 1 else Decimal("0.0001"), rounding=ROUND_FLOOR)
-        require(price > 0, "Price collar rounds to zero")
+        require(price > 0, f"{symbol}: Price collar rounds to zero")
         chunk = int(decimal(limits.max_order_usd) / price)
-        require(chunk > 0, "One share exceeds the per-order limit")
+        require(chunk > 0, f"{symbol}: One share exceeds the per-order limit "
+                           f"(limit price {price} USD, per-order limit {limits.max_order_usd} USD)")
         remaining = abs(change)
         while remaining:
             qty = min(remaining, chunk)
