@@ -19,9 +19,13 @@ it holds no secrets, publishes nothing and never contacts a broker.
 3. **Existing tests stay as they are.** A change adds tests. It does not edit
    or delete existing tests to make them pass.
 4. **Package format version 1 is fixed.** The fields of a version 1 payload do
-   not change. New information goes in a separate document, signed by the same
-   author and bound to the edition by hash, as the evaluation and release
-   documents are.
+   not change. New information included in a verified edition goes in a separate
+   document, signed by the same author and bound to the edition by hash, as the
+   evaluation and release documents are. An explicitly unsigned, dated bibliography
+   may accompany an existing edition under `docs/`: identify its edition ID and
+   verified payload hash, distinguish retained inputs from new corroboration, and
+   state the coverage gaps. It is outside the release inventory and cannot alter
+   the edition, substantiate itself by that hash, or claim the author's signature.
 5. **Commit with your GitHub noreply address.** Every commit's author and
    committer address must be a GitHub noreply address
    (`ID+username@users.noreply.github.com`). Turn on "Keep my email addresses
@@ -30,7 +34,10 @@ it holds no secrets, publishes nothing and never contacts a broker.
    any other address in a tracked file.
 6. **Examples are fictional.** Tests, examples and templates use invented
    symbols such as `DEMOA` and invented values. Real research enters this
-   repository only as an author-signed edition under `history/`.
+   repository as an author-signed edition under `history/`. Reader documentation
+   may link to those editions and the limited bibliographic companions described
+   in rule 4. Product-name exceptions in the export scanner use exact document
+   paths; they never exempt those files from other export checks.
 7. **No performance figures.** Do not add returns, back-tests, benchmarks or
    any other performance claim anywhere in the repository.
 8. **Published history is append-only.** An edition under `history/` is never

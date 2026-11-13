@@ -1,0 +1,11 @@
+{
+  "format": "public-pilot-product-v1",
+  "product_id": "eu-clean-air",
+  "theme_id": "eu-clean-air",
+  "author_id": "nxyziggy",
+  "cadence": "quarterly",
+  "universe_size": 4,
+  "methodology_summary": "Four completed eligible clean-air and clean-energy scorecards exposed to the EU Innovation Fund and Horizon Europe, including a Norwegian issuer. The separate EU variant combines company execution, industrial-policy support and network position. It uses disclosed EU lobbying bands, dated grant conversions, confirmed links in a 15-company reference set and explicitly assigned campaign penalties for missing amounts. Composite scores determine selection; the network pillar determines surviving weights within one group, with a 35% position cap. Each edition discloses neutral factors, raw-data gaps and sensitivities. The free historical sample is a signed demo for reading and fictional offline previews only, with no broker integration. Author-published, not independently reviewed.",
+  "public_history_path": "history/eu-clean-air",
+  "review_status": "author_published"
+}

@@ -68,6 +68,10 @@ step "Full test suite"
 step "Fictional example in docs/ENGINE.md"
 run_section docs/ENGINE.md "## Try the fictional example without credentials"
 
+step "Real sample preview in docs/SAMPLE.md (commands as written)"
+quiet bash -c "$(section docs/SAMPLE.md '## Preview locally')"
+echo "   signature, payload hash, evaluation and offline preview passed"
+
 step "Authoring walkthrough in docs/AUTHORING.md (key in a temporary directory)"
 run_section docs/AUTHORING.md "## Walkthrough"
 

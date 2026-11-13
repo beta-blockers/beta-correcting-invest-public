@@ -1,0 +1,536 @@
+{
+  "format": "public-pilot-evaluation-v1",
+  "key_id": "nxyziggy-2026-11",
+  "payload": {
+    "package_id": "usmaterials",
+    "edition_id": "usmaterials-2026-q4-oct31-sample",
+    "author_id": "nxyziggy",
+    "package_sha256": "b69eb5ecba3149c48026024ac731999ea1efe4a7a95e4d2b497c21c71b4fc7b8",
+    "as_of": "2026-10-31T23:59:59-04:00",
+    "method": {
+      "name": "Materials provisional three-pillar sample",
+      "version": "1.0-oct31-subset",
+      "description": "Retrospective application of the existing provisional Materials formulas to a disclosed 25-company subset. The observation boundary is October 31, 2026; the latest retained company document is dated October 29. P1 weights P1a through P1f by 0.25, 0.25, 0.20, 0.12, 0.10 and 0.08. P3 = 0.60*P3a + 0.40*P3b. The composite is clamped to [0,1] from (P1+0.01)^0.30 * (P2+0.01)^0.55 * (P3+0.01)^0.15, using the zero-age anchor and four-decimal intermediate rounding. This is an initial screen, not a completed quarterly update. Include only composites strictly above the 25-company 25th percentile (linear interpolation), 0.5063. AA equals the threshold and is excluded. The 18 survivors receive P3-proportional weights in one sleeve, with iterative redistribution above a 35% cap. No cap binds. Targets are floored to ten decimal places, leaving 0.0000000009 cash. Equal P3 values explain repeated weights; composite rank does not size positions. The source-only calculation omits operational market-eligibility checks because no price-dependent score is active and this demo cannot trade. The report lists financial bases, scoring inputs, sources and the XE gap."
+    },
+    "thresholds": {
+      "initial_include_strictly_above": "0.5063",
+      "initial_percentile": "25",
+      "position_cap": "0.35"
+    },
+    "companies": {
+      "CBT": {
+        "rank": 1,
+        "composite": "0.5965",
+        "components": {
+          "p1": "0.5168",
+          "p1a": "0.5",
+          "p1b": "0.4456",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.8036",
+          "p1f": "0.5",
+          "p2": "0.7708",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "Aligned FY2025 replaces FY2026 results published November 2. The dated proxy and July announcement support the nine-seat board and October 1 succession."
+      },
+      "LAC": {
+        "rank": 2,
+        "composite": "0.5863",
+        "components": {
+          "p1": "0.3898",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.6479",
+          "p1f": "0.5",
+          "p2": "0.8695",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "The selected DOE loan commitment is not cash already received or a grant. Development-stage financials and construction risks remain."
+      },
+      "ENS": {
+        "rank": 3,
+        "composite": "0.5759",
+        "components": {
+          "p1": "0.5066",
+          "p1a": "0.5",
+          "p1b": "0.3988",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.8194",
+          "p1f": "0.5",
+          "p2": "0.7303",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "Uses the fiscal year ending March 31, 2026 and recorded Section 45X benefit. Annual data is not presented as a live TTM feed."
+      },
+      "USAR": {
+        "rank": 4,
+        "composite": "0.5745",
+        "components": {
+          "p1": "0.384",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.5901",
+          "p1f": "0.5",
+          "p2": "0.8444",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "The selected grant and October CEO transition are retained from dated disclosures. Development-stage assessment does not imply operating mine production."
+      },
+      "ALB": {
+        "rank": 5,
+        "composite": "0.568",
+        "components": {
+          "p1": "0.4122",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.8721",
+          "p1f": "0.5",
+          "p2": "0.7959",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "Uses the February annual filing and pre-cutoff governance update. November results and the later CGP3 milestone are excluded."
+      },
+      "IONR": {
+        "rank": 6,
+        "composite": "0.5546",
+        "components": {
+          "p1": "0.3958",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.7083",
+          "p1f": "0.5",
+          "p2": "0.7786",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "The selected DOE guarantee is not grant revenue. The aligned financial ratio and actual period are preserved; development remains conditional."
+      },
+      "ABAT": {
+        "rank": 7,
+        "composite": "0.5531",
+        "components": {
+          "p1": "0.3937",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.6868",
+          "p1f": "0.5",
+          "p2": "0.7769",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "The grant and annual operating losses are retained. Neutral utilization and innovation factors do not establish completed manufacturing execution."
+      },
+      "NVX": {
+        "rank": 8,
+        "composite": "0.5467",
+        "components": {
+          "p1": "0.3579",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.3288",
+          "p1f": "0.5",
+          "p2": "0.8004",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "Existing low execution and mixed consistency ordinals remain. The selected grant is not combined with loans or treated as cash drawn."
+      },
+      "MP": {
+        "rank": 9,
+        "composite": "0.5465",
+        "components": {
+          "p1": "0.3956",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.706",
+          "p1f": "0.5",
+          "p2": "0.7579",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "The selected Defense loan is not combined with strategic equity or price-support commitments. Mine and magnet execution remain distinct."
+      },
+      "SLDP": {
+        "rank": 10,
+        "composite": "0.5448",
+        "components": {
+          "p1": "0.3794",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.5438",
+          "p1f": "0.5",
+          "p2": "0.7708",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "November Q3 results are excluded. Annual disclosures and the executed assistance agreement support the mixed operating ordinals and selected grant."
+      },
+      "ELBM": {
+        "rank": 11,
+        "composite": "0.5378",
+        "components": {
+          "p1": "0.3993",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.7431",
+          "p1f": "0.5",
+          "p2": "0.7322",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "The Defense grant and native-currency financial ratio retain their scope. Refinery development is not treated as completed production."
+      },
+      "PPTA": {
+        "rank": 12,
+        "composite": "0.5371",
+        "components": {
+          "p1": "0.3929",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.6791",
+          "p1f": "0.5",
+          "p2": "0.7369",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "The selected Defense grant is separate from proposed or conditional financing; development-stage losses remain in ROIC."
+      },
+      "CENX": {
+        "rank": 13,
+        "composite": "0.5365",
+        "components": {
+          "p1": "0.4926",
+          "p1a": "0.5",
+          "p1b": "0.3418",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.8212",
+          "p1f": "0.5",
+          "p2": "0.7079",
+          "p3": "0.2",
+          "p3a": "0.0",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0404040404",
+        "note": "Section 45X uses the observed amount. High substitutability lowers P3, so the target is smaller than most selected names despite composite rank."
+      },
+      "LEU": {
+        "rank": 14,
+        "composite": "0.5322",
+        "components": {
+          "p1": "0.4196",
+          "p1a": "0.5",
+          "p1b": "0.1698",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.5212",
+          "p1f": "0.5",
+          "p2": "0.6555",
+          "p3": "0.35",
+          "p3a": "0.25",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0707070707",
+        "note": "Actual June TTM equals FY2025 plus H1 2026 minus H1 2025. The selected July expansion award is separate from the older operations contract with uncertain options. Few operating domestic HALEU substitutes raise P3."
+      },
+      "NB": {
+        "rank": 15,
+        "composite": "0.5265",
+        "components": {
+          "p1": "0.3992",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.7417",
+          "p1f": "0.5",
+          "p2": "0.7041",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "The grant is distinct from broader project-financing needs. Deeply negative but defined ROIC is retained, not neutralized."
+      },
+      "AMPX": {
+        "rank": 16,
+        "composite": "0.5201",
+        "components": {
+          "p1": "0.3742",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.4916",
+          "p1f": "0.5",
+          "p2": "0.713",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "The March 10-K supports FY2025 inputs. The April proxy documents the retiring director and six-seat board; the November website is not used."
+      },
+      "GMTL": {
+        "rank": 17,
+        "composite": "0.5151",
+        "components": {
+          "p1": "0.3891",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.6409",
+          "p1f": "0.5",
+          "p2": "0.6857",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "Uses the existing grant classification and dated fiscal 2026 disclosures. Commercial production is not invented for the development asset."
+      },
+      "IPX": {
+        "rank": 18,
+        "composite": "0.5134",
+        "components": {
+          "p1": "0.3932",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.6817",
+          "p1f": "0.5",
+          "p2": "0.6778",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.0555555555",
+        "note": "Uses the selected grant and fiscal 2026 basis. Demonstration progress is not a claim of mature commercial-scale production."
+      },
+      "AA": {
+        "rank": 19,
+        "composite": "0.5063",
+        "components": {
+          "p1": "0.4378",
+          "p1a": "0.5",
+          "p1b": "0.1159",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.8378",
+          "p1f": "0.5",
+          "p2": "0.6781",
+          "p3": "0.2",
+          "p3a": "0.0",
+          "p3b": "0.5"
+        },
+        "decision": "exclude",
+        "weight": "0",
+        "note": "Section 45X credits are a bounded observed-period amount, not a lifetime ceiling. Composite equals 0.5063 and fails the strictly-greater initial screen."
+      },
+      "FLNC": {
+        "rank": 20,
+        "composite": "0.4892",
+        "components": {
+          "p1": "0.3708",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.4583",
+          "p1f": "0.5",
+          "p2": "0.6399",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "exclude",
+        "weight": "0",
+        "note": "October CEO is Julian Nebreda, with tenure from September 1, 2022; board is four independent of twelve. The November CEO change and website roster are excluded. Below the initial screen."
+      },
+      "ULBI": {
+        "rank": 21,
+        "composite": "0.4715",
+        "components": {
+          "p1": "0.3799",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.5494",
+          "p1f": "0.5",
+          "p2": "0.59",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "exclude",
+        "weight": "0",
+        "note": "Confirmed unsized tax credit uses the inherited 0.59 P2 branch; no nominal award amount is invented. Below the initial screen."
+      },
+      "GEV": {
+        "rank": 22,
+        "composite": "0.4546",
+        "components": {
+          "p1": "0.6279",
+          "p1a": "0.5",
+          "p1b": "0.8803",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.8278",
+          "p1f": "0.5",
+          "p2": "0.4077",
+          "p3": "0.3049",
+          "p3a": "0.1748",
+          "p3b": "0.5"
+        },
+        "decision": "exclude",
+        "weight": "0",
+        "note": "Uses FY2025 financials, October 28 results for qualitative context, April board disclosures and a March government-role biography. Below the initial screen."
+      },
+      "BWXT": {
+        "rank": 23,
+        "composite": "0.44",
+        "components": {
+          "p1": "0.504",
+          "p1a": "0.5",
+          "p1b": "0.3547",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.9033",
+          "p1f": "0.5",
+          "p2": "0.4077",
+          "p3": "0.3799",
+          "p3a": "0.2998",
+          "p3b": "0.5"
+        },
+        "decision": "exclude",
+        "weight": "0",
+        "note": "Uses FY2025 and the January manufacturing agreement. November Q3 results are excluded. The BWXT-GEV active edge remains; below the initial screen."
+      },
+      "TMQ": {
+        "rank": 24,
+        "composite": "0.4305",
+        "components": {
+          "p1": "0.3961",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.7106",
+          "p1f": "0.5",
+          "p2": "0.4874",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "exclude",
+        "weight": "0",
+        "note": "Strategic equity uses the explicit 0.2 instrument-type factor rather than a grant score. Below the initial-screen threshold."
+      },
+      "UAMY": {
+        "rank": 25,
+        "composite": "0.4205",
+        "components": {
+          "p1": "0.3886",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.6362",
+          "p1f": "0.5",
+          "p2": "0.4714",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "exclude",
+        "weight": "0",
+        "note": "Procurement support uses the explicit 0.2 instrument-type factor, not the grant factor. Below the initial-screen threshold."
+      }
+    },
+    "defaults_disclosed": [
+      "P1a subsidy utilization is 0.5 for all 25 companies. This is a scoring treatment, not an assertion that half of an award has been paid or spent.",
+      "P1c capital-expenditure execution and P1d analyst-consensus narrative are 0.5 for every company because no approved comparable plan or consensus inputs are available. No November quote or fictional preview price enters a score.",
+      "The insider-ownership component within P1e is 0.5 for every company. Unknown raw ownership percentages stay unknown. Missing WACC uses the inherited 0.08 assumption.",
+      "P1f political economy is uniformly 0.5 under the provisional method. Unknown lobbying and campaign amounts are not imputed as zero. Dated government-role counts remain in the evidence but do not differentiate scores.",
+      "P3b innovation is uniformly 0.5. Effective patent 0.5, standards 0.5 and licensing 0.1 are neutral scoring assumptions, not observed innovation measurements.",
+      "Financial inputs are dated annual or actual trailing-twelve-month estimates from public disclosures, not current feed observations. Fiscal dates and currencies differ. Nonpositive invested capital blocks a score; it is not changed to favorable ROIC.",
+      "ULBI has an evidenced but unsized tax credit. Its amount remains unknown; the inherited unsized support branch gives P2 0.59 before policy risk. This is not a zero-dollar award.",
+      "The signed universe is a 25-company subset. XE is unscored for missing confirmed pre-cutoff board independence. EOSE and OKLO retain the original unscored watchlist status. None receives a fabricated composite or rank.",
+      "The initial screen and weights are recomputed over these 25 companies, not copied from a deployed portfolio. Network counts retain the fixed 28-name disclosure search and denominator 27. No completed quarterly observations, exits or reentries are invented.",
+      "The original universe and provisional methodology were assembled after October 31. This is a retrospective source-cutoff reconstruction, not an archived portfolio known or operated on that date. Research is author-published without independent review."
+    ]
+  },
+  "signature": "OU3jaUjsCqcDOW55OjIhadikKVEzfHktow0Rf/KnWCvQ3xdHJ59ifSo8Iur6RU0c2jf30ga+U4DZ0uQTnOXJAw=="
+}

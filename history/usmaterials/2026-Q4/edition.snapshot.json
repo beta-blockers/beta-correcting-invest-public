@@ -1,0 +1,621 @@
+{
+  "format": "public-pilot-envelope-v1",
+  "kind": "snapshot",
+  "key_id": "nxyziggy-2026-11",
+  "payload": {
+    "package_id": "usmaterials",
+    "edition_id": "usmaterials-2026-q4-oct31-sample",
+    "author_id": "nxyziggy",
+    "engine_major": 1,
+    "purpose": "demo",
+    "published_at": "2026-11-13T02:23:09.619181+00:00",
+    "information_cutoff": "2026-10-31T23:59:59-04:00",
+    "valid_until": "2027-01-01T05:00:00+00:00",
+    "geographies": [
+      "US"
+    ],
+    "policy_ids": [
+      "US-defense-critical-materials",
+      "US-Bipartisan-Infrastructure-Law",
+      "US-Inflation-Reduction-Act",
+      "US-DOE-nuclear-fuel",
+      "US-CHIPS-and-Science-Act"
+    ],
+    "universe": [
+      "AA",
+      "ABAT",
+      "ALB",
+      "AMPX",
+      "BWXT",
+      "CBT",
+      "CENX",
+      "ELBM",
+      "ENS",
+      "FLNC",
+      "GEV",
+      "GMTL",
+      "IONR",
+      "IPX",
+      "LAC",
+      "LEU",
+      "MP",
+      "NB",
+      "NVX",
+      "PPTA",
+      "SLDP",
+      "TMQ",
+      "UAMY",
+      "ULBI",
+      "USAR"
+    ],
+    "targets": {
+      "ABAT": "0.0555555555",
+      "ALB": "0.0555555555",
+      "AMPX": "0.0555555555",
+      "CBT": "0.0555555555",
+      "CENX": "0.0404040404",
+      "ELBM": "0.0555555555",
+      "ENS": "0.0555555555",
+      "GMTL": "0.0555555555",
+      "IONR": "0.0555555555",
+      "IPX": "0.0555555555",
+      "LAC": "0.0555555555",
+      "LEU": "0.0707070707",
+      "MP": "0.0555555555",
+      "NB": "0.0555555555",
+      "NVX": "0.0555555555",
+      "PPTA": "0.0555555555",
+      "SLDP": "0.0555555555",
+      "USAR": "0.0555555555"
+    },
+    "research": "USMaterialsPilot free Q4 2026 sample reconstructed at publication using company evidence available by October 31, 2026. The latest retained company source is dated October 29. This is a 25-company subset with 18 positive targets, not the deployed pilot or a contemporaneous October portfolio. XE is unscored because confirmed board independence is missing from the retained pre-cutoff primary sources; the IPO prospectus states expectations, not completed determinations. EOSE and OKLO remain unscored watchlist names. The original universe and provisional method were selected after the cutoff; retrospective application does not establish a point-in-time strategy record. The evaluation discloses scores and neutral defaults. REPORT.md documents inputs, cutoff changes, evidence and limitations. The fixed 28-name network scope remains, while the initial percentile and one-sleeve weights are recalculated over these 25 names. Account data and $100 prices in the fixture are fictional and separate from research. This signed demo supports reading and offline previews only and cannot place paper orders. No investment advice or performance results are provided.",
+    "evidence": [
+      {
+        "title": "MP: Full-year2025 results",
+        "url": "https://investors.mpmaterials.com/investor-news/news-details/2026/MP-Materials-Reports-Fourth-Quarter-and-Full-Year-2025-Results/",
+        "published_at": "2026-02-26T23:59:59+00:00"
+      },
+      {
+        "title": "MP: Second-quarter results",
+        "url": "https://mpmaterials.com/news/mp-materials-reports-second-quarter-2026-results",
+        "published_at": "2026-08-06T23:59:59+00:00"
+      },
+      {
+        "title": "MP: 2022proxy CEOemployment start",
+        "url": "https://materials.proxyvote.com/default.aspx?docHostID=503293",
+        "published_at": "2022-04-29T23:59:59+00:00"
+      },
+      {
+        "title": "MP: OSC confirms execution and provision of150m direct loan",
+        "url": "https://www.defense.gov/News/Releases/Release/Article/4270722/office-of-strategic-capital-announces-first-loan-through-dod-agreement-with-mp/",
+        "published_at": "2025-08-10T23:59:59+00:00"
+      },
+      {
+        "title": "MP: DoD partnership announcement",
+        "url": "https://mpmaterials.com/news/mp-materials-announces-transformational-public-private-partnership-with-the-department-of-defense-to-accelerate-u-s-rare-earth-magnet-independence/",
+        "published_at": "2025-07-10T23:59:59+00:00"
+      },
+      {
+        "title": "MP: 2026proxy",
+        "url": "https://www.sec.gov/Archives/edgar/data/1801368/000180136826000020/mp-20260423.htm",
+        "published_at": "2026-04-24T23:59:59+00:00"
+      },
+      {
+        "title": "USAR: FY2025 annual financial statements",
+        "url": "https://www.sec.gov/Archives/edgar/data/1970622/000197062226000019/exhibit991-earningsrelease.htm",
+        "published_at": "2026-03-30T23:59:59+00:00"
+      },
+      {
+        "title": "USAR: Second-quarter results",
+        "url": "https://www.sec.gov/Archives/edgar/data/1970622/000197062226000056/exhibit991-earningsrelease.htm",
+        "published_at": "2026-08-10T23:59:59+00:00"
+      },
+      {
+        "title": "USAR: Serra Verde combination completedSeptember3",
+        "url": "https://investors.usare.com/news-releases/news-release-details/usa-rare-earth-completes-combination-serra-verde-group",
+        "published_at": "2026-09-04T23:59:59+00:00"
+      },
+      {
+        "title": "USAR: June3annualmeeting sixdirectorselection",
+        "url": "https://www.sec.gov/Archives/edgar/data/1970622/000197062226000045/usar-20260603.htm",
+        "published_at": "2026-06-04T23:59:59+00:00"
+      },
+      {
+        "title": "USAR: Executive chairman and CEO transition",
+        "url": "https://www.sec.gov/Archives/edgar/data/1970622/000121390026079440/ea029849001ex99-1.htm",
+        "published_at": "2026-07-20T23:59:59+00:00"
+      },
+      {
+        "title": "USAR: Commerce final CHIPS agreements",
+        "url": "https://www.nist.gov/system/files/documents/2026/06/03/CHIPS%20USAR%20Press%20Release%202026-06-03_Final%20Version.pdf",
+        "published_at": "2026-06-03T23:59:59+00:00"
+      },
+      {
+        "title": "USAR: 2026 proxy director independence",
+        "url": "https://www.sec.gov/Archives/edgar/data/1970622/000121390026047155/ea0287130-01.htm",
+        "published_at": "2026-04-23T23:59:59+00:00"
+      },
+      {
+        "title": "LAC: FY2025 annual financial statements",
+        "url": "https://www.sec.gov/Archives/edgar/data/1966983/000119312526115081/lac-20251231.htm",
+        "published_at": "2026-03-19T23:59:59+00:00"
+      },
+      {
+        "title": "LAC: Second-quarter results",
+        "url": "https://lithiumamericas.com/news/news-details/2026/Lithium-Americas-Reports-Second-Quarter-2026-Results/default.aspx",
+        "published_at": "2026-08-13T23:59:59+00:00"
+      },
+      {
+        "title": "LAC: Seven directors elected June22",
+        "url": "https://www.lithiumamericas.com/news/news-details/2026/Lithium-Americas-Reports-2026-Annual-Meeting-Results/default.aspx",
+        "published_at": "2026-06-23T23:59:59+00:00"
+      },
+      {
+        "title": "LAC: 2026 Part III annual amendment",
+        "url": "https://www.sec.gov/Archives/edgar/data/1966983/000119312526193861/d432389d10ka.htm",
+        "published_at": "2026-04-30T23:59:59+00:00"
+      },
+      {
+        "title": "LAC: Walker independent appointment",
+        "url": "https://lithiumamericas.com/news/news-details/2026/Lithium-Americas-Appoints-Clayton-Walker-to-the-Board-of-Directors/default.aspx",
+        "published_at": "2026-05-05T23:59:59+00:00"
+      },
+      {
+        "title": "ALB: FY2025 Form10-K",
+        "url": "https://www.sec.gov/Archives/edgar/data/915913/000091591326000018/alb-20251231.htm",
+        "published_at": "2026-02-11T23:59:59+00:00"
+      },
+      {
+        "title": "ALB: Independent director Bartolomeo appointment",
+        "url": "https://www.sec.gov/Archives/edgar/data/915913/000091591326000095/alb-20260721.htm",
+        "published_at": "2026-07-23T23:59:59+00:00"
+      },
+      {
+        "title": "ALB: Kings Mountain DPA award",
+        "url": "https://www.albemarle.com/us/en/news/albemarle-receives-90-million-critical-materials-award-department-defense-boost-us-lithium",
+        "published_at": "2023-09-12T23:59:59+00:00"
+      },
+      {
+        "title": "ALB: 2026proxy",
+        "url": "https://s201.q4cdn.com/960975307/files/doc_financials/2025/ar/ALBEMARLE-CORP_2026_Proxy_Statement.pdf",
+        "published_at": "2026-03-24T23:59:59+00:00"
+      },
+      {
+        "title": "IONR: DOEloan-guaranteeclosingannouncement",
+        "url": "https://www.energy.gov/edf/articles/doe-announces-996-million-loan-guarantee-ioneer-rhyolite-ridge-advance-domestic",
+        "published_at": "2025-01-17T23:59:59+00:00"
+      },
+      {
+        "title": "IONR: Half-year report with preceding six-month comparison",
+        "url": "https://www.sec.gov/Archives/edgar/data/1896084/000114036126032597/ef20079527_ex99-1.htm",
+        "published_at": "2026-08-13T23:59:59+00:00"
+      },
+      {
+        "title": "IONR: Transition-year annual report",
+        "url": "https://announcements.asx.com.au/asxpdf/20260318/pdf/06xkpryx3wszh9.pdf",
+        "published_at": "2026-03-18T23:59:59+00:00"
+      },
+      {
+        "title": "UAMY: FY2025 Form10-K",
+        "url": "https://www.sec.gov/Archives/edgar/data/101538/000110465926032049/uamy-20251231x10k.htm",
+        "published_at": "2026-03-19T23:59:59+00:00"
+      },
+      {
+        "title": "UAMY: DLA procurement announcement",
+        "url": "https://www.sec.gov/Archives/edgar/data/101538/000165495425011011/uamy_ex991.htm",
+        "published_at": "2025-09-23T23:59:59+00:00"
+      },
+      {
+        "title": "UAMY: 2026 proxy statement",
+        "url": "https://materials.proxyvote.com/Approved/911549/20260415/NOMNP_631973.PDF",
+        "published_at": "2026-04-20T23:59:59+00:00"
+      },
+      {
+        "title": "PPTA: FY2025 annual financial statements",
+        "url": "https://www.sec.gov/Archives/edgar/data/1526243/000110465926037403/ppta-20251231x10k.htm",
+        "published_at": "2026-03-31T23:59:59+00:00"
+      },
+      {
+        "title": "PPTA: Second-quarter10-Q",
+        "url": "https://www.sec.gov/Archives/edgar/data/1526243/000110465926097134/ppta-20260630x10q.htm",
+        "published_at": "2026-08-17T23:59:59+00:00"
+      },
+      {
+        "title": "PPTA: CEO appointment",
+        "url": "https://perpetuaresources.com/wp-content/uploads/Perpetua-Resources-Announces-Appointment-of-Mining-Veteran-Jon-Cherry-to-Succeed-Laurel-Sayer-as-CEO_March-14-2024_FINAL-2.pdf",
+        "published_at": "2024-03-14T23:59:59+00:00"
+      },
+      {
+        "title": "PPTA: 2026proxy",
+        "url": "https://www.sec.gov/Archives/edgar/data/1526243/000110465926048110/tm2611905-1_def14a.htm",
+        "published_at": "2026-04-24T23:59:59+00:00"
+      },
+      {
+        "title": "GMTL: FY2026 Form20-F",
+        "url": "https://www.sec.gov/Archives/edgar/data/2039972/000110465926108373/gmtl-20260630x20f.htm",
+        "published_at": "2026-09-17T23:59:59+00:00"
+      },
+      {
+        "title": "IPX: FY2026 Form20-F",
+        "url": "https://www.sec.gov/Archives/edgar/data/1898601/000189860126000030/ipx-20260630.htm",
+        "published_at": "2026-09-29T23:59:59+00:00"
+      },
+      {
+        "title": "NB: FY2026 Form10-K",
+        "url": "https://www.sec.gov/Archives/edgar/data/1512228/000119312526402806/nb-20260630.htm",
+        "published_at": "2026-09-25T23:59:59+00:00"
+      },
+      {
+        "title": "NB: Elk Creek DPA award",
+        "url": "https://www.niocorp.com/u-s-department-of-defense-awards-up-to-10-million-to-niocorps-subsidiary-elk-creek-resources-corp/",
+        "published_at": "2025-08-05T23:59:59+00:00"
+      },
+      {
+        "title": "TMQ: FY2025 annual financial statements",
+        "url": "https://www.sec.gov/Archives/edgar/data/1543418/000110465926015668/tmq-20251130x10k.htm",
+        "published_at": "2026-02-17T23:59:59+00:00"
+      },
+      {
+        "title": "TMQ: Third-quarter fiscal2026 results",
+        "url": "https://trilogymetals.com/news-and-media/news/trilogy-metals-reports-third-quarter-fiscal-2026-financial-results/",
+        "published_at": "2026-10-02T23:59:59+00:00"
+      },
+      {
+        "title": "TMQ: 2026 seven directors election",
+        "url": "https://www.sec.gov/Archives/edgar/data/1543418/000127956926000445/ex991.pdf",
+        "published_at": "2026-05-14T23:59:59+00:00"
+      },
+      {
+        "title": "TMQ: 2026 proxy",
+        "url": "https://www.sec.gov/Archives/edgar/data/1543418/000110465926035492/tm266290d2_def14a.htm",
+        "published_at": "2026-03-27T23:59:59+00:00"
+      },
+      {
+        "title": "ABAT: FY2026 Form10-K",
+        "url": "https://www.sec.gov/Archives/edgar/data/1576873/000149315226042497/form10-k.htm",
+        "published_at": "2026-09-14T23:59:59+00:00"
+      },
+      {
+        "title": "ABAT: FY2026 results",
+        "url": "https://americanbatterytechnology.com/press-release/american-battery-technology-company-reports-fy-26-financial-results-delivering-407-revenue-growth-and-positive-adjusted-gross-profit/",
+        "published_at": "2026-09-14T23:59:59+00:00"
+      },
+      {
+        "title": "ABAT: CEOeffectiveAugust27",
+        "url": "https://www.sec.gov/Archives/edgar/data/1576873/000149315221021498/form8-k.htm",
+        "published_at": "2021-08-30T23:59:59+00:00"
+      },
+      {
+        "title": "ABAT: Lithium refinery grant reinstatement",
+        "url": "https://americanbatterytechnology.com/press-release/american-battery-technology-company-wins-appeal-and-has-us-department-of-energy-grant-reinstated-for-115-million-project-for-commercial-scale-critical-mineral-lithium-refinery/",
+        "published_at": "2026-06-08T23:59:59+00:00"
+      },
+      {
+        "title": "ABAT: 2026proxy current5members",
+        "url": "https://www.sec.gov/Archives/edgar/data/1576873/000149315226043609/formdef14a.htm",
+        "published_at": "2026-09-22T23:59:59+00:00"
+      },
+      {
+        "title": "NVX: FY2025 annual financial statements",
+        "url": "https://www.sec.gov/Archives/edgar/data/1859795/000119312526072814/nvx-20251231.htm",
+        "published_at": "2026-02-26T23:59:59+00:00"
+      },
+      {
+        "title": "NVX: Half-year2026 financial report",
+        "url": "https://www.sec.gov/Archives/edgar/data/1859795/000119312526378825/nvx-ex99_1.htm",
+        "published_at": "2026-08-31T23:59:59+00:00"
+      },
+      {
+        "title": "NVX: Governance statement current8 includingCEO; supersedes stale7text in20F",
+        "url": "https://ir.novonixgroup.com/static-files/1fbe265a-e9e7-4cf2-a441-a26523fc85ff",
+        "published_at": "2026-02-26T23:59:59+00:00"
+      },
+      {
+        "title": "ELBM: FY2025 annual financial statements",
+        "url": "https://www.sec.gov/Archives/edgar/data/1907184/000117184326001993/elbm20251231_20f.htm",
+        "published_at": "2026-03-27T23:59:59+00:00"
+      },
+      {
+        "title": "ELBM: Second-quarter results",
+        "url": "https://electrabmc.com/news-releases/news/electra-appoints-peter-rawlins-as-chief-financial-officer-reports-second-quarter-2026-results",
+        "published_at": "2026-08-12T23:59:59+00:00"
+      },
+      {
+        "title": "AA: Full-year2025 results",
+        "url": "https://news.alcoa.com/press-releases/press-release-details/2026/Alcoa-Corporation-Reports-Fourth-Quarter-and-Full-Year-2025-Results/default.aspx",
+        "published_at": "2026-01-22T23:59:59+00:00"
+      },
+      {
+        "title": "AA: Third-quarter results",
+        "url": "https://news.alcoa.com/press-releases/press-release-details/2026/Alcoa-Corporation-Reports-Third-Quarter-2026-Results/default.aspx",
+        "published_at": "2026-10-15T23:59:59+00:00"
+      },
+      {
+        "title": "AA: Q3 10Q Section45X benefit disclosures",
+        "url": "https://www.sec.gov/Archives/edgar/data/1675149/000119312526437885/aa-20260930.htm",
+        "published_at": "2026-10-29T23:59:59+00:00"
+      },
+      {
+        "title": "AA: CEOappointment",
+        "url": "https://www.sec.gov/Archives/edgar/data/1675149/000119312523240903/d331952d8k.htm",
+        "published_at": "2023-09-25T23:59:59+00:00"
+      },
+      {
+        "title": "AA: All11 nominees elected May6",
+        "url": "https://www.sec.gov/Archives/edgar/data/1675149/000119312526216915/aa-20260506.htm",
+        "published_at": "2026-05-07T23:59:59+00:00"
+      },
+      {
+        "title": "AA: 2026proxy",
+        "url": "https://www.sec.gov/Archives/edgar/data/1675149/000119312526115997/aa-20260319.htm",
+        "published_at": "2026-03-19T23:59:59+00:00"
+      },
+      {
+        "title": "CENX: Full-year2025 results",
+        "url": "https://www.sec.gov/Archives/edgar/data/949157/000162828026009831/exhibit99120251231q4earnin.htm",
+        "published_at": "2026-02-19T23:59:59+00:00"
+      },
+      {
+        "title": "CENX: Second-quarter results",
+        "url": "https://www.sec.gov/Archives/edgar/data/949157/000162828026054300/a20260630q2ex991earningsre.htm",
+        "published_at": "2026-08-06T23:59:59+00:00"
+      },
+      {
+        "title": "CENX: CEO succession",
+        "url": "https://www.sec.gov/Archives/edgar/data/949157/000094915721000085/exhibit991-pressreleaseann.htm",
+        "published_at": "2021-05-17T23:59:59+00:00"
+      },
+      {
+        "title": "CENX: 2026proxy",
+        "url": "https://www.sec.gov/Archives/edgar/data/949157/000155278126000269/e26009_cenx-def14a.htm",
+        "published_at": "2026-04-24T23:59:59+00:00"
+      },
+      {
+        "title": "ENS: ceo start",
+        "url": "https://www.sec.gov/Archives/edgar/data/1289308/000128930825000020/ens-20250523.htm",
+        "published_at": "2025-05-23T23:59:59+00:00"
+      },
+      {
+        "title": "ENS: fy26",
+        "url": "https://investor.enersys.com/news/news-details/2026/CORRECTING-and-REPLACING-EnerSys-Reports-Fourth-Quarter-and-Full-Year-Fiscal-2026-Results/default.aspx",
+        "published_at": "2026-05-21T23:59:59+00:00"
+      },
+      {
+        "title": "ENS: fy26 original network",
+        "url": "https://investor.enersys.com/news/news-details/2026/EnerSys-Reports-Fourth-Quarter-and-Full-Year-Fiscal-2026-Results/default.aspx",
+        "published_at": "2026-05-20T23:59:59+00:00"
+      },
+      {
+        "title": "ENS: proxy",
+        "url": "https://www.sec.gov/Archives/edgar/data/1289308/000119312526294512/d32071ddef14a.htm",
+        "published_at": "2026-07-02T23:59:59+00:00"
+      },
+      {
+        "title": "ENS: q1",
+        "url": "https://investor.enersys.com/news/news-details/2026/EnerSys-Reports-First-Quarter-Fiscal-2027-Results/default.aspx",
+        "published_at": "2026-08-12T23:59:59+00:00"
+      },
+      {
+        "title": "FLNC: board coughlin",
+        "url": "https://www.sec.gov/Archives/edgar/data/1868941/000110465926108270/tm2625477d1_8k.htm",
+        "published_at": "2026-09-16T23:59:59+00:00"
+      },
+      {
+        "title": "FLNC: Fluence June 5 2026 Form 8-K: Shelton replaced by Da Santos",
+        "url": "https://ir.fluenceenergy.com/static-files/b60d07de-62a3-40ad-9fd1-8a3f53ec3dfc",
+        "published_at": "2026-06-05T23:59:59+00:00"
+      },
+      {
+        "title": "FLNC: board may",
+        "url": "https://www.sec.gov/Archives/edgar/data/1868941/000186894126000037/flnc-20260827.htm",
+        "published_at": "2026-09-01T23:59:59+00:00"
+      },
+      {
+        "title": "FLNC: fy25",
+        "url": "https://www.sec.gov/Archives/edgar/data/1868941/000186894125000081/flnc-20250930.htm",
+        "published_at": "2025-11-25T23:59:59+00:00"
+      },
+      {
+        "title": "FLNC: proxy",
+        "url": "https://www.sec.gov/Archives/edgar/data/1868941/000114036126002380/ny20057461x1_def14a.htm",
+        "published_at": "2026-01-26T23:59:59+00:00"
+      },
+      {
+        "title": "FLNC: q3",
+        "url": "https://www.sec.gov/Archives/edgar/data/1868941/000186894126000028/flncq3fy26earningspressrel.htm",
+        "published_at": "2026-08-05T23:59:59+00:00"
+      },
+      {
+        "title": "FLNC: q3 10q",
+        "url": "https://www.sec.gov/Archives/edgar/data/1868941/000186894126000029/flnc-20260630.htm",
+        "published_at": "2026-08-05T23:59:59+00:00"
+      },
+      {
+        "title": "ULBI: ceo start",
+        "url": "https://investor.ultralifecorporation.com/news-releases/news-release-details/ultralife-corporation-names-michael-e-manna-president-ceo",
+        "published_at": "2022-11-22T23:59:59+00:00"
+      },
+      {
+        "title": "ULBI: fy25",
+        "url": "https://investor.ultralifecorporation.com/news-releases/news-release-details/ultralife-corporation-reports-fourth-quarter-results-15",
+        "published_at": "2026-03-10T23:59:59+00:00"
+      },
+      {
+        "title": "ULBI: proxy",
+        "url": "https://www.sec.gov/Archives/edgar/data/875657/000143774926019134/ulbi20260528_def14a.htm",
+        "published_at": "2026-06-02T23:59:59+00:00"
+      },
+      {
+        "title": "ULBI: q2",
+        "url": "https://www.sec.gov/Archives/edgar/data/875657/000143774926026432/ulbi20260630_10q.htm",
+        "published_at": "2026-08-03T23:59:59+00:00"
+      },
+      {
+        "title": "SLDP: board july 8k",
+        "url": "https://www.sec.gov/Archives/edgar/data/1844862/000110465926079956/tm2619489d1_8k.htm",
+        "published_at": "2026-07-01T23:59:59+00:00"
+      },
+      {
+        "title": "SLDP: ceo start",
+        "url": "https://www.sec.gov/Archives/edgar/data/1844862/000110465923066643/tm2316913d2_ex99-1.htm",
+        "published_at": "2023-05-31T23:59:59+00:00"
+      },
+      {
+        "title": "SLDP: doe",
+        "url": "https://www.sec.gov/Archives/edgar/data/1844862/000110465926024728/tm268168d1_ex10-1.htm",
+        "published_at": "2026-03-03T23:59:59+00:00"
+      },
+      {
+        "title": "SLDP: fy25",
+        "url": "https://ir.solidpowerbattery.com/investor-relations/investor-news/news-details/2026/Solid-Power-Reports-Full-Year-2025-Results/default.aspx",
+        "published_at": "2026-02-24T23:59:59+00:00"
+      },
+      {
+        "title": "SLDP: fy25 10k",
+        "url": "https://www.sec.gov/Archives/edgar/data/1844862/000110465926019435/sldp-20251231x10k.htm",
+        "published_at": "2026-02-24T23:59:59+00:00"
+      },
+      {
+        "title": "SLDP: proxy",
+        "url": "https://www.sec.gov/Archives/edgar/data/1844862/000110465926041131/tm261518-1_def14a.htm",
+        "published_at": "2026-04-10T23:59:59+00:00"
+      },
+      {
+        "title": "CBT: ceo",
+        "url": "https://investor.cabot-corp.com/news-releases/news-release-details/cabot-corporation-reports-third-quarter-fiscal-year-2026-results",
+        "published_at": "2026-08-03T23:59:59+00:00"
+      },
+      {
+        "title": "CBT: Cabot July 30 2026: October 1 CEO and director transition",
+        "url": "https://investor.cabot-corp.com/node/26931",
+        "published_at": "2026-07-30T23:59:59+00:00"
+      },
+      {
+        "title": "CBT: doe",
+        "url": "https://investor.cabot-corp.com/news-releases/news-release-details/cabot-corporation-expand-north-american-battery-materials",
+        "published_at": "2026-09-17T23:59:59+00:00"
+      },
+      {
+        "title": "CBT: Cabot fiscal 2025 results: aligned annual financial statements",
+        "url": "https://investor.cabot-corp.com/news-releases/news-release-details/cabot-corp-reports-fourth-quarter-and-fiscal-year-2025-results",
+        "published_at": "2025-11-03T23:59:59+00:00"
+      },
+      {
+        "title": "CBT: proxy",
+        "url": "https://www.sec.gov/Archives/edgar/data/16040/000119312526023681/d38269ddef14a.htm",
+        "published_at": "2026-01-26T23:59:59+00:00"
+      },
+      {
+        "title": "AMPX: award",
+        "url": "https://ir.amprius.com/sec-filings/all-sec-filings/content/0001899287-26-000065/attachment0001redacted2026.htm",
+        "published_at": "2026-09-23T23:59:59+00:00"
+      },
+      {
+        "title": "AMPX: ceo start",
+        "url": "https://www.sec.gov/Archives/edgar/data/1899287/000189928726000026/ampx-20260428.htm",
+        "published_at": "2026-04-29T23:59:59+00:00"
+      },
+      {
+        "title": "AMPX: fy25 10k",
+        "url": "https://ir.amprius.com/sec-filings/all-sec-filings/content/0001899287-26-000015/ampx-20251231.htm",
+        "published_at": "2026-03-06T23:59:59+00:00"
+      },
+      {
+        "title": "AMPX: proxy",
+        "url": "https://ir.amprius.com/sec-filings/all-sec-filings/content/0001899287-26-000026/ampx-20260428.htm",
+        "published_at": "2026-04-29T23:59:59+00:00"
+      },
+      {
+        "title": "AMPX: q2",
+        "url": "https://ir.amprius.com/news-events/press-releases/detail/172/amprius-technologies-reports-second-quarter-2026-financial-results-and-recent-business-highlights",
+        "published_at": "2026-08-06T23:59:59+00:00"
+      },
+      {
+        "title": "LEU: ceo start",
+        "url": "https://www.sec.gov/Archives/edgar/data/1065059/000106505923000075/ex991vexlerceotransition.htm",
+        "published_at": "2023-11-20T23:59:59+00:00"
+      },
+      {
+        "title": "LEU: doe",
+        "url": "https://www.centrusenergy.com/news/centrus-signs-contract-with-department-of-energy-for-900-million-award-intends-to-transition-haleu-production-cascade-to-commercial-operation/",
+        "published_at": "2026-07-01T23:59:59+00:00"
+      },
+      {
+        "title": "LEU: fy25",
+        "url": "https://investors.centrusenergy.com/news-releases/news-release-details/centrus-reports-fourth-quarter-and-full-year-2025-results-and",
+        "published_at": "2026-02-10T23:59:59+00:00"
+      },
+      {
+        "title": "LEU: leu oklo planned",
+        "url": "https://www.centrusenergy.com/news/oklo-centrus-sign-letter-of-intent-to-purchase-nuclear-fuel-for-aurora-powerhouse-deployment-in-southern-ohio/",
+        "published_at": "2026-06-18T23:59:59+00:00"
+      },
+      {
+        "title": "LEU: leu xe future",
+        "url": "https://www.sec.gov/Archives/edgar/data/1065059/000162828026053897/leu-20260806.htm",
+        "published_at": "2026-08-06T23:59:59+00:00"
+      },
+      {
+        "title": "LEU: proxy current",
+        "url": "https://www.sec.gov/Archives/edgar/data/1065059/000162828026027241/leu-20260424.htm",
+        "published_at": "2026-04-24T23:59:59+00:00"
+      },
+      {
+        "title": "LEU: Centrus August 5 2026: Q2 financial results and June balance sheet",
+        "url": "https://www.sec.gov/Archives/edgar/data/1065059/000162828026053433/ex991-10q2026_08x05.htm",
+        "published_at": "2026-08-05T23:59:59+00:00"
+      },
+      {
+        "title": "BWXT: bwxt gev active",
+        "url": "https://investors.bwxt.com/news-releases/news-release-details/bwxt-awarded-historic-manufacturing-contracts-support-pickering",
+        "published_at": "2025-01-27T23:59:59+00:00"
+      },
+      {
+        "title": "BWXT: ceo start",
+        "url": "https://www.sec.gov/Archives/edgar/data/1486957/000148695716000042/a8-kexecutivetransition.htm",
+        "published_at": "2016-11-29T23:59:59+00:00"
+      },
+      {
+        "title": "BWXT: deconversion",
+        "url": "https://www.energy.gov/ne/articles/biden-harris-administration-announces-6-contracts-spur-americas-domestic-haleu-supply",
+        "published_at": "2024-10-08T23:59:59+00:00"
+      },
+      {
+        "title": "BWXT: fy25",
+        "url": "https://investors.bwxt.com/news-releases/news-release-details/bwx-technologies-reports-fourth-quarter-and-full-year-2025",
+        "published_at": "2026-02-23T23:59:59+00:00"
+      },
+      {
+        "title": "BWXT: proxy",
+        "url": "https://www.sec.gov/Archives/edgar/data/1486957/000148695726000021/bwxt-20260318.htm",
+        "published_at": "2026-03-18T23:59:59+00:00"
+      },
+      {
+        "title": "GEV: Bank of America March 23 2026 proxy: Arnold Donald government biography",
+        "url": "https://www.sec.gov/Archives/edgar/data/70858/000119312526118929/d43888ddef14a.htm",
+        "published_at": "2026-03-23T23:59:59+00:00"
+      },
+      {
+        "title": "GEV: fy25 10k",
+        "url": "https://www.sec.gov/Archives/edgar/data/1996810/000199681026000015/gev-20251231.htm",
+        "published_at": "2026-01-29T23:59:59+00:00"
+      },
+      {
+        "title": "GEV: proxy 2026",
+        "url": "https://www.sec.gov/Archives/edgar/data/1996810/000199681026000049/gev-20260402.htm",
+        "published_at": "2026-04-03T23:59:59+00:00"
+      },
+      {
+        "title": "GEV: q3",
+        "url": "https://www.gevernova.com/news/ge-vernova-reports-strong-third-quarter-2026-financial-performance",
+        "published_at": "2026-10-28T23:59:59+00:00"
+      },
+      {
+        "title": "XE: April 27 final prospectus; expected board-independence review",
+        "url": "https://www.sec.gov/Archives/edgar/data/2088896/000110465926049515/tm2527015-22_424b4.htm",
+        "published_at": "2026-04-27T23:59:59+00:00"
+      }
+    ]
+  },
+  "signature": "6ZvcGW5Qto4MHyU5zxq7CEKG0GsF6LSnOvKGPlJOkI7EQXtiE299UjZCZ19QyxSbr3jFYobdO1LbbPVBOs9TBQ=="
+}

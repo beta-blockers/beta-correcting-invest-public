@@ -1,0 +1,100 @@
+# Read and preview the free USCHIPS sample
+
+[Read the Q4 2026 report](../history/uschips/2026-Q4/REPORT.md) directly on GitHub.
+It covers ten companies exposed to the US CHIPS Act and Inflation Reduction
+Act, with scores, inclusion or exit decisions, and seven positive target
+weights. No installation or account is needed to read it.
+
+This is the signed `2026-Q4.r4-sample` edition of `uschips`. It combines
+analyst assessments through October 3, 2026 with the observations used in the
+October 31 scorecard. The report explains the methodology, neutral factors,
+estimates and evidence limitations. It is author-published and not independently
+reviewed.
+
+[Check the public evidence supplement](USCHIPS-Q4-2026-EVIDENCE-20261112.md)
+for dated primary sources, specific claims, limitations and the verified edition
+hash. Coverage is selective. The companion distinguishes retained inputs from
+references added now; it is unsigned and outside the original signed release.
+
+**This sample is an offline demo.** Its `purpose: demo` prevents Alpaca paper
+orders even before expiry. It was unexpired on November 12, 2026 and expires at
+`2027-01-01T05:00:00+00:00`. The accompanying account and quotes are fictional;
+the illustrative USD 100 prices are not market observations. Paper trading
+requires a separate current, signed paper edition; see the
+[engine guide](ENGINE.md#use-an-author-supplied-edition).
+
+## Install
+
+You need Git and Python 3.11 or later on Linux or macOS. Run this block from a
+directory where you want a new checkout. Installation downloads Python
+dependencies; the preview commands in the next section run offline. Each block
+stops on its first failure without closing your terminal.
+
+```sh
+(
+  set -eu
+  git clone https://github.com/beta-blockers/beta-correcting-invest-public.git
+  cd beta-correcting-invest-public
+  python3 --version
+  python3 -m venv .venv
+  .venv/bin/python -m pip install -r requirements.lock
+  .venv/bin/python -m pip install --no-deps --no-build-isolation .
+  printf 'Installation passed. Enter beta-correcting-invest-public before previewing.\n'
+)
+```
+
+After a successful installation, enter the checkout with
+`cd beta-correcting-invest-public`. If you already have a checkout with the
+engine installed, continue below from that checkout's root. Use a Python 3.11+
+interpreter if `python3 --version` reports an older version.
+
+## Preview locally
+
+These commands create a fresh local demo directory on each run. They build a
+demo-only trust file from the catalog, verify the release and evaluation,
+install the edition in historical mode, display it, and preview its weights
+against the fictional account. No broker account or API keys are needed.
+
+```sh
+(
+  set -eu
+  mkdir -p .state
+  SAMPLE_RUN="$(mktemp -d .state/uschips-sample.XXXXXX)"
+  .venv/bin/public-pilot catalog trust --product uschips --out "$SAMPLE_RUN/trust.json"
+  .venv/bin/public-pilot --trust "$SAMPLE_RUN/trust.json" verify-bundle history/uschips/2026-Q4
+  .venv/bin/public-pilot --trust "$SAMPLE_RUN/trust.json" verify history/uschips/2026-Q4/edition.snapshot.json --allow-expired
+  .venv/bin/public-pilot --trust "$SAMPLE_RUN/trust.json" verify-evaluation history/uschips/2026-Q4/evaluation.json --snapshot history/uschips/2026-Q4/edition.snapshot.json
+  .venv/bin/public-pilot --state "$SAMPLE_RUN/state" --trust "$SAMPLE_RUN/trust.json" install history/uschips/2026-Q4/edition.snapshot.json --allow-expired
+  .venv/bin/public-pilot --state "$SAMPLE_RUN/state" --trust "$SAMPLE_RUN/trust.json" show uschips
+  .venv/bin/public-pilot --state "$SAMPLE_RUN/state" --trust "$SAMPLE_RUN/trust.json" preview uschips --offline history/uschips/2026-Q4/account.fixture.json
+  printf 'Sample verification and offline preview passed.\n'
+)
+```
+
+The verification commands report `"status": "verified"`; snapshot verification
+prints the `sha256` to compare with the evidence supplement. The final preview
+contains `"offline": true` inside its plan and `"orders_submitted": 0`.
+The plan shows whole-share positions, illustrative limit orders and the local
+plan ID. Share rounding leaves some of the fictional account in cash.
+
+`--allow-expired` keeps this walkthrough usable after the edition expires.
+`expired` describes the edition's date validity; it does not grant trading
+permission. The offline plan can never execute, whether `expired` is `true`
+or `false`.
+
+## Inspect the published files
+
+- [Report](../history/uschips/2026-Q4/REPORT.md): readable methodology, company
+  commentary, scores, decisions, weights and limitations.
+- [Signed snapshot](../history/uschips/2026-Q4/edition.snapshot.json): the
+  universe, target weights, research text, dates and demo purpose.
+- [Signed evaluation](../history/uschips/2026-Q4/evaluation.json): scores,
+  ranks and decisions bound to the snapshot.
+- [Release inventory](../history/uschips/2026-Q4/release.json): signed hashes
+  for the report, snapshot, evaluation and fictional account fixture.
+- [All public editions](../history/INDEX.md): the catalog's history index.
+- [Evidence companion](USCHIPS-Q4-2026-EVIDENCE-20261112.md): selective public
+  citations added separately, with provenance labels and unresolved gaps.
+
+Signatures establish authorship and unchanged content. The report's limitations
+remain part of the sample; verification does not establish research accuracy.

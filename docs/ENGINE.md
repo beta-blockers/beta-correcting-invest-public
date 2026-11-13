@@ -8,6 +8,10 @@ The engine does not discover companies, collect policy or financial evidence,
 calculate research scores, generate target weights, or call a language model.
 Authors supply the completed research and target weights in a signed data package.
 
+For a real-company research example, start with the
+[free sample walkthrough](SAMPLE.md). It links the readable report and gives
+the exact commands to verify and preview the signed demo without credentials.
+
 ## What is included
 
 - Ed25519 publisher verification with locally configured, package-specific trust.
@@ -55,10 +59,10 @@ they are permanently marked non-executable. No command above contacts a broker,
 model, research source, or evidence URL. Research text is displayed as JSON data,
 not interpreted as commands or rendered as executable HTML.
 
-The free history in `history/` holds a fictional past quarter. Build a trust
-file for its product from the catalog, check its signed files, and read it in
-historical mode. It has expired, so it can be previewed offline but never
-traded:
+The [public history index](../history/INDEX.md) lists the available samples and
+past quarters. The fictional past quarter below has expired. Build its trust
+file from the catalog, check its signed files, and read it in historical mode.
+It can be previewed offline but never traded:
 
 ```sh
 mkdir -p .state
