@@ -124,7 +124,7 @@ jobs:
               result = check(tree, now(), base)
           except Refused as exc:
               sys.exit(f"Refused: {exc}")
-          print("The base branch's code accepts catalog/ and history/, and they only append to the base; "
+          print("The base branch's code accepts catalog/ and history/ under its history rules; "
                 f"editions checked: {len(result['editions'])}")
           checker = base / "scripts" / "check_report_evaluation.py"
           if checker.is_file():

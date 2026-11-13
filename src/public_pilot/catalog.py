@@ -12,6 +12,7 @@ from .bundles import RELEASE_NAME, check_release, file_sha256, inventory, open_m
 from .common import Refused, digest, fields, iso, require, timestamp
 from .evaluation import verify_evaluation
 from .packages import IDENTIFIER, resolve_historical
+from .report_revisions import matches_report_revision
 
 THEMES_FORMAT = "public-pilot-themes-v1"
 AUTHORS_FORMAT = "public-pilot-authors-v1"
@@ -381,7 +382,8 @@ def signing_key(path):
 
 def check_history_append_only(base, root, authors):
     """history/ relative to its base. An existing edition keeps its payloads, report and fixture; only its
-    signatures may change. An edition may disappear only if every signature it had in the base was made with a key
+    signatures may change, apart from exact report revisions approved in the trusted rules. An edition may
+    disappear only if every signature it had in the base was made with a key
     that the catalog now lists as revoked: that is how an edition forged with an exposed key is withdrawn."""
     message = "history/ is append-only: "
     revoked = {key["key_id"] for author in authors.values() for key in author["keys"] if key["status"] == "revoked"}
@@ -394,7 +396,8 @@ def check_history_append_only(base, root, authors):
             require(signers <= revoked, message + f"{where} was removed; only an edition whose signatures are all "
                                                    f"by revoked keys may be removed")
             continue
-        require(edition_content(after[product_id, quarter], where) == edition_content(path, where),
+        require(edition_content(after[product_id, quarter], where) == edition_content(path, where)
+                or matches_report_revision(where, path, after[product_id, quarter]),
                 message + f"{where} changed; an existing edition may only be re-signed, keeping its payloads, "
                           f"REPORT.md and account.fixture.json")
     return True
