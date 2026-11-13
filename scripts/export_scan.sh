@@ -36,11 +36,13 @@ FORBIDDEN = [
     ("PRIVATE KEY", re.compile(r"PRIVATE KEY")),
     ("12-digit number", re.compile(r"\b[0-9]{12}\b")),
 ]
-# The product word is assembled at run time so that no file in the repository spells it outside
-# catalog/ and history/, this scanner included.
+# The product word is assembled at run time. Only published data and these exact
+# reader documentation paths may name it; other export checks still apply there.
 PRODUCT_WORD = "us" + "chips"
 PRODUCT_PATTERN = re.compile(PRODUCT_WORD, re.IGNORECASE)
 PRODUCT_ALLOWED = ("catalog/", "history/")
+PRODUCT_DOCUMENTATION = {"README.md", "docs/SAMPLE.md",
+                         "docs/USCHIPS-Q4-2026-EVIDENCE-20261112.md"}
 EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@((?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,})")
 NOREPLY_DOMAIN = "users.noreply.github.com"
 GITHUB_WEB_COMMITTER = "noreply@github.com"
@@ -94,7 +96,7 @@ for path in paths:
         for match in EMAIL.finditer(value):
             if match.group(1).lower() != NOREPLY_DOMAIN:
                 problems.append(f"{where}: email address that is not a GitHub noreply address")
-        if not path.startswith(PRODUCT_ALLOWED) and PRODUCT_PATTERN.search(value):
+        if path not in PRODUCT_DOCUMENTATION and not path.startswith(PRODUCT_ALLOWED) and PRODUCT_PATTERN.search(value):
             problems.append(f"{where}: {PRODUCT_WORD} outside catalog/ and history/")
 
 for line in git("log", "--format=%H%x00%ae%x00%ce", commit).decode("utf-8", "replace").splitlines():
