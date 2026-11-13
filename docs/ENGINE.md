@@ -38,7 +38,12 @@ Run these commands from a checkout of this repository.
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.lock
 .venv/bin/python -m pip install --no-build-isolation .
+. .venv/bin/activate
 ```
+
+The last line puts `public-pilot` on this terminal's path, as the sample reports'
+commands expect. In a new terminal, run `. .venv/bin/activate` again from the
+checkout first.
 
 ## Try the fictional example without credentials
 
