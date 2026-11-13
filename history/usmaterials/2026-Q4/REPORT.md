@@ -26,8 +26,9 @@ application does not establish a contemporaneous strategy record or independent 
 
 The signed universe is AA, ABAT, ALB, AMPX, BWXT, CBT, CENX, ELBM, ENS, FLNC, GEV, GMTL, IONR, IPX, LAC, LEU, MP, NB, NVX, PPTA, SLDP, TMQ, UAMY, ULBI, USAR.
 US geography describes policy exposure, not every issuer's domicile or accounting currency. Selected
-support spans Defense critical-material awards, DOE infrastructure and nuclear-fuel programmes, and
-Inflation Reduction Act manufacturing credits. One selected instrument supplies each company's amount/type
+support spans Defense critical-material awards, the Bipartisan Infrastructure Law,
+Inflation Reduction Act manufacturing credits, DOE nuclear-fuel programmes, and CHIPS and Science Act
+awards. One selected instrument supplies each company's amount/type
 factor. Grants, loans, guarantees, strategic equity and procurement ceilings are not summed together.
 
 | Unscored name | Treatment |
@@ -304,7 +305,7 @@ Uses the existing grant classification and dated fiscal 2026 disclosures. Commer
 
 The selected DOE guarantee is not grant revenue. The aligned financial ratio and actual period are preserved; development remains conditional.
 
-- [DOEloan-guaranteeclosingannouncement](https://stage.energy.gov/edf/articles/doe-announces-996-million-loan-guarantee-ioneer-rhyolite-ridge-advance-domestic) — 2025-01-17; supports sub_type.
+- [DOEloan-guaranteeclosingannouncement](https://www.energy.gov/edf/articles/doe-announces-996-million-loan-guarantee-ioneer-rhyolite-ridge-advance-domestic) — 2025-01-17; supports sub_type.
 - [Half-year report with preceding six-month comparison](https://www.sec.gov/Archives/edgar/data/1896084/000114036126032597/ef20079527_ex99-1.htm) — 2026-08-13; supports consist, cust, enacted, io, pol_risk, rev, roic, sub_awarded, subst, supp, track.
 - [Transition-year annual report](https://announcements.asx.com.au/asxpdf/20260318/pdf/06xkpryx3wszh9.pdf) — 2026-03-18; supports board, consist, enacted, pol_risk, revolve, sub_awarded, sub_type, subst, tenure, track.
 

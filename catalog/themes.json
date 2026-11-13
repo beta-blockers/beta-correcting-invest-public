@@ -50,7 +50,8 @@
         "US-defense-critical-materials",
         "US-Bipartisan-Infrastructure-Law",
         "US-Inflation-Reduction-Act",
-        "US-DOE-nuclear-fuel"
+        "US-DOE-nuclear-fuel",
+        "US-CHIPS-and-Science-Act"
       ],
       "status": "researched",
       "author_ids": [

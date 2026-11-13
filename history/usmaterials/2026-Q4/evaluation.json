@@ -1,11 +1,11 @@
 {
   "format": "public-pilot-evaluation-v1",
-  "key_id": "nxyziggy-usmaterials-2026-11",
+  "key_id": "nxyziggy-2026-11",
   "payload": {
     "package_id": "usmaterials",
     "edition_id": "usmaterials-2026-q4-oct31-sample",
     "author_id": "nxyziggy",
-    "package_sha256": "c5b1691d60044e1af47ed3df3e6bcb03d8e351b807a7e80846f89d22f5715f60",
+    "package_sha256": "b69eb5ecba3149c48026024ac731999ea1efe4a7a95e4d2b497c21c71b4fc7b8",
     "as_of": "2026-10-31T23:59:59-04:00",
     "method": {
       "name": "Materials provisional three-pillar sample",
@@ -532,5 +532,5 @@
       "The original universe and provisional methodology were assembled after October 31. This is a retrospective source-cutoff reconstruction, not an archived portfolio known or operated on that date. Research is author-published without independent review."
     ]
   },
-  "signature": "0PeO2GX08ntKGr7cSlGEV2z7ak5LnIdHTMkZ+o5dHbYpfBy/Jb/tg6x9fibhvXIqtdTLb9AxBGnCv4EgZRfEDA=="
+  "signature": "OU3jaUjsCqcDOW55OjIhadikKVEzfHktow0Rf/KnWCvQ3xdHJ59ifSo8Iur6RU0c2jf30ga+U4DZ0uQTnOXJAw=="
 }

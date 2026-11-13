@@ -1,7 +1,7 @@
 {
   "format": "public-pilot-envelope-v1",
   "kind": "snapshot",
-  "key_id": "nxyziggy-usmaterials-2026-11",
+  "key_id": "nxyziggy-2026-11",
   "payload": {
     "package_id": "usmaterials",
     "edition_id": "usmaterials-2026-q4-oct31-sample",
@@ -18,7 +18,8 @@
       "US-defense-critical-materials",
       "US-Bipartisan-Infrastructure-Law",
       "US-Inflation-Reduction-Act",
-      "US-DOE-nuclear-fuel"
+      "US-DOE-nuclear-fuel",
+      "US-CHIPS-and-Science-Act"
     ],
     "universe": [
       "AA",
@@ -181,7 +182,7 @@
       },
       {
         "title": "IONR: DOEloan-guaranteeclosingannouncement",
-        "url": "https://stage.energy.gov/edf/articles/doe-announces-996-million-loan-guarantee-ioneer-rhyolite-ridge-advance-domestic",
+        "url": "https://www.energy.gov/edf/articles/doe-announces-996-million-loan-guarantee-ioneer-rhyolite-ridge-advance-domestic",
         "published_at": "2025-01-17T23:59:59+00:00"
       },
       {
@@ -616,5 +617,5 @@
       }
     ]
   },
-  "signature": "HkGBEp/DAyTnU8EAdbrWilyOFjmb1fjMHcjnFpkxWz+5mwWMKbmdWDuVh1gF+fz1c1Q+9Z2Mqakk+Oj8Vsn+Bw=="
+  "signature": "6ZvcGW5Qto4MHyU5zxq7CEKG0GsF6LSnOvKGPlJOkI7EQXtiE299UjZCZ19QyxSbr3jFYobdO1LbbPVBOs9TBQ=="
 }
