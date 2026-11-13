@@ -49,7 +49,8 @@ company's scores and rank, and the resulting portfolio selection and weights.
 Each edition and its scores are signed by their author, so you can check where
 they came from and that they are unchanged.
 
-The [USCHIPS sample walkthrough](docs/SAMPLE.md) and its
+The [USCHIPS sample report](docs/USCHIPS-Q4-2026-REPORT-20261113.md),
+[offline walkthrough](docs/SAMPLE.md) and
 [dated evidence supplement](docs/USCHIPS-Q4-2026-EVIDENCE-20261112.md) are also
 available.
 

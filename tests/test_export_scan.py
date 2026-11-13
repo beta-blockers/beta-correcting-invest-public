@@ -180,16 +180,17 @@ def test_a_revision_that_is_not_a_commit_fails(repo, revision):
 
 
 COMPANION = "docs/" + WORD.upper() + "-Q4-2026-EVIDENCE-20261112.md"
+READING_REPORT = "docs/" + WORD.upper() + "-Q4-2026-REPORT-20261113.md"
 
 
-@pytest.mark.parametrize("relative", ["README.md", "docs/SAMPLE.md", COMPANION])
+@pytest.mark.parametrize("relative", ["README.md", "docs/SAMPLE.md", COMPANION, READING_REPORT])
 def test_public_sample_entry_points_can_name_the_product(repo, relative):
     add(repo, relative, f"Read the {WORD.upper()} sample.\n")
     result = scan(repo)
     assert result.returncode == 0, result.stderr
 
 
-@pytest.mark.parametrize("relative", ["README.md", "docs/SAMPLE.md", COMPANION])
+@pytest.mark.parametrize("relative", ["README.md", "docs/SAMPLE.md", COMPANION, READING_REPORT])
 def test_public_sample_entry_points_keep_sensitive_content_checks(repo, relative):
     secret_marker = "PRIVATE" + " KEY"
     add(repo, relative, f"{WORD.upper()}\n{secret_marker}\n{PERSONAL}\n")
@@ -202,6 +203,8 @@ def test_public_sample_entry_points_keep_sensitive_content_checks(repo, relative
 
 @pytest.mark.parametrize("relative", ["docs/SAMPLE-extra.md", "docs/README.md",
                                       COMPANION.replace("20261112", "20261113"),
+                                      READING_REPORT.replace("20261113", "20261114"),
+                                      READING_REPORT + ".backup",
                                       "docs/nested/" + COMPANION.removeprefix("docs/"),
                                       COMPANION + ".backup"])
 def test_product_documentation_exceptions_are_exact_paths(repo, relative):
@@ -211,8 +214,9 @@ def test_product_documentation_exceptions_are_exact_paths(repo, relative):
 
 
 @pytest.mark.parametrize("label, line", FORBIDDEN)
-def test_evidence_companion_keeps_every_forbidden_content_check(repo, label, line):
-    add(repo, COMPANION, f"{WORD.upper()} evidence.\n{line}\n")
+@pytest.mark.parametrize("relative", [COMPANION, READING_REPORT])
+def test_evidence_companion_keeps_every_forbidden_content_check(repo, label, line, relative):
+    add(repo, relative, f"{WORD.upper()} evidence.\n{line}\n")
     result = scan(repo)
     assert result.returncode == 1
-    assert f"{COMPANION}:2: forbidden string {label}" in result.stderr
+    assert f"{relative}:2: forbidden string {label}" in result.stderr
