@@ -1,15 +1,20 @@
 # Read and preview the free USCHIPS sample
 
-[Read the Q4 2026 report](../history/uschips/2026-Q4/REPORT.md) directly on GitHub.
+[Read the Q4 2026 report](USCHIPS-Q4-2026-REPORT-20261113.md) directly on GitHub.
 It covers ten companies exposed to the US CHIPS Act and Inflation Reduction
 Act, with scores, inclusion or exit decisions, and seven positive target
 weights. No installation or account is needed to read it.
 
-This is the signed `2026-Q4.r4-sample` edition of `uschips`. It combines
+The sample is the signed `2026-Q4.r4-sample` edition of `uschips`. It combines
 analyst assessments through October 3, 2026 with the observations used in the
 October 31 scorecard. The report explains the methodology, neutral factors,
 estimates and evidence limitations. It is author-published and not independently
 reviewed.
+
+The linked reading version is an unsigned editorial companion. It reproduces
+the published scores and weights and explains the sample in plain language.
+The [original signed report](../history/uschips/2026-Q4/REPORT.md) and the other
+edition files remain unchanged; the commands below verify those original files.
 
 [Check the public evidence supplement](USCHIPS-Q4-2026-EVIDENCE-20261112.md)
 for dated primary sources, specific claims, limitations and the verified edition
@@ -82,10 +87,12 @@ plan ID. Share rounding leaves some of the fictional account in cash.
 permission. The offline plan can never execute, whether `expired` is `true`
 or `false`.
 
-## Inspect the published files
+## Inspect the report and published files
 
-- [Report](../history/uschips/2026-Q4/REPORT.md): readable methodology, company
-  commentary, scores, decisions, weights and limitations.
+- [Reading report](USCHIPS-Q4-2026-REPORT-20261113.md): a self-contained introduction,
+  methodology, company assessments, scores, decisions, weights and limitations.
+- [Original signed report](../history/uschips/2026-Q4/REPORT.md): the unchanged
+  report covered by the edition's release inventory.
 - [Signed snapshot](../history/uschips/2026-Q4/edition.snapshot.json): the
   universe, target weights, research text, dates and demo purpose.
 - [Signed evaluation](../history/uschips/2026-Q4/evaluation.json): scores,
