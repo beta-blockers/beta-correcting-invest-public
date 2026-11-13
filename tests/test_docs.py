@@ -158,17 +158,19 @@ def test_public_sample_walkthrough_stops_before_install_after_tampering(tmp_path
     assert not list((repo / ".state").glob("*/state"))
 
 
-def test_sample_entry_points_identify_the_signed_report():
+@pytest.mark.parametrize("document, prefix, product", [
+    ("README.md", "", "usmaterials"),
+    ("docs/SAMPLE.md", "../", "us" + "chips"),
+])
+def test_sample_entry_points_identify_the_signed_report(document, prefix, product):
     from public_pilot.common import digest
 
-    product = "us" + "chips"
     edition = ROOT / "history" / product / "2026-Q4"
     envelope = json.loads((edition / "edition.snapshot.json").read_text())
     report = (edition / "REPORT.md").read_text()
     assert digest(envelope["payload"]) in report
     assert envelope["payload"]["edition_id"] in report
-    for document, prefix in ((ROOT / "README.md", ""), (ROOT / "docs" / "SAMPLE.md", "../")):
-        text = document.read_text()
-        assert f"]({prefix}history/{product}/2026-Q4/REPORT.md)" in text
-        for suffix in ("-Q4-2026-EVIDENCE-20261112.md", "-Q4-2026-REPORT-20261113.md"):
-            assert product.upper() + suffix not in text
+    text = (ROOT / document).read_text()
+    assert f"]({prefix}history/{product}/2026-Q4/REPORT.md)" in text
+    for suffix in ("-Q4-2026-EVIDENCE-20261112.md", "-Q4-2026-REPORT-20261113.md"):
+        assert ("us" + "chips").upper() + suffix not in text
