@@ -376,7 +376,7 @@ part of the November 6 cutoff and cannot support an October 31 reconstruction.
 
 # Evaluation of eu-clean-air, edition eu-clean-air-2026-q4-oct31-sample
 
-Author `nxyziggy`, scores as of 2026-11-06T04:39:01+00:00. Bound to the snapshot payload with SHA-256 `21edeab72ef319fb41897110e101946b02595d0d350af393b5b73c58b0439327`.
+Author `nxyziggy`, scores as of 2026-11-06T04:39:01+00:00. Bound to the snapshot payload with SHA-256 `59389c80c022ad6643262c1aba797683e67a8b3ad5eb913c7a29f77be0b3355f`.
 
 Author-published and not independently reviewed. Check the signature and binding with `public-pilot verify-evaluation`.
 
