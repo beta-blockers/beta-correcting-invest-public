@@ -451,7 +451,7 @@ The following table is rendered directly from the signed evaluation.
 
 # Evaluation of usmaterials, edition usmaterials-2026-q4-oct31-sample
 
-Author `nxyziggy`, scores as of 2026-10-31T23:59:59-04:00. Bound to the snapshot payload with SHA-256 `c5b1691d60044e1af47ed3df3e6bcb03d8e351b807a7e80846f89d22f5715f60`.
+Author `nxyziggy`, scores as of 2026-10-31T23:59:59-04:00. Bound to the snapshot payload with SHA-256 `b69eb5ecba3149c48026024ac731999ea1efe4a7a95e4d2b497c21c71b4fc7b8`.
 
 Author-published and not independently reviewed. Check the signature and binding with `public-pilot verify-evaluation`.
 
