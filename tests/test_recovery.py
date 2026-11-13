@@ -84,6 +84,37 @@ def test_while_the_old_key_is_still_trusted_reinstalling_changes_nothing(store, 
     assert stored_key_ids(store, "edition-1") == ["test-key"]
 
 
+def rotated(old_trust, new_trust):
+    """Trust as catalog trust writes it after a key rotation: the retired key still verifies, only the new trades."""
+    return {"test-key": {**old_trust["test-key"], "allow_paper": False}, **new_trust}
+
+
+@pytest.mark.parametrize("purpose", ["demo", "paper"])
+def test_the_edition_re_signed_after_a_key_rotation_can_trade_again(store, author, replacement, payload, snapshot,
+                                                                    purpose):
+    old_trust, old_sign = author
+    new_trust, new_sign = replacement
+    payload["purpose"] = purpose
+    store.install(old_sign(payload), old_trust, AT)
+    plan = store.save_plan(build_plan(payload, snapshot, Limits(), AT))
+    trust = rotated(old_trust, new_trust)
+    with pytest.raises(Refused, match="trusted only for demonstrations"):
+        execute(store, plan, FakeBroker(snapshot), trust, clock=lambda: AT)
+    assert store.install(new_sign(payload), trust, AT) == payload
+    assert stored_key_ids(store, "edition-1") == ["new-key"]
+    assert execute(store, plan, FakeBroker(snapshot), trust, clock=lambda: AT)["status"] == "complete"
+
+
+def test_an_old_copy_never_replaces_proofs_that_can_trade(store, author, replacement, payload):
+    old_trust, old_sign = author
+    new_trust, new_sign = replacement
+    payload["purpose"] = "demo"
+    trust = rotated(old_trust, new_trust)
+    store.install(new_sign(payload), trust, AT)
+    assert store.install(old_sign(payload), trust, AT) == payload  # it still verifies for reading
+    assert stored_key_ids(store, "edition-1") == ["new-key"]
+
+
 @pytest.mark.parametrize("allow_expired, instant", MODES)
 def test_downgrade_and_identity_checks_still_apply_after_the_key_was_removed(
         store, author, replacement, payload, allow_expired, instant):

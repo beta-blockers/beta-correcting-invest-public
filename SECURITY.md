@@ -63,7 +63,10 @@ deleted.
 
 A key that is only being replaced, not exposed, should be set to `retired`.
 Retired keys still verify past editions, and `public-pilot catalog trust`
-never grants them paper trading.
+never grants them paper trading. An edition you installed under a retired key
+can therefore be read but not traded. Installing the author's copy of it,
+re-signed with the active key, replaces its stored signatures, so live
+previews and paper orders work again.
 
 If you read or license research:
 
