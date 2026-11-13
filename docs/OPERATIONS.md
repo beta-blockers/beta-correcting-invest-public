@@ -38,25 +38,32 @@ complete verified fill allows progression to the next order; an order recorded a
 completely filled is not looked up again. All sells precede buys, and buys use
 currently observed cash after confirmed fills.
 
-If the broker rejects a submission outright, it created no order: HTTP 401, 403
-(for example, insufficient buying power) or 429. The engine records the rejection
-with the order, halts the plan and reports the stock and the broker's reason.
-`execute-paper` and `cancel-paper` then report the plan as `halted`, and a fresh
-preview is allowed. The engine judges the complete response, not the shortened
-reason it displays: a response that mentions the client order ID or a duplicate
-is not a rejection. Nor is a 400 or 422. Alpaca answers 422 both for a malformed
-order, which the engine does not send, and, with `client_order_id must be
-unique`, when another active order already uses the ID, so an order with that ID
-exists.
+Only an outright rejection that the engine recognizes shows that the broker
+created no order: HTTP 401 or 429, which stop a request before it is processed,
+or an HTTP 403 whose whole reason is one Alpaca documents for orders. Those are
+insufficient buying power, insufficient quantity available, and an account that
+is not allowed to short, not authorized to trade, or restricted to liquidation
+only. The engine records the rejection with the order, halts the plan and
+reports the stock and the broker's reason. `execute-paper` and `cancel-paper`
+then report the plan as `halted`, and a fresh preview is allowed.
+
+The engine judges the decoded response, every key and string of it, not the raw
+text or the shortened reason it displays. A response that mentions the client
+order ID or a duplicate is never a rejection, and neither is a 400 or 422. Alpaca
+answers 422 both for a malformed order, which the engine does not send, and, with
+`client_order_id must be unique`, when another active order already uses the ID,
+so an order with that ID exists.
 
 Any other unsuccessful submission stays unresolved: a transport failure, a server
-error, a 400 or 422, or another refusal. Run the same
-`execute-paper` command again. If the broker returns the matching order, its
-terms, status, and fill quantity are checked. If it cannot find an attempted
-order, the engine remains blocked, however much later: a missing response or a
-failed lookup is not proof that the broker never received the submission. Inspect
-the paper account and its order history manually. This version has no override
-for erasing an uncertain submission or declaring it safe to retry.
+error, a 400 or 422, an unrecognized refusal, or one that mentions the client
+order ID. Run the same `execute-paper` command again. The engine looks the order
+up by its client order ID or, if that finds nothing, by the broker order ID it
+recorded. Before anything is recorded, the order's identity, terms, status, and
+fill quantity are checked. If neither lookup finds an attempted order, the engine
+remains blocked, however much later: a missing response or a failed lookup is
+not proof that the broker never received the submission. Inspect the paper
+account and its order history manually. This version has no override for erasing
+an uncertain submission or declaring it safe to retry.
 
 `cancel-paper` only cancels broker orders whose identity and full terms match
 the stored plan. Cancellation may require another invocation to observe the

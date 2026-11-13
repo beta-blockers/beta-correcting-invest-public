@@ -1,5 +1,6 @@
 """Ways out of a stopped paper plan, the broker answers that are kept, lookups that a resumed plan skips, and
 refusals that name the stock. All symbols and values are fictional."""
+from copy import deepcopy
 from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -30,7 +31,21 @@ def planned(store, author, payload, snapshot):
     return store.save_plan(build_plan(payload, snapshot, Limits(), AT))
 
 
-class Rejecting(FakeBroker):
+class Broker(FakeBroker):
+    """The shared simulated broker, plus a lookup by the broker's own order ID."""
+
+    def order(self, broker_id):
+        return deepcopy(next((o for o in self.orders.values() if o["id"] == broker_id), None))
+
+
+class ClientIdBlind(Broker):
+    """Answers a lookup by client order ID with nothing once the order exists, but finds it by the broker's ID."""
+
+    def lookup(self, coid):
+        return None if coid in self.orders else super().lookup(coid)
+
+
+class Rejecting(Broker):
     """Rejects one submission outright, as the broker does for insufficient buying power."""
 
     def __init__(self, snapshot, reject_at):
@@ -45,23 +60,26 @@ class Rejecting(FakeBroker):
         return super().submit(order)
 
 
-class Hiding(FakeBroker):
-    """Accepts orders but cannot show them to a lookup yet, or fails to answer the lookup at all."""
+class Hiding(Broker):
+    """Accepts orders but shows them to no lookup yet, or fails to answer lookups at all."""
 
     def __init__(self, snapshot, failure):
         super().__init__(snapshot)
         self.failure = failure
         self.fill_on_submit = False
 
+    def hidden(self):
+        if self.failure == "error":
+            raise Refused("Broker transport failed; any attempted submission requires reconciliation")
+
     def lookup(self, coid):
-        if self.failure and coid in self.orders:
-            if self.failure == "error":
-                raise Refused("Broker transport failed; any attempted submission requires reconciliation")
-            return None
-        return super().lookup(coid)
+        return self.hidden() if self.failure and coid in self.orders else super().lookup(coid)
+
+    def order(self, broker_id):
+        return self.hidden() if self.failure else super().order(broker_id)
 
 
-class Counting(FakeBroker):
+class Counting(Broker):
     def __init__(self, snapshot):
         super().__init__(snapshot)
         self.looked_up = []
@@ -71,7 +89,7 @@ class Counting(FakeBroker):
         return super().lookup(coid)
 
 
-class CancelFails(FakeBroker):
+class CancelFails(Broker):
     def cancel(self, broker_id):
         raise Refused("Broker transport failed; any attempted submission requires reconciliation")
 
@@ -165,16 +183,58 @@ def test_an_unanswered_submission_that_reached_the_broker_is_cancelled_normally(
     assert [o["status"] for o in broker.orders.values()] == ["canceled"]
 
 
-def test_an_order_the_broker_reported_and_then_lost_is_never_written_off(store, prepared, author):
-    identity, broker = prepared
+def test_an_order_the_broker_reported_and_then_lost_is_never_written_off(store, author, payload, snapshot):
+    identity = planned(store, author, payload, snapshot)
+    broker = Broker(snapshot)
     broker.fill_on_submit = False
     assert run(store, identity, broker, author[0])["status"] == "pending"
-    broker.orders.clear()
+    broker.orders.clear()  # gone by client order ID and by the broker's own ID
     with pytest.raises(Refused, match=REPORTED):
         run(store, identity, broker, author[0], at=AT + timedelta(days=1))
     with pytest.raises(Refused, match=REPORTED):
         cancel(store, identity, broker)
     assert store.outstanding()
+
+
+def test_the_saved_broker_order_id_finds_an_order_that_a_client_id_lookup_misses(store, author, payload, snapshot):
+    trust = author[0]
+    identity = planned(store, author, payload, snapshot)
+    broker = ClientIdBlind(snapshot)
+    broker.fill_on_submit = False
+    first = client_id(identity, 0)
+    assert run(store, identity, broker, trust)["status"] == "pending"
+    broker.fill(first)
+    assert run(store, identity, broker, trust)["status"] == "pending"  # the first order is filled; the next is sent
+    assert loads(store.order(identity, 0)["observation"])["status"] == "filled"
+    broker.orders[client_id(identity, 1)]["status"] = "canceled"
+    assert run(store, identity, broker, trust) == {
+        "plan_id": identity, "status": "halted", "order_status": "canceled", "symbol": "DEMOA",
+        "next_step": "Inspect fills and create a fresh preview"}
+    assert not store.outstanding() and broker.posts == 2
+
+
+def test_cancel_finds_an_order_by_its_saved_broker_order_id(store, author, payload, snapshot):
+    identity = planned(store, author, payload, snapshot)
+    broker = ClientIdBlind(snapshot)
+    broker.fill_on_submit = False
+    assert run(store, identity, broker, author[0])["status"] == "pending"
+    assert cancel(store, identity, broker) == {"plan_id": identity, "status": "canceled"}
+    assert broker.orders[client_id(identity, 0)]["status"] == "canceled"
+    assert loads(store.order(identity, 0)["observation"])["status"] == "canceled"
+
+
+def test_an_order_found_by_its_broker_order_id_is_validated_before_it_is_recorded(store, author, payload, snapshot):
+    identity = planned(store, author, payload, snapshot)
+    broker = ClientIdBlind(snapshot)
+    broker.fill_on_submit = False
+    assert run(store, identity, broker, author[0])["status"] == "pending"
+    kept = loads(store.order(identity, 0)["observation"])
+    broker.orders[client_id(identity, 0)]["client_order_id"] = "another-client-order"
+    with pytest.raises(Refused, match="^DEMOA: Broker order identity mismatch$"):
+        run(store, identity, broker, author[0])
+    with pytest.raises(Refused, match="^DEMOA: Broker order identity mismatch$"):
+        cancel(store, identity, broker)
+    assert loads(store.order(identity, 0)["observation"]) == kept and store.outstanding()
 
 
 def test_a_resumed_plan_does_not_look_up_orders_already_filled(store, author, payload, snapshot):

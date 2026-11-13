@@ -186,7 +186,8 @@ refuses a plan that needs a dearer share and names that stock.
   A refusal that concerns one stock begins with its symbol.
 - A lost submission response is reconciled by client order ID. If its outcome
   cannot be established, the runtime stops; it never guesses that resending is safe.
-  An order the broker rejects outright, creating no order, halts the plan instead.
+  A rejection the engine recognizes as creating no order, such as insufficient
+  buying power, halts the plan instead.
 - Package expiry or a changed edition blocks new submissions. Cancellation stays
   available even after package expiry or publisher-key revocation. After a key is
   removed from the trust file, a full snapshot signed with a trusted key replaces

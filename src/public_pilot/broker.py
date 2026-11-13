@@ -1,6 +1,7 @@
 """Alpaca PAPER endpoint only. Credentials are never supplied by a research package."""
 from __future__ import annotations
 
+import json
 import os
 import re
 from urllib.parse import quote as urlquote
@@ -11,11 +12,18 @@ from .common import Refused, iso, now, require
 
 PAPER = "https://paper-api.alpaca.markets"
 DATA = "https://data.alpaca.markets"
-# Answers to an order submission after which no order exists under its client order ID: invalid credentials, a
-# broker rule such as insufficient buying power, and rate limiting. A 400 or 422 never counts: Alpaca answers 422
-# both for a malformed order, which this engine does not send, and, with "client_order_id must be unique", when
-# another active order already holds the ID. Nor does an answer that mentions the client order ID or a duplicate.
-REJECTED = {401, 403, 429}
+# The outright rejections of an order submission that this engine recognizes, after which no order exists. Invalid
+# credentials and rate limiting stop a request before it is processed. These broker rules, which Alpaca documents
+# for orders, must match the whole decoded reason of an HTTP 403. Every other answer, including any 400 or 422 and
+# any answer that mentions the client order ID or a duplicate, leaves the submission unresolved: Alpaca answers 422
+# "client_order_id must be unique" when another active order already holds the ID.
+REJECTED_BEFORE_PROCESSING = {401, 429}
+REJECTED_BY_RULE = re.compile(
+    r"insufficient buying power"
+    r"|insufficient qty available for order(?: \(requested: [^()]*\))?"
+    r"|account is not allowed to short"
+    r"|account is not authorized to trade"
+    r"|account is restricted to liquidation only")
 
 
 class BrokerRefused(Refused):
@@ -37,17 +45,48 @@ def _detail(response):
     """The broker's own explanation of an error response, shortened for display; empty when it gave none."""
     try:
         body = response.json()
-    except ValueError:
+    except (ValueError, RecursionError):
         return ""
     message = body.get("message") if isinstance(body, dict) else None
     return " ".join(str(message).split())[:200] if message else ""
 
 
+def _decoded(body):
+    """A response decoded from JSON, or its text when it is not JSON."""
+    try:
+        return json.loads(body)
+    except (ValueError, RecursionError):
+        return body
+
+
+def _texts(document):
+    """Every key and string in a decoded response."""
+    found, pending = [], [document]
+    while pending:
+        value = pending.pop()
+        if isinstance(value, dict):
+            found.extend(str(key) for key in value)
+            pending.extend(value.values())
+        elif isinstance(value, list):
+            pending.extend(value)
+        elif isinstance(value, str):
+            found.append(value)
+    return found
+
+
 def rejects_order(status_code, body):
-    """Whether this answer to a submission shows that the broker created no order. The complete response is read,
-    letters only, so that no spelling or length of a mention of the client order ID or a duplicate escapes."""
-    letters = re.sub(r"[^a-z]", "", body.lower())
-    return status_code in REJECTED and "clientorderid" not in letters and "duplicate" not in letters
+    """Whether an answer to a submission is an outright rejection that this engine recognizes, so that no order
+    exists. The decoded response is judged, every key and string of it, so that no escape, length or field can hide
+    a mention of the client order ID or a duplicate."""
+    document = _decoded(body)
+    letters = re.sub(r"[^a-z]", "", " ".join(_texts(document) + [body]).lower())
+    if "clientorderid" in letters or "duplicate" in letters:
+        return False
+    if status_code in REJECTED_BEFORE_PROCESSING:
+        return True
+    reason = document.get("message") if isinstance(document, dict) else None
+    return (status_code == 403 and isinstance(reason, str)
+            and REJECTED_BY_RULE.fullmatch(" ".join(reason.lower().split())) is not None)
 
 
 def tradable_equity(asset):
@@ -124,6 +163,10 @@ class AlpacaPaper:
     def lookup(self, client_order_id):
         return self._request("GET", "/v2/orders:by_client_order_id", absent_ok=True,
                              params={"client_order_id": client_order_id})
+
+    def order(self, broker_order_id):
+        """An order by the broker's own ID, where a lookup by client order ID cannot find it."""
+        return self._request("GET", "/v2/orders/" + urlquote(broker_order_id, safe=""), absent_ok=True)
 
     def submit(self, order):
         try:

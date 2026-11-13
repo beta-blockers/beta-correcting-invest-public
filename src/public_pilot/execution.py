@@ -15,6 +15,15 @@ def client_id(identity, index):
     return f"ppe-{identity[:32]}-{index}"
 
 
+def find(broker, coid, previous):
+    """The broker's record of an attempted order: by its client order ID, or else by the broker's own order ID that
+    an earlier observation saved. Callers validate it before recording it."""
+    observed = broker.lookup(coid)
+    if observed is None and previous and isinstance(previous.get("id"), str) and previous["id"]:
+        observed = broker.order(previous["id"])
+    return observed
+
+
 def unresolved(symbol, previous):
     """The refusal for an attempted order that the broker cannot find. A failed lookup never proves that no order
     was created: only the broker showing the order, or rejecting its submission outright, resolves it."""
@@ -72,7 +81,7 @@ def execute(store, identity, broker, trust, *, clock=now):
         previous = loads(record["observation"]) if record["observation"] else None
         if record["attempted"]:
             # A verified complete fill is final, so only unfinished orders are looked up again.
-            observed = previous if previous and previous.get("status") == "filled" else broker.lookup(coid)
+            observed = previous if previous and previous.get("status") == "filled" else find(broker, coid, previous)
             require(observed is not None, unresolved(symbol, previous))
         else:
             instant = clock()
@@ -133,7 +142,7 @@ def execute(store, identity, broker, trust, *, clock=now):
                 validate_observation(accepted, order, coid)
                 store.record(identity, index, accepted)
                 previous = accepted
-            observed = broker.lookup(coid)
+            observed = find(broker, coid, previous)
             if observed is None:
                 observed = previous  # accepted, but not visible to a lookup yet
             require(observed is not None, f"{symbol}: Submission awaits reconciliation; never resend it")
@@ -167,14 +176,14 @@ def cancel(store, identity, broker):
         previous = loads(record["observation"]) if record["observation"] else None
         if previous and previous.get("status") in TERMINAL | {REJECTED}:
             continue  # nothing is left to cancel, and a final record is not looked up again
-        observed = broker.lookup(coid)
+        observed = find(broker, coid, previous)
         require(observed is not None, unresolved(symbol, previous))
         status, _ = validate_observation(observed, order, coid, previous)
         # Keep what the broker reported before asking it to cancel.
         store.record(identity, index, observed)
         if status not in TERMINAL:
             broker.cancel(observed["id"])
-            updated = broker.lookup(coid)
+            updated = find(broker, coid, observed)
             require(updated is not None, f"{symbol}: Cancellation awaits reconciliation")
             status, _ = validate_observation(updated, order, coid, observed)
             store.record(identity, index, updated)
