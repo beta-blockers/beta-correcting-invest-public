@@ -1,0 +1,13 @@
+{
+  "format": "public-pilot-release-v1",
+  "key_id": "nxyziggy-2026-11",
+  "package_id": "uschips",
+  "snapshot": "edition.snapshot.json",
+  "files": {
+    "REPORT.md": "209440aca5a2b31e87cda826089ac27791de047e1525f083c78a7371cf390978",
+    "account.fixture.json": "f32f9c9914fa1f21f5b609577114c40be1ee075b68dc2be5b42a0dbf71f7c338",
+    "edition.snapshot.json": "c03250cef099d6036fbf74270ab25a281464f82d99f5ab5b5efa2fc25aaa21fe",
+    "evaluation.json": "e18f1d2e4845c36956cd0422a537ecff70b1199764b7ef0ec5316c1050795c85"
+  },
+  "signature": "RND/ZaGBCkaSzgq8gVoUv9rd/wecr+2lnMzfrR8CjKdvegQTziNOzW7grR57r3/J64tOMqslKkvShaUl1CR0Aw=="
+}

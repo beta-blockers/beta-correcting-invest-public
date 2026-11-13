@@ -1,0 +1,232 @@
+{
+  "format": "public-pilot-evaluation-v1",
+  "key_id": "nxyziggy-2026-11",
+  "payload": {
+    "package_id": "uschips",
+    "edition_id": "2026-Q4.r4-sample",
+    "author_id": "nxyziggy",
+    "package_sha256": "5335cec95bbe856ff4dcfcb5d024bebd1de5c2359343c071b7801b03994a2a82",
+    "as_of": "2026-10-31T04:37:58.416452Z",
+    "method": {
+      "name": "US industrial-policy three-pillar scoring and sector-weighted portfolio",
+      "version": "0.3.2",
+      "description": "This archived Q4 2026 sample uses three normalized pillars. P1 covers execution: subsidy utilization, return on invested capital relative to the cost of capital, capital-expenditure execution, the analyst-consensus narrative factor, governance and political-economy exposure. Its component weights are 25%, 25%, 20%, 12%, 10% and 8%, respectively. P2 combines the type and scale or materiality of eligible industrial-policy support with an assessed policy-risk reduction. P3 combines industrial-network position (60%) and innovation spillovers (40%). Neutral factors and company-specific estimates are disclosed separately.\n\nThe composite is a weighted multiplicative blend of P1 + 0.01, P2 + 0.01 and P3 + 0.01, bounded to [0, 1] and rounded to four decimal places. Pillar weights vary with quarters since inception; this scorecard uses one quarter, giving approximately 32.1727% to P1, 49.9913% to P2 and 17.8360% to P3. Thus the composite is not an arithmetic weighted sum. The component and pillar scores are also rounded to four decimal places in the recorded calculation.\n\nSelection thresholds use the full ten-company universe. Scores below its 25th-percentile threshold exit. Re-entry requires a score strictly above the median for two consecutive quarters; this edition has no re-entries. The recorded 75th-percentile flags do not add an overweight bonus in this edition.\n\nPortfolio weights use P3 among surviving companies within each active sector, rather than the composite rank. The active semiconductor and clean-energy budgets are normalized to 62.5% and 37.5%, respectively. Within each sector, P3-proportional weights are constrained to 0.5 to 1.5 times equal weight; a 35% portfolio-wide single-name cap also applies. Neither bound changes this edition's seven resulting targets. Inactive-sector budgets are redistributed proportionately across the active sectors. The exact published targets are copied from the original r4 output without recalculation or new optimization.\n\nThe sample combines analyst assessments through October 3, 2026 with the observations used in the October 31 scorecard. It is an archival demo for reading and fictional offline previews, not an October 3 point-in-time portfolio or a new assessment of present conditions."
+    },
+    "thresholds": {
+      "exit": "0.522775",
+      "reentry": "0.59015",
+      "overweight": "0.6780999999999999"
+    },
+    "companies": {
+      "TSM": {
+        "rank": 1,
+        "composite": "0.7773",
+        "components": {
+          "p1": "0.683",
+          "p1a": "0.5",
+          "p1b": "1.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.7768",
+          "p1f": "0.8791",
+          "p2": "0.9907",
+          "p3": "0.461",
+          "p3a": "0.435",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.15831043956043955",
+        "note": ""
+      },
+      "MU": {
+        "rank": 2,
+        "composite": "0.7175",
+        "components": {
+          "p1": "0.6674",
+          "p1a": "0.5",
+          "p1b": "1.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.5248",
+          "p1f": "0.9988",
+          "p2": "0.9809",
+          "p3": "0.312",
+          "p3a": "0.1867",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.10714285714285715",
+        "note": ""
+      },
+      "TXN": {
+        "rank": 3,
+        "composite": "0.6876",
+        "components": {
+          "p1": "0.6059",
+          "p1a": "0.5",
+          "p1b": "0.6496",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.8359",
+          "p1f": "0.9361",
+          "p2": "0.9207",
+          "p3": "0.349",
+          "p3a": "0.2483",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.11984890109890109",
+        "note": ""
+      },
+      "INTC": {
+        "rank": 4,
+        "composite": "0.6496",
+        "components": {
+          "p1": "0.4274",
+          "p1a": "0.5",
+          "p1b": "0.0313",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.5473",
+          "p1f": "0.9976",
+          "p2": "0.9896",
+          "p3": "0.386",
+          "p3a": "0.31",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.13255494505494506",
+        "note": ""
+      },
+      "GFS": {
+        "rank": 5,
+        "composite": "0.6263",
+        "components": {
+          "p1": "0.4724",
+          "p1a": "0.5",
+          "p1b": "0.1392",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.7848",
+          "p1f": "0.9264",
+          "p2": "0.9293",
+          "p3": "0.312",
+          "p3a": "0.1867",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.10714285714285715",
+        "note": ""
+      },
+      "GEV": {
+        "rank": 6,
+        "composite": "0.554",
+        "components": {
+          "p1": "0.6976",
+          "p1a": "0.5",
+          "p1b": "1.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.827",
+          "p1f": "0.9985",
+          "p2": "0.59",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.17568143100511072",
+        "note": ""
+      },
+      "FSLR": {
+        "rank": 7,
+        "composite": "0.5302",
+        "components": {
+          "p1": "0.5668",
+          "p1a": "0.5",
+          "p1b": "0.4842",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.8159",
+          "p1f": "0.9891",
+          "p2": "0.59",
+          "p3": "0.312",
+          "p3a": "0.1867",
+          "p3b": "0.5"
+        },
+        "decision": "include",
+        "weight": "0.1993185689948892",
+        "note": ""
+      },
+      "NEE": {
+        "rank": 8,
+        "composite": "0.5203",
+        "components": {
+          "p1": "0.4744",
+          "p1a": "0.5",
+          "p1b": "0.13",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.7811",
+          "p1f": "0.9843",
+          "p2": "0.59",
+          "p3": "0.387",
+          "p3a": "0.3117",
+          "p3b": "0.5"
+        },
+        "decision": "exit",
+        "weight": "0",
+        "note": ""
+      },
+      "MCHP": {
+        "rank": 9,
+        "composite": "0.4847",
+        "components": {
+          "p1": "0.4569",
+          "p1a": "0.5",
+          "p1b": "0.1427",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.6108",
+          "p1f": "0.9388",
+          "p2": "0.59",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "exit",
+        "weight": "0",
+        "note": ""
+      },
+      "PLUG": {
+        "rank": 10,
+        "composite": "0.3306",
+        "components": {
+          "p1": "0.3968",
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.4318",
+          "p1f": "0.858",
+          "p2": "0.295",
+          "p3": "0.275",
+          "p3a": "0.125",
+          "p3b": "0.5"
+        },
+        "decision": "exit",
+        "weight": "0",
+        "note": ""
+      }
+    },
+    "defaults_disclosed": [
+      "Subsidy-utilization component P1a is fixed at the neutral score 0.5 for all ten companies. This is a factor treatment, not an assertion that half of an award has been drawn or paid.",
+      "Innovation-spillover component P3b is fixed at the neutral score 0.5 for all ten companies. The effective patent, standards and licensing inputs used to obtain that value are neutral scoring assumptions, not observed innovation measurements.",
+      "The insider-ownership component within P1e is set to 0.5 for GEV, GFS, INTC and TXN because an approved exact ownership fraction was unavailable. No synthetic ownership percentage is substituted; the other companies retain their recorded inputs.",
+      "Capital-expenditure execution component P1c is 0.5 for every company because no usable capital-expenditure plan was supplied to this scoring step. This does not mean actual capital expenditure or execution was zero.",
+      "Analyst-consensus narrative component P1d is 0.5 for every company because an approved consensus-target source was unavailable. The neutral factor is not an analyst forecast.",
+      "GEV return on invested capital uses the recorded rounded-disclosure estimate for the June 30, 2026 measurement date, rather than a direct feed observation. TSM uses the recorded native-currency calculation. GFS, MU and PLUG use recorded analyst ROIC overrides to address feed or coverage gaps. These choices are retained from r4."
+    ]
+  },
+  "signature": "yyAmBOkNiS28mujQzFg+OhOIKksBPWcO1FXGMD5d/z60Dg5Lnj3EqdxzhL6GNbDLDJc/3PPOesk/yVecXwglDw=="
+}

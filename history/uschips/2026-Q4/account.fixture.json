@@ -1,0 +1,69 @@
+{
+  "account_id": "fictional-offline-account",
+  "cash": "1000",
+  "equity": "1000",
+  "positions": {},
+  "observed_at": "2026-11-13T01:41:27.213222+00:00",
+  "market_open": true,
+  "open_orders": [],
+  "quotes": {
+    "FSLR": {
+      "bid": "100",
+      "ask": "100",
+      "at": "2026-11-13T01:41:27.213222+00:00"
+    },
+    "GEV": {
+      "bid": "100",
+      "ask": "100",
+      "at": "2026-11-13T01:41:27.213222+00:00"
+    },
+    "GFS": {
+      "bid": "100",
+      "ask": "100",
+      "at": "2026-11-13T01:41:27.213222+00:00"
+    },
+    "INTC": {
+      "bid": "100",
+      "ask": "100",
+      "at": "2026-11-13T01:41:27.213222+00:00"
+    },
+    "MU": {
+      "bid": "100",
+      "ask": "100",
+      "at": "2026-11-13T01:41:27.213222+00:00"
+    },
+    "TSM": {
+      "bid": "100",
+      "ask": "100",
+      "at": "2026-11-13T01:41:27.213222+00:00"
+    },
+    "TXN": {
+      "bid": "100",
+      "ask": "100",
+      "at": "2026-11-13T01:41:27.213222+00:00"
+    }
+  },
+  "assets": {
+    "FSLR": {
+      "tradable": true
+    },
+    "GEV": {
+      "tradable": true
+    },
+    "GFS": {
+      "tradable": true
+    },
+    "INTC": {
+      "tradable": true
+    },
+    "MU": {
+      "tradable": true
+    },
+    "TSM": {
+      "tradable": true
+    },
+    "TXN": {
+      "tradable": true
+    }
+  }
+}
