@@ -16,8 +16,11 @@ from .packages import resolve_chain, resolve_historical, validate_payload
 from .planning import Limits, build_plan
 from .state import Store
 
-# The command line's per-order limit, in USD. One share must fit in a single order.
-DEFAULT_MAX_ORDER = "1000"
+# The command line's limits for a paper account, in USD: plan for up to 100,000 of it, with at most 50,000 in any
+# one order (one share must fit in a single order) and 100,000 of buys and sells in all.
+DEFAULT_ALLOCATION = "100000"
+DEFAULT_MAX_ORDER = "50000"
+DEFAULT_MAX_TURNOVER = "100000"
 
 
 def parser():
@@ -34,11 +37,13 @@ def parser():
     preview = sub.add_parser("preview")
     preview.add_argument("package_id")
     preview.add_argument("--offline", metavar="FILE", help="Synthetic observation file; result cannot execute")
-    preview.add_argument("--allocation", default="1000")
+    preview.add_argument("--allocation", default=DEFAULT_ALLOCATION,
+                         help="USD of the paper account to plan for, never more than its equity (default %(default)s)")
     preview.add_argument("--max-order", default=DEFAULT_MAX_ORDER,
                          help="Largest single order in USD. One share must fit in an order, so this is also the "
-                              f"highest share price a plan can buy (default {DEFAULT_MAX_ORDER})")
-    preview.add_argument("--max-turnover", default="1000")
+                              "highest share price a plan can buy (default %(default)s)")
+    preview.add_argument("--max-turnover", default=DEFAULT_MAX_TURNOVER,
+                         help="Largest total of buys and sells in one plan, in USD (default %(default)s)")
     preview.add_argument("--max-weight", default="0.5")
     for name in ("execute-paper", "cancel-paper"):
         command = sub.add_parser(name)
