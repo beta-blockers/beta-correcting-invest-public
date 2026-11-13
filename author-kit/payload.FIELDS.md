@@ -20,10 +20,11 @@ trust your key only for this author, and a delta cannot change it.
 **`engine_major`** is the integer `1`, the engine version the package is
 written for.
 
-**`purpose`** is `demo` or `paper`. A `demo` edition can be read and previewed
-offline but never trades. A `paper` edition can be run in a paper account by a
-reader whose trust file allows it. Editions published under `history/` are
-`demo`. There is no live purpose.
+**`purpose`** is `demo` or `paper`. Any reader who trusts your key can read a
+`demo` edition and preview it offline. A reader whose trust file allows paper
+for your key can also run it in a paper account, from engine 0.4.0. A `paper`
+edition is refused unless the reader's trust file allows paper. Editions
+published under `history/` are `demo`. There is no live purpose.
 
 **`published_at`** is the timezone-aware ISO time at which you publish the
 edition. It must not be earlier than `information_cutoff`, and each new edition

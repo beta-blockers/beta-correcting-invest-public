@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import timedelta
 
 import pytest
@@ -80,16 +81,70 @@ def test_expired_plan_cannot_submit_but_can_cancel(store, prepared, author):
     assert cancel(store, identity, broker)["status"] == "canceled"
 
 
-def test_offline_and_demo_packages_cannot_execute(store, author, payload, snapshot):
+@pytest.mark.parametrize("purpose", ["demo", "paper"])
+def test_offline_plans_cannot_execute(store, author, payload, snapshot, purpose):
+    trust, sign = author
+    payload["purpose"] = purpose
+    store.install(sign(payload), trust, AT)
+    identity = store.save_plan(build_plan(payload, snapshot, Limits(), AT, offline=True))
+    broker = FakeBroker(snapshot)
+    with pytest.raises(Refused, match="Offline"):
+        run(store, identity, broker, trust)
+    assert broker.posts == 0
+
+
+def test_demo_edition_trades_only_with_paper_permission(store, author, payload, snapshot):
     trust, sign = author
     payload["purpose"] = "demo"
-    store.install(sign(payload), trust, AT)
+    reading = deepcopy(trust)
+    reading["test-key"]["allow_paper"] = False
+    store.install(sign(payload), reading, AT)  # installing a demo edition needs no paper permission
+    identity = store.save_plan(build_plan(payload, snapshot, Limits(), AT))
     broker = FakeBroker(snapshot)
-    for offline in (True, False):
-        identity = store.save_plan(build_plan(payload, snapshot, Limits(), AT, offline=offline))
-        with pytest.raises(Refused):
-            run(store, identity, broker, trust)
+    with pytest.raises(Refused, match="trusted only for demonstrations"):
+        run(store, identity, broker, reading)
     assert broker.posts == 0
+    assert run(store, identity, broker, trust)["status"] == "complete"
+    assert broker.posts == len(store.plan(identity)[0]["orders"]) > 0
+
+
+@pytest.mark.parametrize("purpose", ["demo", "paper"])
+def test_each_order_rechecks_paper_permission(store, author, payload, snapshot, purpose):
+    trust, sign = author
+    payload["purpose"] = purpose
+    store.install(sign(payload), trust, AT)
+    identity = store.save_plan(build_plan(payload, snapshot, Limits(), AT))
+    assert len(store.plan(identity)[0]["orders"]) > 1
+
+    class Withdrawing(FakeBroker):
+        def submit(self, order):
+            trust["test-key"]["allow_paper"] = False  # permission is gone before the next order
+            return super().submit(order)
+
+    broker = Withdrawing(snapshot)
+    with pytest.raises(Refused, match="trusted only for demonstrations"):
+        run(store, identity, broker, trust)
+    assert broker.posts == 1
+
+
+@pytest.mark.parametrize("purpose", ["demo", "paper"])
+def test_resuming_needs_paper_permission_even_with_no_order_left_to_submit(store, author, payload, snapshot,
+                                                                           purpose):
+    trust, sign = author
+    payload.update(purpose=purpose, targets={"DEMOA": "0.2"})
+    store.install(sign(payload), trust, AT)
+    identity = store.save_plan(build_plan(payload, snapshot, Limits(), AT))
+    assert len(store.plan(identity)[0]["orders"]) == 1
+    broker = FakeBroker(snapshot)
+    broker.lose_response = True
+    with pytest.raises(Refused, match="lost"):
+        run(store, identity, broker, trust)
+    reading = deepcopy(trust)
+    reading["test-key"]["allow_paper"] = False
+    with pytest.raises(Refused, match="trusted only for demonstrations"):
+        run(store, identity, broker, reading)
+    assert run(store, identity, broker, trust)["status"] == "complete"
+    assert broker.posts == 1
 
 
 def test_another_unresolved_plan_blocks_execution(store, prepared, author):

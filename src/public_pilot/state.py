@@ -45,13 +45,13 @@ class Store:
     def close(self):
         self.db.close()
 
-    def load_package(self, package_id, trust, instant, *, check_freshness=True):
+    def load_package(self, package_id, trust, instant, *, check_freshness=True, trading=False):
         row = self.db.execute("""SELECT e.* FROM editions e JOIN active a
           ON a.package_id=e.package_id AND a.edition_id=e.edition_id
           WHERE a.package_id=?""", (package_id,)).fetchone()
         require(row is not None, "Package is not installed")
         proofs = loads(row["proofs"])
-        payload = resolve_chain(proofs, trust, instant, check_freshness=check_freshness)
+        payload = resolve_chain(proofs, trust, instant, check_freshness=check_freshness, trading=trading)
         require(digest(payload) == row["hash"], "Installed package identity changed")
         return payload, proofs
 

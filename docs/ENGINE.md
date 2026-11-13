@@ -94,9 +94,31 @@ this repository's catalog, `public-pilot catalog trust --product ID --out FILE`
 writes that trust file. Install the signed edition as above. A key embedded in
 a downloaded package cannot grant itself trust.
 
-An edition for paper execution must have `purpose: "paper"`, and its trust grant
-must have `allow_paper: true`. Installing, showing and offline previews need no
-broker account.
+Live previews and paper orders need a current edition and a trust grant with
+`allow_paper: true` for every key that signed it, whatever the edition's
+`purpose`. A `paper` edition also needs that permission to be verified,
+installed or shown; a `demo` edition does not. Installing, showing and offline
+previews need no broker account.
+
+### Trade a demo edition on paper
+
+From engine 0.4.0, a current `demo` edition, such as a US sample under
+`history/`, can be previewed live and traded on paper once its trust file
+allows paper. `--allow-paper` grants that only to the product's active keys.
+Use a state directory of its own: a later `paper` edition of the same product
+cannot replace a `demo` edition in one state directory.
+
+```sh
+mkdir -p .state
+.venv/bin/public-pilot catalog trust --product usmaterials --allow-paper --out .state/usmaterials-paper-trust.json
+.venv/bin/public-pilot --state .state/usmaterials-paper --trust .state/usmaterials-paper-trust.json install history/usmaterials/2026-Q4/edition.snapshot.json
+```
+
+Then follow the [manual steps](#manual-steps-with-your-own-paper-account) with
+`--state .state/usmaterials-paper`, `--trust .state/usmaterials-paper-trust.json`
+and the package ID `usmaterials`. Earlier engines, and the signed sample
+reports written for them, limit `demo` editions to reading and offline
+previews.
 
 ## Manual steps with your own paper account
 

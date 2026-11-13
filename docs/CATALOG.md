@@ -183,8 +183,9 @@ also accepted by older engines.
 `public-pilot catalog trust [DIR] --product ID --out FILE` writes an engine trust
 file for one product from the catalog. Revoked keys and keys that do not list
 the product are left out. `allow_paper` is `false` unless `--allow-paper` is
-given, and even then only `active` keys may trade on paper. The output file is
-never overwritten.
+given, and even then only `active` keys may trade on paper. With it, the
+product's current editions can be previewed live and traded on paper, `demo`
+editions under `history/` included. The output file is never overwritten.
 
 `public-pilot history index [DIR]` regenerates `history/INDEX.md` from verified
 editions and lists each edition with `expired`; with `--check` it changes

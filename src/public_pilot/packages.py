@@ -87,7 +87,9 @@ def verify_envelope(envelope, trust):
     return grant
 
 
-def resolve_chain(proofs, trust, instant, *, check_freshness=True):
+def resolve_chain(proofs, trust, instant, *, check_freshness=True, trading=False):
+    """Resolve a signed chain. trading is set for live previews and paper orders: every key must then allow
+    paper, whatever the edition's purpose. A paper edition needs that permission for every use."""
     require(isinstance(proofs, list) and 1 <= len(proofs) <= 32, "Invalid package chain")
     payload = None
     for envelope in proofs:
@@ -113,7 +115,7 @@ def resolve_chain(proofs, trust, instant, *, check_freshness=True):
                     timestamp(payload["information_cutoff"]) >= timestamp(previous["information_cutoff"]),
                     "Delta must advance the edition without moving its cutoff backwards")
         require(payload.get("author_id") == grant["author_id"], "Publisher author mismatch")
-        require(payload.get("purpose") != "paper" or grant["allow_paper"],
+        require(grant["allow_paper"] or (payload.get("purpose") != "paper" and not trading),
                 "This key is trusted only for demonstrations")
         # Historical bases may expire before an update; validate them at publication.
         at = instant if check_freshness and envelope is proofs[-1] else timestamp(payload["published_at"])

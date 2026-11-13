@@ -14,6 +14,8 @@ Reports that matter most are anything that:
 - accepts a package, delta, evaluation or release without a valid trusted
   signature, or with a key outside its trusted package and author;
 - lets an expired or future-dated edition reach a live preview or an order;
+- lets an edition reach a live preview or an order without paper permission
+  for every key that signed it;
 - makes the engine contact an endpoint other than Alpaca's paper endpoint;
 - resends an order whose submission outcome is uncertain;
 - lets data in a research package run code or fetch from the network.

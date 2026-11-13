@@ -48,8 +48,8 @@ def execute(store, identity, broker, trust, *, clock=now):
     if state in ("complete", "canceled", "halted"):
         return {"plan_id": identity, "status": state}
     require(not store.outstanding(identity), "Another plan has unresolved submissions")
-    payload, _ = store.load_package(plan["package_id"], trust, instant, check_freshness=False)
-    require(payload["purpose"] == "paper", "Demonstration packages cannot submit broker orders")
+    # Every key in the chain must allow paper, for demo and paper editions alike.
+    payload, _ = store.load_package(plan["package_id"], trust, instant, check_freshness=False, trading=True)
     limits = Limits(**plan["limits"])
     limits.validate()
     expected = dict(plan["starting_positions"])
@@ -63,7 +63,7 @@ def execute(store, identity, broker, trust, *, clock=now):
         else:
             instant = clock()
             # Resume may observe old orders after expiry, but must never place a new one.
-            fresh, _ = store.load_package(plan["package_id"], trust, instant)
+            fresh, _ = store.load_package(plan["package_id"], trust, instant, trading=True)
             require(digest(fresh) == plan["package_sha256"], "Research changed; preview a new plan")
             require(0 <= (instant - timestamp(plan["created_at"])).total_seconds() <= limits.plan_max_age_seconds,
                     "Plan expired; cancel/reconcile before creating a fresh plan")
