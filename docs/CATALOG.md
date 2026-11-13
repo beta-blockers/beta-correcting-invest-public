@@ -75,9 +75,17 @@ holds exactly five files:
 | --- | --- |
 | `edition.snapshot.json` | The signed snapshot of the edition, with `purpose: demo` |
 | `evaluation.json` | The signed evaluation: scores, ranks, decisions and weights |
-| `REPORT.md` | The readable report, for example from `public-pilot render-evaluation` |
+| `REPORT.md` | Optional explanation followed by exactly one complete, final section from `public-pilot render-evaluation` |
 | `account.fixture.json` | A fictional account for `preview --offline`, with quotes for every target |
 | `release.json` | The signed inventory of the other four files |
+
+Put your explanation before the `# Evaluation of ...` heading and leave the
+rendered section unchanged through the end of the file. Render the final signed
+evaluation before signing `release.json`. For added or content-changed editions,
+the base-rules job compares that whole section byte for byte with the base
+branch's renderer. Unchanged published editions and signature-only key rotations
+are not re-rendered, so later renderer changes cannot invalidate their reports.
+The signature and append-only checks still apply to every edition.
 
 Published history is **append-only**: an edition's content never changes, and
 its directory is never removed unless all its signatures are by revoked keys,
