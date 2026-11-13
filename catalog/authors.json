@@ -29,7 +29,8 @@
           "valid_from": "2026-11-12",
           "packages": [
             "uschips",
-            "usmaterials"
+            "usmaterials",
+            "eu-clean-air"
           ]
         }
       ]

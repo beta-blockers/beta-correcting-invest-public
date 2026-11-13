@@ -1,0 +1,45 @@
+{
+  "account_id": "fictional-offline-account",
+  "cash": "1000",
+  "equity": "1000",
+  "positions": {},
+  "observed_at": "2026-11-13T02:18:41.331543+00:00",
+  "market_open": true,
+  "open_orders": [],
+  "quotes": {
+    "ALFEN.AS": {
+      "bid": "100",
+      "ask": "100",
+      "at": "2026-11-13T02:18:41.331543+00:00"
+    },
+    "ENEL.MI": {
+      "bid": "100",
+      "ask": "100",
+      "at": "2026-11-13T02:18:41.331543+00:00"
+    },
+    "ENR.DE": {
+      "bid": "100",
+      "ask": "100",
+      "at": "2026-11-13T02:18:41.331543+00:00"
+    },
+    "NEL.OL": {
+      "bid": "100",
+      "ask": "100",
+      "at": "2026-11-13T02:18:41.331543+00:00"
+    }
+  },
+  "assets": {
+    "ALFEN.AS": {
+      "tradable": true
+    },
+    "ENEL.MI": {
+      "tradable": true
+    },
+    "ENR.DE": {
+      "tradable": true
+    },
+    "NEL.OL": {
+      "tradable": true
+    }
+  }
+}

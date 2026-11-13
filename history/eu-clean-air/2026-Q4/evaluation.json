@@ -1,0 +1,118 @@
+{
+  "format": "public-pilot-evaluation-v1",
+  "key_id": "nxyziggy-2026-11",
+  "payload": {
+    "package_id": "eu-clean-air",
+    "edition_id": "eu-clean-air-2026-q4-nov06-sample",
+    "author_id": "nxyziggy",
+    "package_sha256": "227b64b6b011977a0c56510482a1c9b6a8eef1492fd280c018d6fbc7301b408a",
+    "as_of": "2026-11-06T04:39:01+00:00",
+    "method": {
+      "name": "EU clean-air three-pillar research with confirmed links and assigned campaign penalties",
+      "version": "eu_confirmed_links_half_campaign_penalty_v1",
+      "description": "This separate EU variant retains the three-pillar scoring and portfolio-construction methods: company execution (P1), industrial-policy support (P2), and industrial-network position (P3). The normalized pillars combine multiplicatively with the recorded inception-quarter weights of 30%, 55% and 15%, respectively. Component, pillar and composite outputs below are copied from the frozen completed scorecards, with no recomputation using later news or prices.\n\nEU-specific choices are the midpoint of each disclosed lobbying band; fixed grant FX at the verified publication date of the exact amount; a network limited to confirmed links in a frozen 15-company source set; and a half-maximum campaign-factor penalty when the amount is undisclosed. The resulting point scores are model-assigned for Alfen, Siemens Energy and Nel. Enel is evidence-complete only within this selected scope. The defaults and remaining unknown raw values are disclosed separately.\n\nThe four completed eligible companies, not the 15 network references, define the selection population. Scores below the lower-quartile exit threshold receive zero weight. The median is the re-entry threshold and the upper quartile identifies the top group; no re-entry occurs in this initial allocation. Allocation starts with each surviving company's P3 divided by the sum of survivor P3 values in one 100% clean-air group. The first projection clips these normalized weights to 0.5–1.5 times equal weight (16.6667%–50% for three survivors). Any residual is divided equally among the companies that can move in its direction without remaining at a bound, then clipping and equal redistribution repeat until the total is restored within numerical tolerance. These first bounds do not bind in this sample. The separate 35% portfolio position cap is then applied within the group using the same equal-residual projection, with a zero lower bound. If the group cannot absorb its budget under that cap, the unused budget remains cash. There is no proportional P3 redistribution at this second step. Here P3 values 0.3132 (Alfen), 0.3513 (Siemens Energy) and 0.2750 (Nel) sum to 0.9395. Initial weights are 33.33688132%, 37.39222991% and 29.27088877%. Capping Siemens Energy at 35% releases 2.39222991 percentage points; Alfen and Nel each receive 1.19611495 points. Final weights are 34.53299627%, 35% and 30.46700373%, with the original exact serialized decimals retained below. A higher composite rank therefore need not imply a larger weight. Enel is the recorded startup exit and has no positive target; no actual sale is represented.\n\nEvidence was frozen on November 6, 2026 at 04:24:51.531890 UTC. The model treatment and allocation were recorded at 04:39:01 UTC that day. Publication of this free demo does not update those records. It is for reading and fictional offline previews only; the symbols identify original research listings and do not certify availability at any broker."
+    },
+    "thresholds": {
+      "exit": "0.48925",
+      "reentry": "0.54035",
+      "overweight": "0.5984499999999999"
+    },
+    "companies": {
+      "ENR.DE": {
+        "rank": 1,
+        "composite": "0.6928",
+        "components": {
+          "p1a": "0.5",
+          "p1b": "1.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.5051",
+          "p1f": "0.7174",
+          "p3a": "0.2521",
+          "p3b": "0.5",
+          "p2": "0.8447",
+          "p1": "0.6429",
+          "p3": "0.3513"
+        },
+        "decision": "include",
+        "weight": "0.35",
+        "note": "Siemens Energy. MODEL_ASSIGNED: campaign raw amount is null; half-maximum campaign penalty applied. Highest composite; the 35% position cap binds. Confirmed network customers are EDF/Enedis and Orsted. The ROIC input is a strategy-derived 94.6796% for the TTM to June 30, 2026, using latest capital after subtracting cash; see the calculation in REPORT.md."
+      },
+      "NEL.OL": {
+        "rank": 2,
+        "composite": "0.567",
+        "components": {
+          "p1a": "0.5",
+          "p1b": "0.0",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.5215",
+          "p1f": "0.6504",
+          "p3a": "0.125",
+          "p3b": "0.5",
+          "p2": "0.8184",
+          "p1": "0.3892",
+          "p3": "0.275"
+        },
+        "decision": "include",
+        "weight": "0.30467003725385844",
+        "note": "Nel. MODEL_ASSIGNED: campaign raw amount and raw ROIC are null. Half-maximum campaign penalty applied; all values in the verified ROIC interval give the same zero ROIC-spread component. No qualifying network link confirmed in the frozen set; this does not mean no customers or suppliers exist."
+      },
+      "ALFEN.AS": {
+        "rank": 3,
+        "composite": "0.5137",
+        "components": {
+          "p1a": "0.5",
+          "p1b": "0.0801",
+          "p1c": "0.5",
+          "p1d": "0.5",
+          "p1e": "0.6351",
+          "p1f": "0.8846",
+          "p3a": "0.1886",
+          "p3b": "0.5",
+          "p2": "0.6171",
+          "p1": "0.4393",
+          "p3": "0.3132"
+        },
+        "decision": "include",
+        "weight": "0.34532996274614153",
+        "note": "Alfen. MODEL_ASSIGNED: campaign raw amount is null; half-maximum campaign penalty applied. Lobbying band includes an issuer-described event cost estimate. Confirmed customer link to EDF/Luminus. P3-based allocation explains its greater weight than Nel despite a lower composite."
+      },
+      "ENEL.MI": {
+        "rank": 4,
+        "composite": "0.4159",
+        "components": {
+          "p1a": "0.5",
+          "p1b": "0.2242",
+          "p1c": "0.5",
+          "p1d": "0.5264",
+          "p1e": "0.6876",
+          "p1f": "0.6991",
+          "p3a": "0.1886",
+          "p3b": "0.5",
+          "p2": "0.4025",
+          "p1": "0.4689",
+          "p3": "0.3132"
+        },
+        "decision": "exit",
+        "weight": "0.0",
+        "note": "Enel. Evidence-complete within the selected EU scope, including neutral model treatments and analyst judgments; not independently reviewed. Disclosed campaign amount is zero within its stated perimeter. Score is below the four-company exit threshold, so the archived startup decision is exit with zero weight. No holding or executed sale is implied."
+      }
+    },
+    "defaults_disclosed": [
+      "Subsidy-utilization P1a and innovation-spillover P3b are fixed at 0.5 for all four companies. These are model treatments, not observed grant utilization or innovation measurements.",
+      "The insider-ownership contribution within governance is neutral at 0.5 for all four companies. An 8% cost-of-capital fallback is used. Missing raw ownership and cost-of-capital observations are not fabricated.",
+      "Capital-expenditure execution P1c is 0.5 for all four because no approved comparable plan/actual pair is available. Analyst-target P1d is 0.5 for Alfen, Siemens Energy and Nel because an approved complete consensus set is unavailable; Enel retains its assessed target data.",
+      "EU lobbying uses the midpoint of each closed EU Transparency Register cost band, converted at the relevant fiscal-period-end ECB rate. The endpoints are retained in the report. These are filed cost estimates, not exact lobbying cash expenses; national-register and intermediary amounts are not added on top.",
+      "Alfen, Siemens Energy and Nel have no verified campaign amount for the specified period. Their raw amounts remain null. Each receives a model-assigned penalty of 0.10 in P1f, half of the campaign factor maximum penalty of 0.20. This is not a statement that the issuer spent a particular amount. Enel retains its disclosed zero within the stated reporting perimeter.",
+      "Nel raw return on invested capital remains null. Its verified interval of -0.5882922370408002 to -0.4169893062532083 produces the same zero ROIC-spread component throughout at the configured cost of capital. An exact raw ROIC is not invented.",
+      "Siemens Energy's ROIC input of 0.9467959966831865 is strategy-derived for July 1, 2025–June 30, 2026, not an issuer-reported ratio. It is TTM operating income times (1 minus the TTM tax-expense/pretax-income rate, clamped to 0–50%), divided by latest total equity plus current and non-current debt minus cash. The denominator is not averaged; subtracting EUR 11,088 million cash leaves EUR 3,042 million invested capital. Reported operating income is not adjusted for special items. REPORT.md shows the statement lines and arithmetic. The derived 94.6796% ratio and capped P1b score of 1.0 are retained; differently defined ROIC or ROCE measures are not interchangeable with this input.",
+      "Network counts use only confirmed links in a frozen source set of 15 reference companies. Zero means no qualifying link was confirmed in that set. The degree proxy is not a complete supply-chain census or a Leontief input-output measure. The disputed reverse Enel-to-EDF link is excluded and shown as a sensitivity.",
+      "Eligible grant face amounts are converted using the ECB rate on the earliest verified publication date of the exact amount, then frozen until that amount changes. Award face amounts do not establish cash received or unconditional future entitlement.",
+      "Governance, delivery, capital-allocation, substitutability and policy-risk values include dated analyst judgments. The variant is author-published and has not been independently reviewed.",
+      "Only the four completed eligible scorecards define this edition and its selection thresholds. The wider 15-company set is used for network research; this publication does not assign scores or portfolio decisions to the other 11 companies.",
+      "The inception-quarter calculation uses one clean-air allocation group and a 35% position cap. These are archived research targets, not account holdings, orders, or a live portfolio. Exact serialized target decimals are preserved without re-optimization."
+    ]
+  },
+  "signature": "rSmUxQXn94Ihi/H2D0TI7MadRu5DKnE1ejG8bfzKh/dDutUJ2SCAjlNxxHmDXEcXMYP/Pp0bEm0mnEjw5u5UDw=="
+}

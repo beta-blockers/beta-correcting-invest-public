@@ -62,6 +62,27 @@
       ],
       "committed_on": "2026-11-13",
       "latest_public_quarter": "2026-Q4"
+    },
+    {
+      "theme_id": "eu-clean-air",
+      "title": "European clean-air and clean-energy industrial-policy research",
+      "geographies": [
+        "EU",
+        "NO"
+      ],
+      "policy_ids": [
+        "EU-Innovation-Fund",
+        "Horizon-Europe"
+      ],
+      "status": "researched",
+      "author_ids": [
+        "nxyziggy"
+      ],
+      "product_ids": [
+        "eu-clean-air"
+      ],
+      "committed_on": "2026-11-13",
+      "latest_public_quarter": "2026-Q4"
     }
   ]
 }
