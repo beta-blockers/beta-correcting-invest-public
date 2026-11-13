@@ -143,6 +143,33 @@ that is behind its base is not mistaken for one that deletes editions. A pull
 request that changes these rules or the file formats is judged by its base's
 rules until it is merged, so change code and data in separate pull requests.
 
+### Engine compatibility
+
+Engines built before support for empty key `packages` lists refuse a catalog
+containing such a key with `Invalid key package list`. Both `catalog check` and
+`catalog trust` validate the whole catalog, so building trust for an unrelated
+product also fails. Merging the engine fix alone does not change catalog data.
+
+Before merging the first registration with `packages: []`, maintainers must:
+
+1. Merge the engine fix.
+2. Update the engine commit and tree pins used by delivery tooling and buyer
+   setup to a commit containing the fix.
+3. Verify the installed engine used by each publisher or buyer environment that
+   reads the current catalog. Changing a pin does not upgrade an existing
+   installation; reinstall the pinned engine and verify its installed source.
+   A version number alone is insufficient when multiple commits share it. If
+   there are no buyer installations, verify a clean installation through the
+   updated buyer setup instead.
+4. In a scratch copy of the catalog, exercise an author registered with a theme
+   and an empty `packages` list. With the installed engine, run `catalog check`
+   and build trust for an existing product; the new key must be absent from that
+   trust file. Only after these checks pass may an empty-key registration merge.
+
+Until this rollout is complete, a new author can register together with their
+first product, listing that product in their key's `packages`. That workflow is
+also accepted by older engines.
+
 ### Trust files and the index
 
 `public-pilot catalog trust [DIR] --product ID --out FILE` writes an engine trust

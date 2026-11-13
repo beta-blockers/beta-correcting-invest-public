@@ -44,6 +44,14 @@ Before opening a pull request, run the tests, `public-pilot catalog check`,
 
 ## Proposing a theme
 
+**Compatibility before registration:** engines without support for empty key
+`packages` lists refuse the whole catalog with `Invalid key package list`,
+including `catalog trust` for unrelated products. Before merging the first
+registration with `packages: []`, complete the
+[engine compatibility rollout](docs/CATALOG.md#engine-compatibility). Until
+then, register an author together with their first product and list that product
+in the key's `packages`.
+
 1. Read [docs/AUTHORING.md](docs/AUTHORING.md) and
    [docs/CATALOG.md](docs/CATALOG.md).
 2. Generate a signing key with `public-pilot keygen`, in a directory outside

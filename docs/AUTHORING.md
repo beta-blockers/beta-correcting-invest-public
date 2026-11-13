@@ -232,6 +232,11 @@ the state directory keeps its plans and order records.
 
 ## Registering before your first product
 
+Before using this workflow in the official catalog, maintainers must complete
+the [engine compatibility rollout](CATALOG.md#engine-compatibility). Older
+engines reject a catalog containing an empty key `packages` list, including
+when building trust for other products.
+
 A new author joins in two pull requests, as [CONTRIBUTING.md](../CONTRIBUTING.md)
 describes: first an author entry and a committed theme, before any product
 exists; later the first product. This walkthrough runs both with a fictional
