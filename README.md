@@ -16,23 +16,24 @@ research to more industries and regions. It provides a common engine that
 reads research packages, the tools to write one, and an index of who is
 researching what.
 
-## 2. Try the free USCHIPS sample
+## 2. Try the free USMaterials sample
 
-[Read the USCHIPS Q4 2026 research report](history/uschips/2026-Q4/REPORT.md)
-to see ten companies assessed for US CHIPS Act and Inflation Reduction Act
-exposure, with their scores, inclusion or exit decisions, and seven portfolio
-target weights. Reading the report needs no installation or account.
+[Read the USMaterials Q4 2026 research report](history/usmaterials/2026-Q4/REPORT.md)
+to see a 25-company subset assessed for US industrial-policy exposure in
+minerals, metals, batteries and nuclear supply chains, with scores, inclusion
+or exclusion decisions, and 18 positive portfolio target weights. Reading the
+report needs no installation or account.
 
-[Verify the signed files and preview the portfolio locally](docs/SAMPLE.md)
-with the sample's fictional account and quotes. This is a frozen research
+[Verify the signed files and preview the portfolio locally](history/usmaterials/2026-Q4/REPORT.md#read-and-preview-without-credentials)
+after [installing the engine](docs/ENGINE.md#install), using the sample's
+fictional account and quotes. This is a frozen research
 demo for reading and offline previews. It cannot place Alpaca paper orders,
-even before its expiry date. The report describes its observation dates,
-methodology, neutral factors and evidence limitations.
+even before its expiry date.
 
-[Inspect the dated evidence supplement](docs/USCHIPS-Q4-2026-EVIDENCE-20261112.md)
-for primary-source links covering all ten companies, PLUG's financing judgment,
-selected financial inputs and remaining gaps. This selective, unsigned companion
-identifies the original edition by its verified payload hash.
+[Inspect the dated company evidence](history/usmaterials/2026-Q4/REPORT.md#company-notes-and-evidence)
+and [input treatments and limitations](history/usmaterials/2026-Q4/REPORT.md#input-treatments-and-limitations).
+The sample is a retrospective reconstruction using evidence available by
+October 31, 2026. The report discloses its neutral factors and unscored names.
 
 ## 3. What you will find here
 
@@ -47,6 +48,10 @@ For each product, published quarterly evaluations: the companies assessed, each
 company's scores and rank, and the resulting portfolio selection and weights.
 Each edition and its scores are signed by their author, so you can check where
 they came from and that they are unchanged.
+
+The [USCHIPS sample walkthrough](docs/SAMPLE.md) and its
+[dated evidence supplement](docs/USCHIPS-Q4-2026-EVIDENCE-20261112.md) are also
+available.
 
 **Tools**
 - An engine that verifies a signed research package, shows the research,
@@ -101,6 +106,7 @@ predate the current catalog rules.
 
 ## 7. Getting started
 
-Start with the [free sample walkthrough](docs/SAMPLE.md) to inspect real-company
+Start with the [USMaterials sample walkthrough](history/usmaterials/2026-Q4/REPORT.md#read-and-preview-without-credentials) to inspect real-company
 research and preview it offline. See the [engine guide](docs/ENGINE.md) for
-the fictional example and for using a separate author-supplied paper edition.
+installation, the fictional example and using a separate author-supplied paper
+edition.
