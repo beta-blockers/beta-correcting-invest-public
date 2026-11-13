@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import re
 from urllib.parse import quote as urlquote
 
 import httpx
@@ -10,21 +11,22 @@ from .common import Refused, iso, now, require
 
 PAPER = "https://paper-api.alpaca.markets"
 DATA = "https://data.alpaca.markets"
-# Answers to an order submission after which no order exists under its client order ID. Alpaca answers 422 both
-# for an invalid order and, with "client_order_id must be unique", when another active order already uses the ID.
-# A 400 or 422 therefore counts only with a reason, and no answer that names the client order ID counts at all.
+# Answers to an order submission after which no order exists under its client order ID: invalid credentials, a
+# broker rule such as insufficient buying power, and rate limiting. A 400 or 422 never counts: Alpaca answers 422
+# both for a malformed order, which this engine does not send, and, with "client_order_id must be unique", when
+# another active order already holds the ID. Nor does an answer that mentions the client order ID or a duplicate.
 REJECTED = {401, 403, 429}
-REJECTED_WITH_REASON = {400, 422}
 
 
 class BrokerRefused(Refused):
     """The broker answered with a client error (HTTP 4xx other than 408 Request Timeout) and did not carry out the
     request. For an order submission, this alone does not prove that no order exists under its client ID."""
 
-    def __init__(self, message, status_code, detail):
+    def __init__(self, message, status_code, detail, body=""):
         super().__init__(message)
         self.status_code = status_code
-        self.detail = detail
+        self.detail = detail  # the broker's reason, shortened for display
+        self.body = body  # the complete response, which alone is used to classify it
 
 
 class OrderRejected(BrokerRefused):
@@ -32,7 +34,7 @@ class OrderRejected(BrokerRefused):
 
 
 def _detail(response):
-    """The broker's own explanation of an error response, shortened; empty when it gave none."""
+    """The broker's own explanation of an error response, shortened for display; empty when it gave none."""
     try:
         body = response.json()
     except ValueError:
@@ -41,11 +43,11 @@ def _detail(response):
     return " ".join(str(message).split())[:200] if message else ""
 
 
-def rejects_order(status_code, detail):
-    """Whether this answer to a submission shows that the broker created no order."""
-    if "client_order_id" in detail.lower().replace(" ", "_"):
-        return False
-    return status_code in REJECTED or (status_code in REJECTED_WITH_REASON and bool(detail))
+def rejects_order(status_code, body):
+    """Whether this answer to a submission shows that the broker created no order. The complete response is read,
+    letters only, so that no spelling or length of a mention of the client order ID or a duplicate escapes."""
+    letters = re.sub(r"[^a-z]", "", body.lower())
+    return status_code in REJECTED and "clientorderid" not in letters and "duplicate" not in letters
 
 
 def tradable_equity(asset):
@@ -76,7 +78,7 @@ class AlpacaPaper:
             message = (f"Broker returned HTTP {response.status_code}" + (f": {detail}" if detail else "") +
                        "; no automatic submission retry")
             if 400 <= response.status_code < 500 and response.status_code != 408:
-                raise BrokerRefused(message, response.status_code, detail)
+                raise BrokerRefused(message, response.status_code, detail, response.text)
             raise Refused(message)
         return response.json() if response.content else None
 
@@ -127,8 +129,8 @@ class AlpacaPaper:
         try:
             return self._request("POST", "/v2/orders", json=order)
         except BrokerRefused as exc:
-            if rejects_order(exc.status_code, exc.detail):
-                raise OrderRejected(str(exc), exc.status_code, exc.detail) from exc
+            if rejects_order(exc.status_code, exc.body):
+                raise OrderRejected(str(exc), exc.status_code, exc.detail, exc.body) from exc
             raise
 
     def cancel(self, broker_order_id):

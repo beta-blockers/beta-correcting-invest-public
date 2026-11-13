@@ -39,16 +39,18 @@ completely filled is not looked up again. All sells precede buys, and buys use
 currently observed cash after confirmed fills.
 
 If the broker rejects a submission outright, it created no order: HTTP 401, 403
-(for example, insufficient buying power) or 429, or a 400 or 422 with a reason,
-such as an invalid order. The engine records the rejection with the order, halts
-the plan and reports the stock and the broker's reason. `execute-paper` and
-`cancel-paper` then report the plan as `halted`, and a fresh preview is allowed.
-A refusal that names the client order ID is not a rejection: Alpaca answers 422
-`client_order_id must be unique` when another active order already uses the ID,
-so an order with that ID exists.
+(for example, insufficient buying power) or 429. The engine records the rejection
+with the order, halts the plan and reports the stock and the broker's reason.
+`execute-paper` and `cancel-paper` then report the plan as `halted`, and a fresh
+preview is allowed. The engine judges the complete response, not the shortened
+reason it displays: a response that mentions the client order ID or a duplicate
+is not a rejection. Nor is a 400 or 422. Alpaca answers 422 both for a malformed
+order, which the engine does not send, and, with `client_order_id must be
+unique`, when another active order already uses the ID, so an order with that ID
+exists.
 
 Any other unsuccessful submission stays unresolved: a transport failure, a server
-error, a duplicate client order ID, or another refusal. Run the same
+error, a 400 or 422, or another refusal. Run the same
 `execute-paper` command again. If the broker returns the matching order, its
 terms, status, and fill quantity are checked. If it cannot find an attempted
 order, the engine remains blocked, however much later: a missing response or a

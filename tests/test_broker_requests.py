@@ -127,8 +127,8 @@ def answering(status, message):
 
 
 @pytest.mark.parametrize("status, message", [
-    (403, "insufficient buying power"), (422, "invalid order type"), (400, "invalid limit_price"),
-    (429, "too many requests"), (401, ""),
+    (403, "insufficient buying power"), (403, "insufficient qty available for order (requested: 5, available: 3)"),
+    (403, "account is not authorized to trade"), (429, "too many requests"), (401, ""),
 ])
 def test_an_outright_rejection_shows_that_no_order_was_created(status, message):
     broker = answering(status, message)
@@ -143,8 +143,8 @@ def test_an_outright_rejection_shows_that_no_order_was_created(status, message):
 
 
 @pytest.mark.parametrize("status, message", [
-    (422, "client_order_id must be unique"), (400, "Client Order ID is invalid"), (422, ""), (404, "not found"),
-    (409, "conflict"),
+    (422, "client_order_id must be unique"), (422, "invalid order type"), (400, "invalid limit_price"), (422, ""),
+    (404, "not found"), (409, "conflict"), (403, "Client Order ID already in use"), (429, "duplicate submission"),
 ])
 def test_a_refusal_that_may_hide_an_order_leaves_the_submission_unresolved(status, message):
     broker = answering(status, message)
@@ -154,6 +154,26 @@ def test_a_refusal_that_may_hide_an_order_leaves_the_submission_unresolved(statu
     finally:
         broker.close()
     assert not isinstance(caught.value, OrderRejected)
+
+
+LONG_PREFIX = "the order could not be accepted because " * 6  # 240 characters, past the shortened reason
+
+
+@pytest.mark.parametrize("status, body", [
+    (422, {"code": 40010001, "message": LONG_PREFIX + "client_order_id must be unique"}),
+    (403, {"code": 40310000, "message": LONG_PREFIX + "client_order_id must be unique"}),
+    (403, {"code": 40310000, "message": "forbidden", "field": "client_order_id"}),
+])
+def test_the_whole_response_is_classified_and_only_the_displayed_reason_is_shortened(status, body):
+    broker = client(lambda request: httpx.Response(status, json=body))
+    try:
+        with pytest.raises(BrokerRefused) as caught:
+            broker.submit({"client_order_id": "synthetic"})
+    finally:
+        broker.close()
+    assert not isinstance(caught.value, OrderRejected)
+    assert caught.value.detail == " ".join(body["message"].split())[:200]
+    assert len(body["message"]) < 200 or "client_order_id" not in caught.value.detail
 
 
 def test_a_refused_read_is_never_an_order_rejection():
@@ -253,14 +273,20 @@ def test_an_outright_rejection_halts_the_plan_and_a_fresh_preview_is_allowed(tmp
     assert venue.count("POST", "/v2/orders") == 1
 
 
+@pytest.mark.parametrize("status, message", [
+    (422, "client_order_id must be unique"),
+    (422, LONG_PREFIX + "client_order_id must be unique"),
+    (403, LONG_PREFIX + "client_order_id must be unique"),
+])
 def test_a_client_id_in_use_keeps_the_plan_unresolved_until_the_broker_shows_the_order(tmp_path, author, payload,
-                                                                                       monkeypatch, capsys):
+                                                                                       monkeypatch, capsys, status,
+                                                                                       message):
     args, venue, preview = previewed(tmp_path, author, payload, monkeypatch, capsys)
     plan_id = preview["plan_id"]
-    venue.refuse_submission = (422, "client_order_id must be unique")
+    venue.refuse_submission = (status, message)
     code, refusal = call(capsys, args + ["execute-paper", plan_id, *ACCOUNT])
-    assert code == 2 and refusal["reason"] == ("Broker returned HTTP 422: client_order_id must be unique; "
-                                               "no automatic submission retry")
+    shown = " ".join(message.split())[:200]
+    assert code == 2 and refusal["reason"] == f"Broker returned HTTP {status}: {shown}; no automatic submission retry"
     assert call(capsys, args + ["preview", "test-research"]) == (2, {
         "status": "refused", "reason": f"Reconcile or cancel the outstanding execution first: plan {plan_id}"})
     assert call(capsys, args + ["cancel-paper", plan_id, *ACCOUNT]) == (2, {
