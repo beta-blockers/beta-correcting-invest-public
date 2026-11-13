@@ -39,7 +39,7 @@ of 1–50 keys. Each key has exactly:
 | `fingerprint_sha256` | SHA-256 of those 32 raw bytes, lowercase hex, as `public-pilot fingerprint` prints it |
 | `status` | `active`, `retired` (no longer signs, still verifies past editions) or `revoked` (not trusted; treat revocation as final) |
 | `valid_from` | UTC date from which the key is the author's, `YYYY-MM-DD`; it cannot change once listed. A product's editions may not predate the earliest `valid_from` among its author's keys for it |
-| `packages` | Products of this author that the key may sign |
+| `packages` | Products of this author that the key may sign. An empty list registers an author before their first product; it is accepted only while a theme lists the author, and such a key grants no signing or trading authority, because trust files and history editions use only keys that list the product |
 
 The file is **append-only**. Authors and keys are appended at the end; a key's
 `status` may change and products may be appended to its `packages`. Nothing is
@@ -100,8 +100,10 @@ edition expires, or add editions only once they have expired.
 
 1. every catalog file has the required structure;
 2. every fingerprint matches its key;
-3. every reference resolves: themes, authors, products, keys' packages,
-   history directories and `latest_public_quarter`;
+3. every reference resolves: themes, authors, products, keys' packages (each a
+   product of the key's author), history directories and
+   `latest_public_quarter`, and every key that lists no products belongs to an
+   author that a theme lists;
 4. every edition under `history/` resolves in historical mode, was published
    no earlier than the first `valid_from` among its author's keys for that
    product (whatever their status now), and has each of its three signed
@@ -141,12 +143,40 @@ that is behind its base is not mistaken for one that deletes editions. A pull
 request that changes these rules or the file formats is judged by its base's
 rules until it is merged, so change code and data in separate pull requests.
 
+### Engine compatibility
+
+Engines built before support for empty key `packages` lists refuse a catalog
+containing such a key with `Invalid key package list`. Both `catalog check` and
+`catalog trust` validate the whole catalog, so building trust for an unrelated
+product also fails. Merging the engine fix alone does not change catalog data.
+
+Before merging the first registration with `packages: []`, maintainers must:
+
+1. Merge the engine fix.
+2. Update the engine commit and tree pins used by delivery tooling and buyer
+   setup to a commit containing the fix.
+3. Verify the installed engine used by each publisher or buyer environment that
+   reads the current catalog. Changing a pin does not upgrade an existing
+   installation; reinstall the pinned engine and verify its installed source.
+   A version number alone is insufficient when multiple commits share it. If
+   there are no buyer installations, verify a clean installation through the
+   updated buyer setup instead.
+4. In a scratch copy of the catalog, exercise an author registered with a theme
+   and an empty `packages` list. With the installed engine, run `catalog check`
+   and build trust for an existing product; the new key must be absent from that
+   trust file. Only after these checks pass may an empty-key registration merge.
+
+Until this rollout is complete, a new author can register together with their
+first product, listing that product in their key's `packages`. That workflow is
+also accepted by older engines.
+
 ### Trust files and the index
 
 `public-pilot catalog trust [DIR] --product ID --out FILE` writes an engine trust
-file for one product from the catalog. Revoked keys are left out. `allow_paper`
-is `false` unless `--allow-paper` is given, and even then only `active` keys may
-trade on paper. The output file is never overwritten.
+file for one product from the catalog. Revoked keys and keys that do not list
+the product are left out. `allow_paper` is `false` unless `--allow-paper` is
+given, and even then only `active` keys may trade on paper. The output file is
+never overwritten.
 
 `public-pilot history index [DIR]` regenerates `history/INDEX.md` from verified
 editions and lists each edition with `expired`; with `--check` it changes

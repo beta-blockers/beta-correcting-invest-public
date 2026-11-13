@@ -230,6 +230,120 @@ Installing the re-signed snapshot of the same edition replaces its proofs, and
 the state directory keeps its plans and order records.
 [SECURITY.md](../SECURITY.md) lists every step for authors and readers.
 
+## Registering before your first product
+
+Before using this workflow in the official catalog, maintainers must complete
+the [engine compatibility rollout](CATALOG.md#engine-compatibility). Older
+engines reject a catalog containing an empty key `packages` list, including
+when building trust for other products.
+
+A new author joins in two pull requests, as [CONTRIBUTING.md](../CONTRIBUTING.md)
+describes: first an author entry and a committed theme, before any product
+exists; later the first product. This walkthrough runs both with a fictional
+author, in a scratch copy of `catalog/` and `history/`. `BASE` holds the tree
+as it was before each pull request, the way a pull request's base branch does.
+
+### 1. Register the author and a theme
+
+The new key lists no products: `"packages": []`. The catalog accepts that only
+because the new theme lists the author.
+
+```sh
+export PATH="$PWD/.venv/bin:$PATH"
+WORK="$(mktemp -d)"
+BASE="$(mktemp -d)"
+KEYS="$(mktemp -d)"
+cp -R catalog history "$WORK/"
+cp -R catalog history "$BASE/"
+public-pilot keygen --out "$KEYS/new-author.key" > "$KEYS/new-author.public.json"
+python - "$WORK" "$KEYS/new-author.public.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+work, key = Path(sys.argv[1]), json.loads(Path(sys.argv[2]).read_text())
+
+
+def update(name, change):
+    path = work / "catalog" / name
+    document = json.loads(path.read_text())
+    change(document)
+    path.write_text(json.dumps(document, indent=2) + "\n")
+
+
+update("authors.json", lambda d: d["authors"].append({
+    "author_id": "new-author", "display_name": "New Author (fictional)",
+    "keys": [{"key_id": "new-author-2020", "public_key": key["public_key"],
+              "fingerprint_sha256": key["fingerprint_sha256"], "status": "active",
+              "valid_from": "2020-01-01", "packages": []}]}))
+update("themes.json", lambda d: d["themes"].append({
+    "theme_id": "new-theme", "title": "Fictional new theme", "geographies": ["SYNTHETIC"],
+    "policy_ids": ["fictional-grant-program"], "status": "committed", "author_ids": ["new-author"],
+    "product_ids": [], "committed_on": "2020-01-01", "latest_public_quarter": None}))
+PY
+public-pilot catalog check "$WORK" --base "$BASE"
+```
+
+Until a product is appended to its `packages`, the key grants nothing. No trust
+file can be built for a product that does not exist, and the trust files of
+other products leave the key out, so nothing it signs verifies:
+
+```sh
+public-pilot catalog trust "$WORK" --product new-product --out "$WORK/new-trust.json" \
+  || echo "Refused as expected: new-product is not in the catalog yet"
+public-pilot catalog trust "$WORK" --product synthetic-example --out "$WORK/example-trust.json"
+```
+
+### 2. Register the first product
+
+When the first product is ready, one pull request adds its entry, lists it in
+the theme and appends it to the key's `packages`. Appending a product is the
+only change besides `status` that the append-only rule allows on a listed key.
+
+```sh
+BASE="$(mktemp -d)"
+cp -R "$WORK/catalog" "$WORK/history" "$BASE/"
+python - "$WORK" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+work = Path(sys.argv[1])
+
+
+def update(name, change):
+    path = work / "catalog" / name
+    document = json.loads(path.read_text()) if path.exists() else {}
+    change(document)
+    path.write_text(json.dumps(document, indent=2) + "\n")
+
+
+def list_product(document):
+    theme = next(t for t in document["themes"] if t["theme_id"] == "new-theme")
+    theme["product_ids"].append("new-product")
+    theme["status"] = "in_progress"
+
+
+def append_package(document):
+    author = next(a for a in document["authors"] if a["author_id"] == "new-author")
+    author["keys"][0]["packages"].append("new-product")
+
+
+update("products/new-product.json", lambda d: d.update({
+    "format": "public-pilot-product-v1", "product_id": "new-product", "theme_id": "new-theme",
+    "author_id": "new-author", "cadence": "quarterly", "universe_size": 3,
+    "methodology_summary": "Fictional first product of a new author.",
+    "public_history_path": "history/new-product", "review_status": "author_published"}))
+update("themes.json", list_product)
+update("authors.json", append_package)
+PY
+public-pilot catalog check "$WORK" --base "$BASE"
+public-pilot catalog trust "$WORK" --product new-product --out "$WORK/new-trust.json"
+```
+
+The key may now sign editions of `new-product`, and no others. The
+[walkthrough](#walkthrough) above shows how to sign and check an edition.
+
 ## Guidance
 
 ### Guarding your key
@@ -301,10 +415,13 @@ Readers trust a key only after confirming it through a channel they trust. In
 this repository, that channel is `catalog/authors.json`: open a pull request
 that appends your author entry, with your `key_id`, `public_key`,
 `fingerprint_sha256` (from `keygen`), `status: active`, `valid_from` and the
-products it may sign, together with your theme and product entries, as
-`CONTRIBUTING.md` describes. Readers then build a trust file with
-`public-pilot catalog trust`. Announce the fingerprint through a second channel
-too, so that readers can compare it.
+products it may sign, together with your theme entry, as `CONTRIBUTING.md`
+describes. Before your first product exists the key lists none, and a later
+pull request adds the product and appends it to the key, as
+[Registering before your first product](#registering-before-your-first-product)
+shows. Readers then build a trust file with `public-pilot catalog trust`, which
+lists your key only for the products it names. Announce the fingerprint through
+a second channel too, so that readers can compare it.
 
 ### Submissions are data only
 

@@ -506,3 +506,158 @@ def test_only_an_edition_signed_with_revoked_keys_may_be_withdrawn(repo, tmp_pat
     else:
         with pytest.raises(Refused, match="2020-Q1 was removed; only an edition whose signatures are all by revoked"):
             catalog.check(repo, NOW, base)
+
+
+# A genuinely new author: registered with a theme before any product ----------------------------------------------
+
+NEW_THEME = {"theme_id": "new-theme", "title": "Fictional new theme", "geographies": ["SYNTHETIC"],
+             "policy_ids": ["fictional-policy"], "status": "committed", "author_ids": ["new-author"], "product_ids": [],
+             "committed_on": "2019-06-01", "latest_public_quarter": None}
+NEW_PRODUCT = {"format": "public-pilot-product-v1", "product_id": "new-product", "theme_id": "new-theme",
+               "author_id": "new-author", "cadence": "quarterly", "universe_size": 3,
+               "methodology_summary": "Fictional first product of a new author.",
+               "public_history_path": "history/new-product", "review_status": "author_published"}
+
+
+def register(repo, keys, capsys, packages=(), theme=True):
+    """CONTRIBUTING.md's first pull request through the command line: keygen outside every checkout, then the author
+    entry with its public key and a committed theme without products. Returns the new private key."""
+    code, created = call(capsys, ["keygen", "--out", keys / "new-author.key"])
+    assert code == 0
+    edit(repo / "catalog" / "authors.json", lambda d: d["authors"].append({
+        "author_id": "new-author", "display_name": "New Author (fictional)", "keys": [{
+            "key_id": "new-key", "public_key": created["public_key"],
+            "fingerprint_sha256": created["fingerprint_sha256"], "status": "active", "valid_from": "2019-06-01",
+            "packages": list(packages)}]}))
+    if theme:
+        edit(repo / "catalog" / "themes.json", lambda d: d["themes"].append(deepcopy(NEW_THEME)))
+    return authoring.load_private_key(created["key"])
+
+
+def publish_first_product(repo):
+    """The later pull request: the product entry, listed by the theme and appended to the key's packages."""
+    write(repo / "catalog" / "products" / "new-product.json", NEW_PRODUCT)
+    edit(repo / "catalog" / "themes.json", lambda d: d["themes"][-1].update(
+        product_ids=["new-product"], status="in_progress"))
+    edit(repo / "catalog" / "authors.json", lambda d: d["authors"][-1]["keys"][0]["packages"].append("new-product"))
+
+
+@pytest.fixture
+def keys(tmp_path):
+    directory = tmp_path / "new-keys"
+    directory.mkdir(mode=0o700)
+    return directory
+
+
+def test_a_new_author_registers_with_a_theme_before_any_product(repo, tmp_path, keys, capsys):
+    base = tmp_path / "base"
+    shutil.copytree(repo, base)
+    register(repo, keys, capsys)
+    code, output = call(capsys, ["catalog", "check", repo, "--base", base])
+    assert code == 0 and output["append_only"] is True
+    assert (output["themes"], output["authors"], output["keys"], output["products"]) == (2, 2, 2, 1)
+    assert call(capsys, ["history", "index", repo])[0] == 0
+    assert call(capsys, ["history", "index", repo, "--check"])[0] == 0
+
+
+@pytest.mark.parametrize("themes, listed", [
+    pytest.param(lambda d: None, False, id="no theme"),
+    pytest.param(lambda d: d["themes"].append(deepcopy(NEW_THEME)), True, id="own theme"),
+    pytest.param(lambda d: d["themes"][0]["author_ids"].append("new-author"), True, id="existing theme"),
+])
+def test_a_key_without_products_is_accepted_only_while_a_theme_lists_its_author(repo, keys, capsys, themes, listed):
+    register(repo, keys, capsys, theme=False)
+    edit(repo / "catalog" / "themes.json", themes)
+    code, output = call(capsys, ["catalog", "check", repo])
+    if listed:
+        assert code == 0 and output["status"] == "verified"
+    else:
+        assert code == 2 and output["reason"] == ("Key new-key lists no products, which is allowed only while a "
+                                                  "theme lists author new-author")
+
+
+def test_a_key_without_products_grants_no_signing_or_trading_authority(repo, tmp_path, keys, capsys):
+    private = register(repo, keys, capsys)
+    # No trust file names the planned product, and other products' trust files leave the key out.
+    code, refusal = call(capsys, ["catalog", "trust", repo, "--product", "new-product", "--out", tmp_path / "n.json"])
+    assert code == 2 and refusal["reason"] == "Unknown product new-product" and not (tmp_path / "n.json").exists()
+    code, output = call(capsys, ["catalog", "trust", repo, "--product", "demo-product", "--allow-paper", "--out",
+                                 tmp_path / "demo.json"])
+    assert code == 0 and output["keys"] == ["demo-key"] and "new-key" not in read(tmp_path / "demo.json")
+    # Nothing the key signs verifies with trust built from the catalog.
+    payload = edition_payload()
+    signed = write_edition(tmp_path / "signed-by-new-key", private, "new-key", payload, evaluation_payload(payload))
+    code, refusal = call(capsys, ["--trust", tmp_path / "demo.json", "verify-bundle", signed])
+    assert code == 2 and refusal["reason"] == "Publisher is not in the local trust store"
+    # And it cannot sign a history edition, not even one claiming to be by the new author.
+    edit(repo / "catalog" / "themes.json", lambda d: d["themes"][0].update(latest_public_quarter="2020-Q2"))
+    for author in ("demo-author", "new-author"):
+        target = repo / "history" / "demo-product" / "2020-Q2"
+        shutil.rmtree(target, ignore_errors=True)
+        forged = {**edition_payload(author=author), "edition_id": "demo-product-2020-q2"}
+        write_edition(target, private, "new-key", forged, evaluation_payload(forged))
+        code, refusal = call(capsys, ["catalog", "check", repo])
+        assert code == 2 and refusal["reason"] == (
+            "history/demo-product/2020-Q2/edition.snapshot.json is signed by key new-key, which the catalog does not "
+            "list as a key of author demo-author for package demo-product that is not revoked")
+
+
+@pytest.mark.parametrize("packages, message", [
+    pytest.param(["new-product"], "Key new-key lists new-product, which is not a product of author new-author",
+                 id="planned product"),
+    pytest.param(["demo-product"], "Key new-key lists demo-product, which is not a product of author new-author",
+                 id="another author's product"),
+])
+def test_a_new_key_may_not_name_a_planned_or_another_authors_product(repo, tmp_path, keys, capsys, packages, message):
+    register(repo, keys, capsys, packages=packages)
+    for command in (["catalog", "check", repo], ["catalog", "trust", repo, "--product", "demo-product", "--out",
+                                                  tmp_path / "t.json"]):
+        code, refusal = call(capsys, command)
+        assert code == 2 and refusal["reason"] == message
+
+
+def test_the_first_product_grants_authority_for_that_product_only(repo, tmp_path, keys, capsys):
+    private = register(repo, keys, capsys)
+    registered = tmp_path / "registered"
+    shutil.copytree(repo, registered)
+    # The product alone grants nothing: the key does not list it yet.
+    write(repo / "catalog" / "products" / "new-product.json", NEW_PRODUCT)
+    edit(repo / "catalog" / "themes.json", lambda d: d["themes"][-1].update(product_ids=["new-product"]))
+    assert call(capsys, ["catalog", "check", repo])[0] == 0
+    code, refusal = call(capsys, ["catalog", "trust", repo, "--product", "new-product", "--out", tmp_path / "t.json"])
+    assert code == 2 and refusal["reason"] == "The catalog lists no valid key for product new-product"
+    # Appending the product to the key is allowed by the append-only rule and grants authority for it alone.
+    shutil.rmtree(repo)
+    shutil.copytree(registered, repo)
+    publish_first_product(repo)
+    code, output = call(capsys, ["catalog", "check", repo, "--base", registered])
+    assert code == 0 and output["append_only"] is True and output["products"] == 2
+    code, output = call(capsys, ["catalog", "trust", repo, "--product", "new-product", "--allow-paper", "--out",
+                                 tmp_path / "new.json"])
+    assert code == 0 and output["keys"] == ["new-key"] and output["allow_paper"] is True
+    assert call(capsys, ["catalog", "trust", repo, "--product", "demo-product", "--out", tmp_path / "demo.json"])[1][
+        "keys"] == ["demo-key"]
+    # Its first edition: signed by the new key, accepted by the catalog and listed in the history index.
+    payload = edition_payload(product="new-product", author="new-author")
+    write_edition(repo / "history" / "new-product" / "2020-Q1", private, "new-key", payload,
+                  evaluation_payload(payload))
+    edit(repo / "catalog" / "themes.json", lambda d: d["themes"][-1].update(latest_public_quarter="2020-Q1",
+                                                                             status="researched"))
+    assert call(capsys, ["history", "index", repo])[0] == 0
+    code, output = call(capsys, ["catalog", "check", repo, "--base", registered])
+    assert code == 0 and ("new-product", "2020-Q1") in {(e["product_id"], e["quarter"]) for e in output["editions"]}
+    assert call(capsys, ["history", "index", repo, "--check"])[0] == 0
+    code, output = call(capsys, ["--trust", tmp_path / "new.json", "verify-bundle",
+                                 repo / "history" / "new-product" / "2020-Q1"])
+    assert code == 0 and output["edition_id"] == "new-product-2020-q1"
+
+
+def test_after_the_first_product_the_key_still_cannot_take_another_authors_product(repo, tmp_path, keys, capsys):
+    register(repo, keys, capsys)
+    publish_first_product(repo)
+    base = tmp_path / "base"
+    shutil.copytree(repo, base)
+    # Appending is allowed by the append-only rule, but ownership is still checked.
+    edit(repo / "catalog" / "authors.json", lambda d: d["authors"][-1]["keys"][0]["packages"].append("demo-product"))
+    code, refusal = call(capsys, ["catalog", "check", repo, "--base", base])
+    assert code == 2 and refusal["reason"] == "Key new-key lists demo-product, which is not a product of author new-author"

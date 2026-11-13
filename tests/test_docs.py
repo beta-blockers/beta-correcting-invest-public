@@ -1,4 +1,5 @@
 """The documented offline commands run exactly as written."""
+import json
 import os
 from pathlib import Path
 import shutil
@@ -75,6 +76,49 @@ def test_authoring_walkthrough_runs_as_written_and_passes_the_checks(tmp_path):
     assert sorted(path.name for path in (repo / "catalog").iterdir()) == ["authors.json", "products", "themes.json"]
 
 
+def documents(text):
+    """Every JSON document that the commands printed, in order; plain lines such as echo messages are skipped."""
+    decoder, found, index = json.JSONDecoder(), [], 0
+    while index < len(text):
+        if text[index].isspace():
+            index += 1
+            continue
+        try:
+            document, index = decoder.raw_decode(text, index)
+        except json.JSONDecodeError:
+            index = text.find("\n", index) + 1 or len(text)
+            continue
+        found.append(document)
+    return found
+
+
+def test_registering_before_the_first_product_runs_as_written(tmp_path):
+    """CONTRIBUTING.md's two pull requests for a new author, run with the command line exactly as documented."""
+    script = section_script("AUTHORING.md", "## Registering before your first product")
+    for step in ("keygen", '"packages": []', '"product_ids": []', '"status": "committed"', "catalog check",
+                 "--base", "catalog trust", '["packages"].append("new-product")'):
+        assert step in script, step
+    repo = copy_data(tmp_path / "repo")
+    authors = json.loads((repo / "catalog" / "authors.json").read_text())["authors"]
+    products = len(list((repo / "catalog" / "products").glob("*.json")))
+    keys = sum(len(author["keys"]) for author in authors)
+    before = {path: path.read_bytes() for path in repo.rglob("*") if path.is_file()}
+    result = run(script, repo, install_shims(tmp_path / "bin"))
+    assert result.returncode == 0, result.stderr[-3000:]
+    printed = documents(result.stdout)
+    checks = [document for document in printed if document.get("status") == "verified"]
+    # First pull request: one more author and key, no new product; second: the first product. Both only append.
+    assert [(c["authors"], c["keys"], c["products"], c["append_only"]) for c in checks] == [
+        (len(authors) + 1, keys + 1, products, True), (len(authors) + 1, keys + 1, products + 1, True)]
+    assert "Refused as expected: new-product is not in the catalog yet" in result.stdout
+    assert "Unknown product new-product" in result.stderr
+    trusts = [document for document in printed if document.get("status") == "written"]
+    assert [trust["product_id"] for trust in trusts] == ["synthetic-example", "new-product"]
+    assert trusts[0]["keys"] and "new-author-2020" not in trusts[0]["keys"]
+    assert trusts[1]["keys"] == ["new-author-2020"] and trusts[1]["allow_paper"] is False
+    assert json.loads(Path(trusts[1]["output"]).read_text())["new-author-2020"]["packages"] == ["new-product"]
+    # The documented commands work in scratch copies: the checkout itself is unchanged.
+    assert {path: path.read_bytes() for path in repo.rglob("*") if path.is_file()} == before
 @pytest.mark.parametrize("shell", ["bash", "sh", "zsh"])
 def test_public_sample_walkthrough_runs_as_written(tmp_path, shell):
     if shutil.which(shell) is None:
