@@ -41,9 +41,7 @@ FORBIDDEN = [
 PRODUCT_WORD = "us" + "chips"
 PRODUCT_PATTERN = re.compile(PRODUCT_WORD, re.IGNORECASE)
 PRODUCT_ALLOWED = ("catalog/", "history/")
-PRODUCT_DOCUMENTATION = {"README.md", "docs/SAMPLE.md",
-                         "docs/USCHIPS-Q4-2026-EVIDENCE-20261112.md",
-                         "docs/USCHIPS-Q4-2026-REPORT-20261113.md"}
+PRODUCT_DOCUMENTATION = {"README.md", "docs/SAMPLE.md"}
 EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@((?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,})")
 NOREPLY_DOMAIN = "users.noreply.github.com"
 GITHUB_WEB_COMMITTER = "noreply@github.com"
