@@ -73,7 +73,13 @@ cp examples/account.json "$EDITION/account.fixture.json"
 The evaluation's `package_sha256` is the `sha256` that `validate` printed. Its
 companies are exactly the universe, and each weight equals the payload's target
 or 0. `sign-evaluation` checks all of that against the snapshot, which must be
-signed with the same key. Add your own explanation to `REPORT.md` if you like.
+signed with the same key. If you add your own explanation to `REPORT.md`, put it
+before the `# Evaluation of ...` heading. Keep exactly one complete rendered
+section at the end of the report, with no edits or text after it, and sign the
+release only after finalizing the report. CI byte-compares added or content-changed
+editions using the base branch's renderer; unchanged published reports and
+signature-only key rotations are not re-rendered. Merge renderer changes before
+using them for new research. The append-only and signature checks still apply.
 The account fixture is a fictional account, with quotes for every target, that
 readers use for offline previews.
 

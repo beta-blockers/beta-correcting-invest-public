@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Clean-room check: a fresh clone, a new virtual environment, and the full offline verification.
 #
-# Usage: scripts/cleanroom.sh [REPOSITORY_URL] [BRANCH]
+# Usage: scripts/cleanroom.sh [REPOSITORY_URL] [BRANCH] [BASE_BRANCH]
 #   REPOSITORY_URL defaults to this checkout's origin remote; BRANCH defaults to PublicRepoStaging.
+#   BASE_BRANCH defaults to main; its trusted checker and renderer judge changed research.
 #   PYTHON selects the interpreter (default python3). KEEP=1 keeps the work directory.
 #
 # Installing from the lock files needs the package index; every later step is offline. Broker
@@ -12,6 +13,7 @@ set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 url="${1:-$(git -C "$here" remote get-url origin)}"
 branch="${2:-PublicRepoStaging}"
+base_branch="${3:-main}"
 python="${PYTHON:-python3}"
 unset APCA_API_KEY_ID APCA_API_SECRET_KEY
 work="$(mktemp -d)"
@@ -57,6 +59,24 @@ git clone --quiet --single-branch --branch "$branch" -- "$url" "$work/repo"
 cd "$work/repo"
 git log -1 --format='   %H %s'
 
+step "Trusted report rules from $base_branch, history comparison with the merge base"
+git fetch --quiet origin "$base_branch:refs/remotes/origin/$base_branch"
+rules_commit="$(git rev-parse "refs/remotes/origin/$base_branch")"
+base_commit="$(git merge-base "$rules_commit" HEAD)"
+report_base="$work/report-base"
+mkdir -p "$report_base"
+if git cat-file -e "$rules_commit:scripts/check_report_evaluation.py" 2>/dev/null; then
+  git archive "$rules_commit" src requirements.lock scripts/check_report_evaluation.py | tar -x -C "$report_base"
+  if git cat-file -e "$base_commit:history" 2>/dev/null; then
+    git archive "$base_commit" history | tar -x -C "$report_base"
+  fi
+  (
+    cd "$work"
+    "$python" -I -m venv "$work/report-venv"
+    quiet "$work/report-venv/bin/python" -I -m pip install --disable-pip-version-check -r "$report_base/requirements.lock"
+  )
+fi
+
 step "New virtual environment with $("$python" --version 2>&1), installed from the lock files"
 "$python" -m venv .venv
 quiet .venv/bin/python -m pip install --disable-pip-version-check -r requirements-test.lock
@@ -95,6 +115,18 @@ for edition in "${editions[@]}"; do
     --snapshot "$edition/edition.snapshot.json"
   echo "   $edition passed"
 done
+
+step "Report sections for added or content-changed editions"
+if [ -f "$report_base/scripts/check_report_evaluation.py" ]; then
+  (
+    cd "$work"
+    quiet "$work/report-venv/bin/python" -I "$report_base/scripts/check_report_evaluation.py" \
+      "$report_base" "$work/repo"
+  )
+  echo "   passed with the base branch's checker and renderer"
+else
+  echo "   the base branch predates the report comparison; no trusted checker is available yet"
+fi
 
 step "History index is current"
 quiet .venv/bin/public-pilot history index --check

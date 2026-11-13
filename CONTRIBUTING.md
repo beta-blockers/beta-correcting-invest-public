@@ -49,6 +49,22 @@ it holds no secrets, publishes nothing and never contacts a broker.
 Before opening a pull request, run the tests, `public-pilot catalog check`,
 `public-pilot history index --check` and `scripts/export_scan.sh`.
 
+Each `REPORT.md` must end with exactly one complete section produced by
+`public-pilot render-evaluation` from its final signed `evaluation.json`, starting
+at `# Evaluation of ...`. Put the research narrative before that section. Generate
+it after finalizing the snapshot and evaluation, then sign the release inventory.
+For editions a pull request adds or changes in content, CI compares the entire
+section byte for byte, including its snapshot hash, and refuses missing,
+duplicated or stale sections. The base-rules job uses the base branch's checker
+and renderer outside the checkout, with isolated Python. Unchanged published
+editions and signature-only key rotations are not re-rendered; the existing
+signature and append-only checks still apply to all editions. CI never rewrites
+research files. Merge renderer changes separately from new research.
+
+`scripts/cleanroom.sh REPOSITORY_URL BRANCH [BASE_BRANCH]` runs the same comparison
+locally; `BASE_BRANCH` defaults to `main`. It fetches that branch and uses its
+checker and renderer, comparing the proposed tree with their merge base.
+
 ## Proposing a theme
 
 **Compatibility before registration:** engines without support for empty key

@@ -62,7 +62,8 @@ jobs:
         run: scripts/export_scan.sh "$COMMITS"
 
   # The pull request's catalog/ and history/, judged by the base branch's code: the full catalog check plus the
-  # append-only rules. This job never installs or runs the pull request's code; it reads its files as data. It
+  # append-only rules and rendered sections for added or content-changed editions. This job never installs or
+  # runs the pull request's code; it reads its files as data. It
   # judges what would land (the proposed merge for pull requests into the default branch, otherwise the head)
   # against the merge base, so a branch that is behind its base is not mistaken for one that deletes editions.
   base-rules:
@@ -82,14 +83,22 @@ jobs:
           BASE_REF: ${{ github.base_ref }}
         run: |
           set -euo pipefail
-          base_commit="$(git merge-base "origin/$BASE_REF" HEAD)"
+          rules_commit="$(git rev-parse "origin/$BASE_REF")"
+          base_commit="$(git merge-base "$rules_commit" HEAD)"
           if ! git cat-file -e "$base_commit:catalog/authors.json" 2>/dev/null; then
             echo "The base branch has no catalog yet; nothing to compare."
             exit 0
           fi
           base="$RUNNER_TEMP/base"
           mkdir -p "$base"
-          paths=(src catalog requirements.lock)
+          # Rules come from the current base branch, even when this PR forked before a rule was added.
+          paths=(src requirements.lock)
+          if git cat-file -e "$rules_commit:scripts/check_report_evaluation.py" 2>/dev/null; then
+            paths+=(scripts/check_report_evaluation.py)
+          fi
+          git archive "$rules_commit" "${paths[@]}" | tar -x -C "$base"
+          # Compare data with the merge base so changes that landed only on the base are not PR changes.
+          paths=(catalog)
           if git cat-file -e "$base_commit:history" 2>/dev/null; then
             paths+=(history)
           fi
@@ -103,6 +112,7 @@ jobs:
           "$RUNNER_TEMP/venv/bin/python" -I -m pip install --quiet -r "$base/requirements.lock"
           "$RUNNER_TEMP/venv/bin/python" -I - "$base" "$tree" <<'PY'
           import sys
+          import runpy
           from pathlib import Path
 
           base, tree = Path(sys.argv[1]), Path(sys.argv[2])
@@ -116,4 +126,10 @@ jobs:
               sys.exit(f"Refused: {exc}")
           print("The base branch's code accepts catalog/ and history/, and they only append to the base; "
                 f"editions checked: {len(result['editions'])}")
+          checker = base / "scripts" / "check_report_evaluation.py"
+          if checker.is_file():
+              trusted = runpy.run_path(str(checker))
+              sys.exit(trusted["main"]([str(base), str(tree)]))
+          # Bootstrap for the code-only PR introducing this rule. Never fall back to the PR's script.
+          print("The base branch predates the report comparison; no trusted checker is available yet.")
           PY
