@@ -87,7 +87,8 @@ branch's renderer. Unchanged published editions and signature-only key rotations
 are not re-rendered, so later renderer changes cannot invalidate their reports.
 The signature and append-only checks still apply to every edition.
 
-Published history is **append-only**: an edition's content never changes, and
+Published history is **append-only**, subject only to the exact reviewed report
+revision described below: an edition's research content never changes, and
 its directory is never removed unless all its signatures are by revoked keys,
 as for an edition forged with an exposed key. After a key change, the author
 re-signs each edition
@@ -142,6 +143,22 @@ branch:
 3. an edition directory of the base may be missing only if every one of its
    signatures was made with a key that the catalog now lists as revoked. That
    is how an edition forged with an exposed key is withdrawn.
+
+There is one narrowly scoped editorial exception for the USMaterials 2026-Q4
+report at `history/usmaterials/2026-Q4/REPORT.md`. The trusted engine code in
+`report_revisions.py` pins the exact before and after SHA-256 hashes of all five
+edition files. Only the report introduction and its signed release inventory
+may differ in that reviewed transition; snapshot, evaluation and fictional
+account bytes are identical. The rendered evaluation section is also unchanged.
+The revised report records its editorial revision date separately from the
+original edition publication date. Previous report bytes remain in Git history.
+
+The rules PR must merge before the data PR. A proposed tree cannot authorize
+its own change by editing the hash list, because the base-rules job imports only
+the base branch's code. No other report edit, score or weight change, unrelated
+edition, reverse transition or further revision is authorized. Signature,
+binding and changed-report rendering checks continue to apply. This is not a
+general alternative to publishing a new edition for research corrections.
 
 The output gains `"append_only": true`. For every pull request, a separate
 continuous-integration job runs this command with the base branch's code

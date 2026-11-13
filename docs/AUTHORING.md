@@ -415,6 +415,14 @@ refuses to replace an installed edition ID with different content and refuses
 to go back to an older edition. Re-signing an edition with a new key, as in
 step 9, changes only its signatures.
 
+The single [reviewed USMaterials report exception](CATALOG.md#changes-relative-to-the-base-branch)
+permits a precisely pinned editorial revision at the same report path. It does
+not change the edition snapshot, evaluation or account fixture, and requires a
+new signed release inventory. It grants no permission to revise other published
+reports or to change any scores or weights. The separate rules PR must land
+before the report PR; adding an exception to the report PR itself cannot pass
+the trusted base checks.
+
 ### Getting your key listed
 
 Readers trust a key only after confirming it through a channel they trust. In
