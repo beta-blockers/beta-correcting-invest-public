@@ -14,6 +14,8 @@ Reports that matter most are anything that:
 - accepts a package, delta, evaluation or release without a valid trusted
   signature, or with a key outside its trusted package and author;
 - lets an expired or future-dated edition reach a live preview or an order;
+- lets an edition reach a live preview or an order without paper permission
+  for every key that signed it;
 - makes the engine contact an endpoint other than Alpaca's paper endpoint;
 - resends an order whose submission outcome is uncertain;
 - lets data in a research package run code or fetch from the network.
@@ -61,7 +63,10 @@ deleted.
 
 A key that is only being replaced, not exposed, should be set to `retired`.
 Retired keys still verify past editions, and `public-pilot catalog trust`
-never grants them paper trading.
+never grants them paper trading. An edition you installed under a retired key
+can therefore be read but not traded. Installing the author's copy of it,
+re-signed with the active key, replaces its stored signatures, so live
+previews and paper orders work again.
 
 If you read or license research:
 

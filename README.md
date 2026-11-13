@@ -51,8 +51,10 @@ report needs no installation or account.
 [Verify the signed files and preview the portfolio locally](history/usmaterials/2026-Q4/REPORT.md#read-and-preview-without-credentials)
 after [installing the engine](docs/ENGINE.md#install), using the sample's
 fictional account and quotes. This is a frozen research
-demo for reading and offline previews. It cannot place Alpaca paper orders,
-even before its expiry date.
+demo. Until it expires on January 1, 2027, you can also
+[run it in your own Alpaca paper account](docs/ENGINE.md#trade-a-demo-edition-on-paper)
+once its trust file allows paper. The report's statement that it cannot place
+paper orders was written for earlier engines.
 
 [Inspect the dated company evidence](history/usmaterials/2026-Q4/REPORT.md#company-notes-and-evidence)
 and [input treatments and limitations](history/usmaterials/2026-Q4/REPORT.md#input-treatments-and-limitations).

@@ -14,12 +14,14 @@ reviewed.
 The report is covered by the edition's signed release inventory. The commands
 below verify the report and other published edition files.
 
-**This sample is an offline demo.** Its `purpose: demo` prevents Alpaca paper
-orders even before expiry. It was unexpired on November 12, 2026 and expires at
+**This sample is a demo edition.** The commands below read it and preview it
+offline. It was unexpired on November 12, 2026 and expires at
 `2027-01-01T05:00:00+00:00`. The accompanying account and quotes are fictional;
-the illustrative USD 100 prices are not market observations. Paper trading
-requires a separate current, signed paper edition; see the
-[engine guide](ENGINE.md#use-an-author-supplied-edition).
+the illustrative USD 100 prices are not market observations. Until it expires,
+you can also run it in your own Alpaca paper account with a trust file that
+allows paper; see the [engine guide](ENGINE.md#trade-a-demo-edition-on-paper).
+The report's statement that the sample never places paper orders was written
+for earlier engines.
 
 ## Install
 

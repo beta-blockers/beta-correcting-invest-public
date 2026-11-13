@@ -223,9 +223,10 @@ def run(args):
                 return payload
             if args.command == "preview":
                 require(not store.outstanding(), "Reconcile or cancel the outstanding execution first")
-                # Offline plans can never execute, so they may read an expired edition.
-                fresh = not args.offline
-                payload, _ = store.load_package(args.package_id, trust, instant, check_freshness=fresh)
+                # Offline plans can never execute, so they may read an expired edition with any trusted key.
+                # A live plan can: it needs a current edition and paper permission, whatever the purpose.
+                live = not args.offline
+                payload, _ = store.load_package(args.package_id, trust, instant, check_freshness=live, trading=live)
                 if args.offline:
                     snapshot = read_json(args.offline)
                     # Explicit offline simulation advances only the fixture clock.
@@ -234,14 +235,13 @@ def run(args):
                     for quote in snapshot["quotes"].values():
                         quote["at"] = iso(instant)
                 else:
-                    require(payload["purpose"] == "paper", "Demo packages support offline previews only")
                     broker = AlpacaPaper()
                     snapshot = broker.snapshot(payload["universe"])
                 limits = Limits(allocation_usd=args.allocation, max_order_usd=args.max_order,
                                 max_turnover_usd=args.max_turnover, max_position_weight=args.max_weight)
                 # Recheck package freshness after network observation.
                 instant = now()
-                payload, _ = store.load_package(args.package_id, trust, instant, check_freshness=fresh)
+                payload, _ = store.load_package(args.package_id, trust, instant, check_freshness=live, trading=live)
                 plan = build_plan(payload, snapshot, limits, instant, offline=bool(args.offline))
                 return {"plan_id": store.save_plan(plan), "plan": plan, "orders_submitted": 0}
             plan, _ = store.plan(args.plan_id)

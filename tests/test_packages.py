@@ -1,10 +1,13 @@
+import base64
 from copy import deepcopy
 from datetime import timedelta
 
 import pytest
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
-from public_pilot.common import Refused, digest, iso, loads
-from public_pilot.packages import resolve_chain
+from public_pilot.common import Refused, canonical, digest, iso, loads
+from public_pilot.packages import FORMAT, resolve_chain
 from conftest import AT, delta_for
 
 
@@ -37,6 +40,37 @@ def test_trust_is_scoped_to_package_and_purpose(author, payload):
     trust["test-key"]["allow_paper"] = False
     with pytest.raises(Refused, match="demonstrations"):
         resolve_chain([sign(payload)], trust, AT)
+
+
+def signer(key_id):
+    private = Ed25519PrivateKey.generate()
+    public = base64.b64encode(private.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw)).decode()
+
+    def sign(payload, kind="snapshot"):
+        body = {"format": FORMAT, "kind": kind, "key_id": key_id, "payload": deepcopy(payload)}
+        return {**body, "signature": base64.b64encode(private.sign(canonical(body))).decode()}
+
+    return public, sign
+
+
+def test_trading_needs_paper_permission_from_every_key_whatever_the_purpose(author, payload):
+    trust, sign = author
+    payload["purpose"] = "demo"
+    reading = deepcopy(trust)
+    reading["test-key"]["allow_paper"] = False
+    assert resolve_chain([sign(payload)], reading, AT) == payload
+    with pytest.raises(Refused, match="trusted only for demonstrations"):
+        resolve_chain([sign(payload)], reading, AT, trading=True)
+    assert resolve_chain([sign(payload)], trust, AT, trading=True) == payload
+    # A delta signed by a key without paper permission can be read, but the chain cannot trade.
+    public, second_sign = signer("second-key")
+    trust["second-key"] = {"public_key": public, "author_id": "test-author", "packages": ["test-research"],
+                           "allow_paper": False}
+    delta = delta_for(payload, edition_id="edition-2", published_at=iso(AT - timedelta(days=1)))
+    chain = [sign(payload), second_sign(delta, "delta")]
+    assert resolve_chain(chain, trust, AT)["edition_id"] == "edition-2"
+    with pytest.raises(Refused, match="trusted only for demonstrations"):
+        resolve_chain(chain, trust, AT, trading=True)
 
 
 def test_delta_install_and_wrong_base_are_atomic(store, author, payload):

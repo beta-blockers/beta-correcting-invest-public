@@ -11,6 +11,15 @@ from .common import MAX_DOCUMENT_BYTES, Refused, canonical, digest, fields, load
 from .packages import resolve_chain, resolve_historical
 
 
+def tradable(proofs, trust, instant):
+    """Whether every key in an already verified chain allows paper; expiry is checked where an order is made."""
+    try:
+        resolve_chain(proofs, trust, instant, check_freshness=False, trading=True)
+    except Refused:
+        return False
+    return True
+
+
 class Store:
     def __init__(self, directory):
         self.directory = Path(directory)
@@ -45,13 +54,13 @@ class Store:
     def close(self):
         self.db.close()
 
-    def load_package(self, package_id, trust, instant, *, check_freshness=True):
+    def load_package(self, package_id, trust, instant, *, check_freshness=True, trading=False):
         row = self.db.execute("""SELECT e.* FROM editions e JOIN active a
           ON a.package_id=e.package_id AND a.edition_id=e.edition_id
           WHERE a.package_id=?""", (package_id,)).fetchone()
         require(row is not None, "Package is not installed")
         proofs = loads(row["proofs"])
-        payload = resolve_chain(proofs, trust, instant, check_freshness=check_freshness)
+        payload = resolve_chain(proofs, trust, instant, check_freshness=check_freshness, trading=trading)
         require(digest(payload) == row["hash"], "Installed package identity changed")
         return payload, proofs
 
@@ -80,15 +89,15 @@ class Store:
         current = self.db.execute("SELECT 1 FROM active WHERE package_id=?", (package_id,)).fetchone()
         previous = None
         proofs = []
-        reverified = True
+        stored = None  # the installed proofs, while they still verify with this trust
         if current and envelope.get("kind") == "snapshot":
             # A snapshot replaces the installed edition, so that edition need not verify with the current trust
             # file: after a publisher key is removed, a snapshot signed with a trusted key still installs. The
             # downgrade checks below then compare with the edition as it was verified when it was installed.
             try:
-                previous, _ = self.load_package(package_id, trust, instant, check_freshness=False)
+                previous, stored = self.load_package(package_id, trust, instant, check_freshness=False)
             except Refused:
-                previous, reverified = self.installed(package_id), False
+                previous = self.installed(package_id)
         elif current:
             previous, proofs = self.load_package(package_id, trust, instant, check_freshness=False)
         chain = [envelope] if envelope.get("kind") == "snapshot" else proofs + [envelope]
@@ -98,7 +107,10 @@ class Store:
         identity = digest(payload)
         if previous:
             if identity == digest(previous):
-                if not reverified:  # the same edition, re-signed: keep the proofs that verify with this trust
+                # The same edition, re-signed: keep the proofs that verify further with this trust. New proofs
+                # replace installed ones that no longer verify, or that verify only for reading when the new ones
+                # also allow live previews and orders (a demo edition re-signed after a key rotation).
+                if stored is None or (tradable(chain, trust, instant) and not tradable(stored, trust, instant)):
                     self.db.execute("UPDATE editions SET proofs=? WHERE package_id=? AND edition_id=? AND hash=?",
                                     (canonical(chain).decode(), package_id, payload["edition_id"], identity))
                 return payload
