@@ -41,6 +41,29 @@
       "latest_public_quarter": "2026-Q4"
     },
     {
+      "theme_id": "us-materials-industrial-policy",
+      "title": "US industrial-policy exposure in critical materials, batteries and nuclear supply chains",
+      "geographies": [
+        "US"
+      ],
+      "policy_ids": [
+        "US-defense-critical-materials",
+        "US-Bipartisan-Infrastructure-Law",
+        "US-Inflation-Reduction-Act",
+        "US-DOE-nuclear-fuel",
+        "US-CHIPS-and-Science-Act"
+      ],
+      "status": "researched",
+      "author_ids": [
+        "nxyziggy"
+      ],
+      "product_ids": [
+        "usmaterials"
+      ],
+      "committed_on": "2026-11-13",
+      "latest_public_quarter": "2026-Q4"
+    },
+    {
       "theme_id": "eu-clean-air",
       "title": "European clean-air and clean-energy industrial-policy research",
       "geographies": [

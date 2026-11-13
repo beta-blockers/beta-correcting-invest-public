@@ -5,6 +5,7 @@ author and is not yet independently reviewed. `Expired` is as of the last regene
 
 | Product | Quarter | Edition | Information cutoff | Valid until | Universe size | Expired |
 | --- | --- | --- | --- | --- | ---: | --- |
-| eu-clean-air | 2026-Q4 | eu-clean-air-2026-q4-oct31-sample | 2026-11-06T04:24:51.531890+00:00 | 2026-12-31T23:00:00+00:00 | 4 | no |
+| eu-clean-air | 2026-Q4 | eu-clean-air-2026-q4-nov06-sample | 2026-11-06T04:24:51.531890+00:00 | 2026-12-31T23:00:00+00:00 | 4 | no |
 | synthetic-example | 2020-Q1 | synthetic-example-2020-q1 | 2019-12-31T00:00:00+00:00 | 2020-04-01T00:00:00+00:00 | 3 | yes |
 | uschips | 2026-Q4 | 2026-Q4.r4-sample | 2026-10-31T04:34:12.239389+00:00 | 2027-01-01T05:00:00+00:00 | 10 | no |
+| usmaterials | 2026-Q4 | usmaterials-2026-q4-oct31-sample | 2026-11-01T03:59:59+00:00 | 2027-01-01T05:00:00+00:00 | 25 | no |

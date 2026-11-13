@@ -1,0 +1,11 @@
+{
+  "format": "public-pilot-product-v1",
+  "product_id": "usmaterials",
+  "theme_id": "us-materials-industrial-policy",
+  "author_id": "nxyziggy",
+  "cadence": "quarterly",
+  "universe_size": 25,
+  "methodology_summary": "USMaterialsPilot covers companies exposed to US industrial policy in minerals, metals, batteries and nuclear supply chains. The first free edition reconstructs a 25-company subset using evidence available by October 31, 2026. XE lacks confirmed pre-cutoff board independence and is unscored; EOSE and OKLO remain on the original unscored watchlist. Execution and governance, selected policy support and industrial-network position form three pillars. The initial screen includes composites strictly above the subset lower quartile and weights survivors in proportion to the network pillar in one sleeve, capped at 35%. Neutral treatments and dated annual or actual TTM financial estimates are disclosed. The universe and method were selected after the cutoff, so this is a retrospective reconstruction, not a historical portfolio record. Free editions are signed demos for reading and offline previews only. Research is author-published without independent review.",
+  "public_history_path": "history/usmaterials",
+  "review_status": "author_published"
+}

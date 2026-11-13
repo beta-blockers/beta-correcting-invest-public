@@ -3,9 +3,9 @@
   "key_id": "nxyziggy-2026-11",
   "payload": {
     "package_id": "eu-clean-air",
-    "edition_id": "eu-clean-air-2026-q4-oct31-sample",
+    "edition_id": "eu-clean-air-2026-q4-nov06-sample",
     "author_id": "nxyziggy",
-    "package_sha256": "59389c80c022ad6643262c1aba797683e67a8b3ad5eb913c7a29f77be0b3355f",
+    "package_sha256": "227b64b6b011977a0c56510482a1c9b6a8eef1492fd280c018d6fbc7301b408a",
     "as_of": "2026-11-06T04:39:01+00:00",
     "method": {
       "name": "EU clean-air three-pillar research with confirmed links and assigned campaign penalties",
@@ -114,5 +114,5 @@
       "The inception-quarter calculation uses one clean-air allocation group and a 35% position cap. These are archived research targets, not account holdings, orders, or a live portfolio. Exact serialized target decimals are preserved without re-optimization."
     ]
   },
-  "signature": "g6BbnCB3YgCGUgA3PYPdDPULt0bvjc1U1Giuzq2HZHHAfScCr9K51/VlhTQUc2guYT7578BPL7OYRDk83pmWAw=="
+  "signature": "rSmUxQXn94Ihi/H2D0TI7MadRu5DKnE1ejG8bfzKh/dDutUJ2SCAjlNxxHmDXEcXMYP/Pp0bEm0mnEjw5u5UDw=="
 }
