@@ -212,7 +212,7 @@ must stay `allow_paper: false`. Without `allow_paper`, a key's `demo` editions
 can be verified, installed, shown and previewed offline, and its `paper`
 editions are refused. A live preview or `execute-paper` needs `allow_paper` for
 every key in the edition's proof chain, for `demo` and `paper` editions alike
-(engine 0.4.0 and later; earlier engines never trade `demo` editions).
+(engine 0.3.1 and later; earlier engines never trade `demo` editions).
 
 Removing a key invalidates editions whose retained proof chain needs it. For
 key rotation, authorize the new key locally and obtain a fresh signed snapshot.

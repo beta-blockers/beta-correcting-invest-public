@@ -22,7 +22,7 @@ written for.
 
 **`purpose`** is `demo` or `paper`. Any reader who trusts your key can read a
 `demo` edition and preview it offline. A reader whose trust file allows paper
-for your key can also run it in a paper account, from engine 0.4.0. A `paper`
+for your key can also run it in a paper account, from engine 0.3.1. A `paper`
 edition is refused unless the reader's trust file allows paper. Editions
 published under `history/` are `demo`. There is no live purpose.
 

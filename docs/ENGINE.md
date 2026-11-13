@@ -102,7 +102,7 @@ previews need no broker account.
 
 ### Trade a demo edition on paper
 
-From engine 0.4.0, a current `demo` edition, such as a US sample under
+From engine 0.3.1, a current `demo` edition, such as a US sample under
 `history/`, can be previewed live and traded on paper once its trust file
 allows paper. `--allow-paper` grants that only to the product's active keys.
 Use a state directory of its own: a later `paper` edition of the same product
