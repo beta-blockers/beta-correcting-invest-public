@@ -183,11 +183,20 @@ COMPANION = "docs/" + WORD.upper() + "-Q4-2026-EVIDENCE-20261112.md"
 READING_REPORT = "docs/" + WORD.upper() + "-Q4-2026-REPORT-20261113.md"
 
 
-@pytest.mark.parametrize("relative", ["README.md", "docs/SAMPLE.md", COMPANION, READING_REPORT])
+@pytest.mark.parametrize("relative", ["README.md", "docs/SAMPLE.md"])
 def test_public_sample_entry_points_can_name_the_product(repo, relative):
     add(repo, relative, f"Read the {WORD.upper()} sample.\n")
     result = scan(repo)
     assert result.returncode == 0, result.stderr
+
+
+@pytest.mark.parametrize("relative", [COMPANION, READING_REPORT])
+def test_removed_companion_paths_have_no_export_exception(repo, relative):
+    # The path itself is refused even when the file's contents do not name the product.
+    add(repo, relative, "# A document without a product label.\n")
+    result = scan(repo)
+    assert result.returncode == 1
+    assert f"{relative} (path): {WORD} outside catalog/ and history/" in result.stderr
 
 
 @pytest.mark.parametrize("relative", ["README.md", "docs/SAMPLE.md", COMPANION, READING_REPORT])

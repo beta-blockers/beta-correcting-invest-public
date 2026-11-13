@@ -158,16 +158,17 @@ def test_public_sample_walkthrough_stops_before_install_after_tampering(tmp_path
     assert not list((repo / ".state").glob("*/state"))
 
 
-def test_evidence_companion_identifies_the_actual_sample_payload():
-    import json
+def test_sample_entry_points_identify_the_signed_report():
     from public_pilot.common import digest
 
     product = "us" + "chips"
     edition = ROOT / "history" / product / "2026-Q4"
     envelope = json.loads((edition / "edition.snapshot.json").read_text())
-    companion_name = product.upper() + "-Q4-2026-EVIDENCE-20261112.md"
-    companion = (ROOT / "docs" / companion_name).read_text()
-    assert digest(envelope["payload"]) in companion
-    assert envelope["payload"]["edition_id"] in companion
-    assert companion_name in (ROOT / "docs" / "SAMPLE.md").read_text()
-    assert companion_name in (ROOT / "README.md").read_text()
+    report = (edition / "REPORT.md").read_text()
+    assert digest(envelope["payload"]) in report
+    assert envelope["payload"]["edition_id"] in report
+    for document, prefix in ((ROOT / "README.md", ""), (ROOT / "docs" / "SAMPLE.md", "../")):
+        text = document.read_text()
+        assert f"]({prefix}history/{product}/2026-Q4/REPORT.md)" in text
+        for suffix in ("-Q4-2026-EVIDENCE-20261112.md", "-Q4-2026-REPORT-20261113.md"):
+            assert product.upper() + suffix not in text

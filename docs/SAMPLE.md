@@ -1,6 +1,6 @@
 # Read and preview the free USCHIPS sample
 
-[Read the Q4 2026 report](USCHIPS-Q4-2026-REPORT-20261113.md) directly on GitHub.
+[Read the signed Q4 2026 report](../history/uschips/2026-Q4/REPORT.md) directly on GitHub.
 It covers ten companies exposed to the US CHIPS Act and Inflation Reduction
 Act, with scores, inclusion or exit decisions, and seven positive target
 weights. No installation or account is needed to read it.
@@ -11,15 +11,8 @@ October 31 scorecard. The report explains the methodology, neutral factors,
 estimates and evidence limitations. It is author-published and not independently
 reviewed.
 
-The linked reading version is an unsigned editorial companion. It reproduces
-the published scores and weights and explains the sample in plain language.
-The [original signed report](../history/uschips/2026-Q4/REPORT.md) and the other
-edition files remain unchanged; the commands below verify those original files.
-
-[Check the public evidence supplement](USCHIPS-Q4-2026-EVIDENCE-20261112.md)
-for dated primary sources, specific claims, limitations and the verified edition
-hash. Coverage is selective. The companion distinguishes retained inputs from
-references added now; it is unsigned and outside the original signed release.
+The report is covered by the edition's signed release inventory. The commands
+below verify the report and other published edition files.
 
 **This sample is an offline demo.** Its `purpose: demo` prevents Alpaca paper
 orders even before expiry. It was unexpired on November 12, 2026 and expires at
@@ -77,7 +70,7 @@ against the fictional account. No broker account or API keys are needed.
 ```
 
 The verification commands report `"status": "verified"`; snapshot verification
-prints the `sha256` to compare with the evidence supplement. The final preview
+prints the snapshot payload's `sha256`. The final preview
 contains `"offline": true` inside its plan and `"orders_submitted": 0`.
 The plan shows whole-share positions, illustrative limit orders and the local
 plan ID. Share rounding leaves some of the fictional account in cash.
@@ -89,9 +82,7 @@ or `false`.
 
 ## Inspect the report and published files
 
-- [Reading report](USCHIPS-Q4-2026-REPORT-20261113.md): a self-contained introduction,
-  methodology, company assessments, scores, decisions, weights and limitations.
-- [Original signed report](../history/uschips/2026-Q4/REPORT.md): the unchanged
+- [Signed report](../history/uschips/2026-Q4/REPORT.md): the unchanged
   report covered by the edition's release inventory.
 - [Signed snapshot](../history/uschips/2026-Q4/edition.snapshot.json): the
   universe, target weights, research text, dates and demo purpose.
@@ -100,8 +91,6 @@ or `false`.
 - [Release inventory](../history/uschips/2026-Q4/release.json): signed hashes
   for the report, snapshot, evaluation and fictional account fixture.
 - [All public editions](../history/INDEX.md): the catalog's history index.
-- [Evidence companion](USCHIPS-Q4-2026-EVIDENCE-20261112.md): selective public
-  citations added separately, with provenance labels and unresolved gaps.
 
 Signatures establish authorship and unchanged content. The report's limitations
 remain part of the sample; verification does not establish research accuracy.
