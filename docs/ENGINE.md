@@ -168,9 +168,12 @@ plan, for example one the broker rejected for insufficient buying power; preview
 fresh plan. Do not delete state or create a replacement plan while a submission
 is uncertain. See [operations](OPERATIONS.md) for recovery.
 
-Without `--max-order`, a single order is at most USD 1,000. One share must fit in
-an order, so a plan can buy shares priced up to about USD 1,000; the preview
-refuses a plan that needs a dearer share and names that stock.
+Without these options, a preview plans for up to USD 100,000 of the paper
+account, never more than its equity, with at most USD 50,000 in any one order and
+USD 100,000 of buys and sells in all. `examples/paper.env.example` sets the same
+limits. One share must fit in an order, so a plan can buy shares priced up to
+about USD 50,000; the preview refuses a plan that needs a dearer share and names
+that stock.
 
 ## Scope and limits
 

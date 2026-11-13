@@ -9,8 +9,9 @@ from .common import decimal, digest, fields, iso, require, timestamp
 
 @dataclass(frozen=True)
 class Limits:
+    # Library defaults. The command line sets its own: cli.DEFAULT_ALLOCATION and the others beside it.
     allocation_usd: str = "1000"
-    max_order_usd: str = "250"  # library default; the command line's is cli.DEFAULT_MAX_ORDER
+    max_order_usd: str = "250"
     max_turnover_usd: str = "1000"
     max_position_weight: str = "0.5"
     collar_bps: int = 25

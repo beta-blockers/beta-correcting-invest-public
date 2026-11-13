@@ -331,20 +331,28 @@ def account_fixture(tmp_path, ask, cash="5000"):
         "assets": {s: {"tradable": True} for s in ("DEMOA", "DEMOB")}})
 
 
-def test_the_command_line_buys_shares_priced_up_to_its_default_order_limit(tmp_path, author, payload, capsys):
-    assert cli.parser().parse_args(["preview", "test-research"]).max_order == cli.DEFAULT_MAX_ORDER == "1000"
-    assert f"\nPILOT_MAX_ORDER={cli.DEFAULT_MAX_ORDER}\n" in (ROOT / "examples" / "paper.env.example").read_text()
+def test_the_command_line_plans_a_100000_usd_paper_account_with_orders_of_at_most_50000_usd(tmp_path, author,
+                                                                                            payload, capsys):
+    defaults = cli.parser().parse_args(["preview", "test-research"])
+    assert (defaults.allocation, defaults.max_order, defaults.max_turnover) == ("100000", "50000", "100000")
+    example = (ROOT / "examples" / "paper.env.example").read_text()
+    for name, value in [("PILOT_ALLOCATION", defaults.allocation), ("PILOT_MAX_ORDER", defaults.max_order),
+                        ("PILOT_MAX_TURNOVER", defaults.max_turnover), ("PILOT_MAX_WEIGHT", defaults.max_weight)]:
+        assert f"\n{name}={value}\n" in example
+    payload["targets"] = {"DEMOA": "0.5", "DEMOB": "0.4"}
     args = current_edition(tmp_path, author, payload, capsys)
-    sized = ["--allocation", "5000", "--max-turnover", "5000"]
-    code, preview = call(capsys, args + ["preview", "test-research", "--offline", account_fixture(tmp_path, "900")]
-                         + sized)
-    assert code == 0
+    account = account_fixture(tmp_path, "100", cash="100000")
+    code, preview = call(capsys, args + ["preview", "test-research", "--offline", account])
+    assert code == 0 and preview["plan"]["allocation_usd"] == "100000"
     assert [(o["symbol"], o["qty"], o["limit_price"]) for o in preview["plan"]["orders"]] == [
-        ("DEMOA", "1", "902.25"), ("DEMOA", "1", "902.25"), ("DEMOB", "1", "902.25"), ("DEMOB", "1", "902.25")]
-    code, refusal = call(capsys, args + ["preview", "test-research", "--offline", account_fixture(tmp_path, "1000")]
-                         + sized)
-    assert code == 2 and refusal["reason"] == (
-        "DEMOA: One share exceeds the per-order limit (limit price 1002.50 USD, per-order limit 1000 USD)")
+        ("DEMOA", "498", "100.25"), ("DEMOB", "399", "100.25")]
+    # A smaller per-order limit still splits the same positions into orders that each fit.
+    code, split = call(capsys, args + ["preview", "test-research", "--offline", account, "--max-order", "20000"])
+    assert code == 0 and [(o["symbol"], o["qty"]) for o in split["plan"]["orders"]] == [
+        ("DEMOA", "199"), ("DEMOA", "199"), ("DEMOA", "100"), ("DEMOB", "199"), ("DEMOB", "199"), ("DEMOB", "1")]
+    # The plan never uses more than the account's equity.
+    code, small = call(capsys, args + ["preview", "test-research", "--offline", account_fixture(tmp_path, "50")])
+    assert code == 0 and small["plan"]["allocation_usd"] == "5000"
 
 
 def test_a_preview_blocked_by_an_unresolved_plan_names_that_plan(tmp_path, author, payload, capsys):
