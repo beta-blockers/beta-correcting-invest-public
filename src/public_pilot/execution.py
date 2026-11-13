@@ -1,31 +1,26 @@
 """Serial, durable paper submissions with explicit resume and cancellation."""
 from __future__ import annotations
 
-from datetime import timedelta
-
-from .broker import BrokerRefused
-from .common import decimal, digest, iso, loads, now, require, timestamp
+from .broker import OrderRejected
+from .common import decimal, digest, loads, now, require, timestamp
 from .planning import Limits, account_ok, order_symbols, positions, quote
 
 TERMINAL = {"filled", "canceled", "expired", "rejected"}
 PENDING = {"new", "accepted", "pending_new", "partially_filled", "pending_cancel", "accepted_for_bidding"}
-# Recorded for submissions that never became broker orders; neither is ever a broker status.
-REFUSED = "submission_refused"  # the broker answered the submission with a refusal
-NEVER_PLACED = "never_placed"  # no answer, and the broker still had no order long after it could have arrived
-# A submission starts only while its plan is fresh. This long after that window, a submission that the broker
-# still has no order for under its client ID never reached it.
-SETTLE_SECONDS = 300
+# Recorded for a submission that the broker rejected outright, creating no order. Never a broker order status.
+REJECTED = "submission_rejected"
 
 
 def client_id(identity, index):
     return f"ppe-{identity[:32]}-{index}"
 
 
-def settled_at(plan):
-    """From when an unanswered submission of this plan counts as never placed if the broker cannot find it."""
-    limits = Limits(**plan["limits"])
-    limits.validate()
-    return timestamp(plan["created_at"]) + timedelta(seconds=limits.plan_max_age_seconds + SETTLE_SECONDS)
+def unresolved(symbol, previous):
+    """The refusal for an attempted order that the broker cannot find. A failed lookup never proves that no order
+    was created: only the broker showing the order, or rejecting its submission outright, resolves it."""
+    if previous:
+        return f"{symbol}: The broker no longer finds an order it reported; inspect broker history manually"
+    return f"{symbol}: Submission outcome is uncertain; no retry. Inspect broker history manually"
 
 
 def validate_observation(observation, order, coid, previous=None):
@@ -78,9 +73,7 @@ def execute(store, identity, broker, trust, *, clock=now):
         if record["attempted"]:
             # A verified complete fill is final, so only unfinished orders are looked up again.
             observed = previous if previous and previous.get("status") == "filled" else broker.lookup(coid)
-            require(observed is not None,
-                    f"{symbol}: Submission outcome is uncertain; no retry. Inspect broker history manually. "
-                    f"From {iso(settled_at(plan))}, cancel-paper closes this plan without resending the order")
+            require(observed is not None, unresolved(symbol, previous))
         else:
             instant = clock()
             # Resume may observe old orders after expiry, but must never place a new one.
@@ -94,7 +87,9 @@ def execute(store, identity, broker, trust, *, clock=now):
                         and order["side"] == plan["activation"]["sides"][symbol]
                         and plan["activation"]["package_sha256"] == plan["package_sha256"],
                         "Activation expired or changed")
-            snapshot = broker.snapshot(payload["universe"])
+            # A fresh observation for this order: the account, the market session, and this stock's quote and
+            # tradability, all read again before every submission.
+            snapshot = broker.snapshot([symbol])
             instant = clock()
             account_ok(snapshot, instant)
             require(instant < timestamp(fresh["valid_until"]) and
@@ -126,14 +121,21 @@ def execute(store, identity, broker, trust, *, clock=now):
             # by its client ID and never sent again.
             store.mark_attempt(identity, index)
             try:
-                broker.submit({**order, "client_order_id": coid})
-            except BrokerRefused as exc:
-                # The broker answered and refused, so no order exists: settle the intent and stop this plan.
-                store.refuse(identity, index, {"client_order_id": coid, "symbol": symbol, "status": REFUSED,
+                accepted = broker.submit({**order, "client_order_id": coid})
+            except OrderRejected as exc:
+                # The broker rejected the submission and created no order: settle the intent and stop this plan.
+                store.reject(identity, index, {"client_order_id": coid, "symbol": symbol, "status": REJECTED,
                                                "http_status": exc.status_code, "detail": exc.detail})
-                return {"plan_id": identity, "status": "halted", "order_status": REFUSED, "symbol": symbol,
+                return {"plan_id": identity, "status": "halted", "order_status": REJECTED, "symbol": symbol,
                         "reason": str(exc), "next_step": "Inspect fills and create a fresh preview"}
+            if isinstance(accepted, dict) and accepted.get("client_order_id") == coid:
+                # The broker's answer shows that the order exists. Keep it before asking the broker anything else.
+                validate_observation(accepted, order, coid)
+                store.record(identity, index, accepted)
+                previous = accepted
             observed = broker.lookup(coid)
+            if observed is None:
+                observed = previous  # accepted, but not visible to a lookup yet
             require(observed is not None, f"{symbol}: Submission awaits reconciliation; never resend it")
         status, filled = validate_observation(observed, order, coid, previous)
         store.record(identity, index, observed)
@@ -149,14 +151,13 @@ def execute(store, identity, broker, trust, *, clock=now):
     return {"plan_id": identity, "status": "complete"}
 
 
-def cancel(store, identity, broker, *, clock=now):
-    instant = clock()
+def cancel(store, identity, broker):
     plan, state = store.plan(identity)
     require(not plan["offline"], "Offline previews have no broker orders")
     require(broker.account_id() == plan["account_id"], "Paper account binding changed")
     if state in ("complete", "canceled", "halted"):
         return {"plan_id": identity, "status": state}
-    pending, never_placed = False, []
+    pending = False
     for index, order in enumerate(plan["orders"]):
         record = store.order(identity, index)
         if not record["attempted"]:
@@ -164,34 +165,19 @@ def cancel(store, identity, broker, *, clock=now):
         symbol = order["symbol"]
         coid = client_id(identity, index)
         previous = loads(record["observation"]) if record["observation"] else None
-        if previous and previous.get("status") in TERMINAL | {REFUSED, NEVER_PLACED}:
+        if previous and previous.get("status") in TERMINAL | {REJECTED}:
             continue  # nothing is left to cancel, and a final record is not looked up again
         observed = broker.lookup(coid)
-        if observed is None:
-            # The broker has no order under this client ID. One it reported earlier and lost needs a person.
-            require(previous is None,
-                    f"{symbol}: The broker no longer finds an order it reported; inspect broker history manually")
-            # It never answered the submission. Once no submission of this plan could still arrive, the order
-            # was never placed: close the plan without ever sending it again.
-            settle = settled_at(plan)
-            require(instant >= settle,
-                    f"{symbol}: Cannot cancel an uncertain submission yet: the broker has no order under its "
-                    f"client ID. Run cancel-paper again from {iso(settle)} to close this plan without resending it")
-            store.record(identity, index, {"client_order_id": coid, "symbol": symbol, "status": NEVER_PLACED,
-                                           "checked_at": iso(instant)})
-            never_placed.append({"symbol": symbol, "client_order_id": coid})
-            continue
+        require(observed is not None, unresolved(symbol, previous))
         status, _ = validate_observation(observed, order, coid, previous)
+        # Keep what the broker reported before asking it to cancel.
+        store.record(identity, index, observed)
         if status not in TERMINAL:
             broker.cancel(observed["id"])
             updated = broker.lookup(coid)
             require(updated is not None, f"{symbol}: Cancellation awaits reconciliation")
             status, _ = validate_observation(updated, order, coid, observed)
-            observed = updated
+            store.record(identity, index, updated)
         pending |= status not in TERMINAL
-        store.record(identity, index, observed)
     store.status(identity, "started" if pending else "canceled")
-    result = {"plan_id": identity, "status": "cancel_pending" if pending else "canceled"}
-    if never_placed:
-        result["never_placed"] = never_placed
-    return result
+    return {"plan_id": identity, "status": "cancel_pending" if pending else "canceled"}

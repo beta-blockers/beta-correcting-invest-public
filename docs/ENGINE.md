@@ -164,7 +164,7 @@ There is no background scheduler. Use a dedicated paper account without other
 strategies or manual orders while a plan is running. A preview is valid for 120
 seconds. A `pending` result means the run is unfinished: repeat `execute-paper`
 for the **same** plan. A `halted` result names the stock whose order stopped the
-plan, for example one the broker refused for insufficient buying power; preview a
+plan, for example one the broker rejected for insufficient buying power; preview a
 fresh plan. Do not delete state or create a replacement plan while a submission
 is uncertain. See [operations](OPERATIONS.md) for recovery.
 
@@ -186,9 +186,7 @@ refuses a plan that needs a dearer share and names that stock.
   A refusal that concerns one stock begins with its symbol.
 - A lost submission response is reconciled by client order ID. If its outcome
   cannot be established, the runtime stops; it never guesses that resending is safe.
-  An order the broker refuses outright halts the plan instead. Once the plan's
-  submission window has passed, `cancel-paper` closes a plan whose unanswered
-  submission the broker still cannot find. The order is never resent.
+  An order the broker rejects outright, creating no order, halts the plan instead.
 - Package expiry or a changed edition blocks new submissions. Cancellation stays
   available even after package expiry or publisher-key revocation. After a key is
   removed from the trust file, a full snapshot signed with a trusted key replaces

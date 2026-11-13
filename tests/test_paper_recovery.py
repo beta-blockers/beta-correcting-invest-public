@@ -1,5 +1,5 @@
-"""Ways out of a stopped paper plan, lookups that a resumed plan skips, and refusals that name the stock.
-All symbols and values are fictional."""
+"""Ways out of a stopped paper plan, the broker answers that are kept, lookups that a resumed plan skips, and
+refusals that name the stock. All symbols and values are fictional."""
 from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -8,34 +8,57 @@ import pytest
 
 from conftest import AT, FakeBroker
 from public_pilot import cli
-from public_pilot.broker import BrokerRefused
+from public_pilot.broker import OrderRejected
 from public_pilot.common import Refused, iso, loads, now
-from public_pilot.execution import NEVER_PLACED, REFUSED, SETTLE_SECONDS, cancel, client_id, execute
+from public_pilot.execution import REJECTED, cancel, client_id, execute
 from public_pilot.planning import Limits, build_plan
 from public_pilot.state import Store
 from support import call, write
 
 ROOT = Path(__file__).resolve().parents[1]
-SETTLED = AT + timedelta(seconds=Limits().plan_max_age_seconds + SETTLE_SECONDS)
+UNCERTAIN = "^DEMOA: Submission outcome is uncertain; no retry. Inspect broker history manually$"
+REPORTED = "^DEMOA: The broker no longer finds an order it reported; inspect broker history manually$"
 
 
 def run(store, identity, broker, trust, at=AT):
     return execute(store, identity, broker, trust, clock=lambda: at)
 
 
-class Refusing(FakeBroker):
-    """Refuses one submission outright, as the broker does for insufficient buying power."""
+def planned(store, author, payload, snapshot):
+    trust, sign = author
+    store.install(sign(payload), trust, AT)
+    return store.save_plan(build_plan(payload, snapshot, Limits(), AT))
 
-    def __init__(self, snapshot, refuse_at):
+
+class Rejecting(FakeBroker):
+    """Rejects one submission outright, as the broker does for insufficient buying power."""
+
+    def __init__(self, snapshot, reject_at):
         super().__init__(snapshot)
-        self.refuse_at = refuse_at
+        self.reject_at = reject_at
 
     def submit(self, order):
-        if self.posts + 1 == self.refuse_at:
+        if self.posts + 1 == self.reject_at:
             self.posts += 1
-            raise BrokerRefused("Broker returned HTTP 403: insufficient buying power; no automatic submission retry",
+            raise OrderRejected("Broker returned HTTP 403: insufficient buying power; no automatic submission retry",
                                 403, "insufficient buying power")
         return super().submit(order)
+
+
+class Hiding(FakeBroker):
+    """Accepts orders but cannot show them to a lookup yet, or fails to answer the lookup at all."""
+
+    def __init__(self, snapshot, failure):
+        super().__init__(snapshot)
+        self.failure = failure
+        self.fill_on_submit = False
+
+    def lookup(self, coid):
+        if self.failure and coid in self.orders:
+            if self.failure == "error":
+                raise Refused("Broker transport failed; any attempted submission requires reconciliation")
+            return None
+        return super().lookup(coid)
 
 
 class Counting(FakeBroker):
@@ -48,19 +71,23 @@ class Counting(FakeBroker):
         return super().lookup(coid)
 
 
-def test_a_refused_submission_halts_the_plan_and_a_fresh_plan_trades_the_rest(store, author, payload, snapshot):
-    trust, sign = author
-    store.install(sign(payload), trust, AT)
-    identity = store.save_plan(build_plan(payload, snapshot, Limits(), AT))
+class CancelFails(FakeBroker):
+    def cancel(self, broker_id):
+        raise Refused("Broker transport failed; any attempted submission requires reconciliation")
+
+
+def test_a_rejected_submission_halts_the_plan_and_a_fresh_plan_trades_the_rest(store, author, payload, snapshot):
+    trust = author[0]
+    identity = planned(store, author, payload, snapshot)
     assert [o["symbol"] for o in store.plan(identity)[0]["orders"]] == ["DEMOA", "DEMOA", "DEMOB", "DEMOB"]
-    broker = Refusing(snapshot, refuse_at=3)
-    result = run(store, identity, broker, trust)
-    assert result == {"plan_id": identity, "status": "halted", "order_status": REFUSED, "symbol": "DEMOB",
-                      "reason": "Broker returned HTTP 403: insufficient buying power; no automatic submission retry",
-                      "next_step": "Inspect fills and create a fresh preview"}
+    broker = Rejecting(snapshot, reject_at=3)
+    assert run(store, identity, broker, trust) == {
+        "plan_id": identity, "status": "halted", "order_status": REJECTED, "symbol": "DEMOB",
+        "reason": "Broker returned HTTP 403: insufficient buying power; no automatic submission retry",
+        "next_step": "Inspect fills and create a fresh preview"}
     record = store.order(identity, 2)
     assert record["attempted"] == 1 and loads(record["observation"]) == {
-        "client_order_id": client_id(identity, 2), "symbol": "DEMOB", "status": REFUSED, "http_status": 403,
+        "client_order_id": client_id(identity, 2), "symbol": "DEMOB", "status": REJECTED, "http_status": 403,
         "detail": "insufficient buying power"}
     assert not store.outstanding()
     assert run(store, identity, broker, trust) == {"plan_id": identity, "status": "halted"}
@@ -72,26 +99,60 @@ def test_a_refused_submission_halts_the_plan_and_a_fresh_plan_trades_the_rest(st
     assert broker.data["positions"] == {"DEMOA": "3", "DEMOB": "3"} and broker.posts == 5
 
 
-def test_an_unanswered_submission_is_never_resent_and_cancel_closes_the_plan_once_settled(store, prepared, author):
+def test_an_unanswered_submission_is_resolved_only_by_the_broker(store, prepared, author):
     identity, broker = prepared
     broker.lose_response = True
     broker.accept_before_loss = False
     with pytest.raises(Refused, match="lost"):
         run(store, identity, broker, author[0])
-    with pytest.raises(Refused, match="^DEMOA: Submission outcome is uncertain; no retry") as uncertain:
-        run(store, identity, broker, author[0])
-    assert f"From {iso(SETTLED)}, cancel-paper closes this plan" in str(uncertain.value)
-    with pytest.raises(Refused, match="^DEMOA: Cannot cancel an uncertain submission yet") as early:
-        cancel(store, identity, broker, clock=lambda: SETTLED - timedelta(seconds=1))
-    assert f"again from {iso(SETTLED)}" in str(early.value)
-    assert store.outstanding()
-    assert cancel(store, identity, broker, clock=lambda: SETTLED) == {
-        "plan_id": identity, "status": "canceled",
-        "never_placed": [{"symbol": "DEMOA", "client_order_id": client_id(identity, 0)}]}
-    assert loads(store.order(identity, 0)["observation"])["status"] == NEVER_PLACED
-    assert not store.outstanding()
-    assert run(store, identity, broker, author[0]) == {"plan_id": identity, "status": "canceled"}
-    assert broker.posts == 1 and not broker.orders
+    # However much later, a lookup miss is not proof that no order was created.
+    with pytest.raises(Refused, match=UNCERTAIN):
+        run(store, identity, broker, author[0], at=AT + timedelta(days=30))
+    with pytest.raises(Refused, match=UNCERTAIN):
+        cancel(store, identity, broker)
+    assert store.outstanding() and broker.posts == 1
+    coid = client_id(identity, 0)
+    broker.orders[coid] = {**store.plan(identity)[0]["orders"][0], "client_order_id": coid, "id": "broker-late",
+                           "status": "accepted", "filled_qty": "0", "filled_avg_price": None}
+    assert cancel(store, identity, broker) == {"plan_id": identity, "status": "canceled"}
+    assert broker.orders[coid]["status"] == "canceled" and broker.posts == 1
+
+
+@pytest.mark.parametrize("failure", ["hidden", "error"])
+def test_the_brokers_acceptance_is_kept_before_the_lookup(store, author, payload, snapshot, failure):
+    trust = author[0]
+    identity = planned(store, author, payload, snapshot)
+    broker = Hiding(snapshot, failure)
+    coid = client_id(identity, 0)
+    if failure == "hidden":
+        assert run(store, identity, broker, trust)["status"] == "pending"
+    else:
+        with pytest.raises(Refused, match="transport failed"):
+            run(store, identity, broker, trust)
+    kept = loads(store.order(identity, 0)["observation"])
+    assert (kept["id"], kept["status"]) == ("broker-" + coid, "accepted")
+    if failure == "hidden":
+        with pytest.raises(Refused, match=REPORTED):
+            run(store, identity, broker, trust)
+        with pytest.raises(Refused, match=REPORTED):
+            cancel(store, identity, broker)
+    assert store.outstanding() and broker.posts == 1
+    broker.failure = None
+    assert cancel(store, identity, broker) == {"plan_id": identity, "status": "canceled"}
+    assert broker.posts == 1
+
+
+def test_a_reported_order_is_kept_before_the_cancellation_request(store, author, payload, snapshot):
+    identity = planned(store, author, payload, snapshot)
+    broker = CancelFails(snapshot)
+    broker.fill_on_submit = False
+    assert run(store, identity, broker, author[0])["status"] == "pending"
+    order = broker.orders[client_id(identity, 0)]
+    order.update(status="partially_filled", filled_qty="1", filled_avg_price=order["limit_price"])
+    with pytest.raises(Refused, match="transport failed"):
+        cancel(store, identity, broker)
+    kept = loads(store.order(identity, 0)["observation"])
+    assert (kept["status"], kept["filled_qty"]) == ("partially_filled", "1")
 
 
 def test_an_unanswered_submission_that_reached_the_broker_is_cancelled_normally(store, prepared, author):
@@ -100,7 +161,7 @@ def test_an_unanswered_submission_that_reached_the_broker_is_cancelled_normally(
     broker.lose_response = True  # the broker accepts the order, then the response is lost
     with pytest.raises(Refused, match="lost"):
         run(store, identity, broker, author[0])
-    assert cancel(store, identity, broker, clock=lambda: AT) == {"plan_id": identity, "status": "canceled"}
+    assert cancel(store, identity, broker) == {"plan_id": identity, "status": "canceled"}
     assert [o["status"] for o in broker.orders.values()] == ["canceled"]
 
 
@@ -109,15 +170,16 @@ def test_an_order_the_broker_reported_and_then_lost_is_never_written_off(store, 
     broker.fill_on_submit = False
     assert run(store, identity, broker, author[0])["status"] == "pending"
     broker.orders.clear()
-    with pytest.raises(Refused, match="^DEMOA: The broker no longer finds an order it reported"):
-        cancel(store, identity, broker, clock=lambda: AT + timedelta(days=1))
+    with pytest.raises(Refused, match=REPORTED):
+        run(store, identity, broker, author[0], at=AT + timedelta(days=1))
+    with pytest.raises(Refused, match=REPORTED):
+        cancel(store, identity, broker)
     assert store.outstanding()
 
 
 def test_a_resumed_plan_does_not_look_up_orders_already_filled(store, author, payload, snapshot):
-    trust, sign = author
-    store.install(sign(payload), trust, AT)
-    identity = store.save_plan(build_plan(payload, snapshot, Limits(), AT))
+    trust = author[0]
+    identity = planned(store, author, payload, snapshot)
     broker = Counting(snapshot)
     broker.fill_on_submit = False
     first, second, third = (client_id(identity, i) for i in range(3))
@@ -133,9 +195,8 @@ def test_a_resumed_plan_does_not_look_up_orders_already_filled(store, author, pa
 
 
 def test_cancelling_looks_up_only_unfinished_orders(store, author, payload, snapshot):
-    trust, sign = author
-    store.install(sign(payload), trust, AT)
-    identity = store.save_plan(build_plan(payload, snapshot, Limits(), AT))
+    trust = author[0]
+    identity = planned(store, author, payload, snapshot)
     broker = Counting(snapshot)
     broker.fill_on_submit = False
     first, second = client_id(identity, 0), client_id(identity, 1)

@@ -32,26 +32,29 @@ credentials. Back it up as local operational data, not as a research product.
 
 Before submission, the order's deterministic client ID and attempt flag are
 durably recorded. A restart looks up attempted orders instead of resending them.
-Only a complete verified fill allows progression to the next order; an order
-recorded as completely filled is not looked up again. All sells precede buys, and
-buys use currently observed cash after confirmed fills.
+What the broker reports is recorded before the next request: the order it returns
+when it accepts a submission, and an order it shows during cancellation. Only a
+complete verified fill allows progression to the next order; an order recorded as
+completely filled is not looked up again. All sells precede buys, and buys use
+currently observed cash after confirmed fills.
 
-If the broker answers a submission with a refusal, an HTTP 4xx status other than
-408 such as 403 for insufficient buying power or 429 for too many requests, it
-created no order. The engine records the refusal with the order, halts the plan
-and reports the stock and the broker's reason. `execute-paper` and `cancel-paper`
-then report the plan as `halted`, and a fresh preview is allowed.
+If the broker rejects a submission outright, it created no order: HTTP 401, 403
+(for example, insufficient buying power) or 429, or a 400 or 422 with a reason,
+such as an invalid order. The engine records the rejection with the order, halts
+the plan and reports the stock and the broker's reason. `execute-paper` and
+`cancel-paper` then report the plan as `halted`, and a fresh preview is allowed.
+A refusal that names the client order ID is not a rejection: Alpaca answers 422
+`client_order_id must be unique` when another active order already uses the ID,
+so an order with that ID exists.
 
-If a transport failure occurs, or the broker answers with a server error, run the
-same `execute-paper` command again. If the broker returns the matching order, its
+Any other unsuccessful submission stays unresolved: a transport failure, a server
+error, a duplicate client order ID, or another refusal. Run the same
+`execute-paper` command again. If the broker returns the matching order, its
 terms, status, and fill quantity are checked. If it cannot find an attempted
-order, the engine remains blocked: a missing response is not proof that the
-broker never received the submission. Inspect the paper account and its order
-history. The order is never resent. A submission can start only while its plan
-is fresh (120 seconds by default). Once that window and five further minutes have
-passed, `cancel-paper` asks the broker again; if it still has no order under that
-client ID, the order is recorded as never placed, listed under `never_placed`,
-and the plan closes. Before then, `cancel-paper` refuses and names the time.
+order, the engine remains blocked, however much later: a missing response or a
+failed lookup is not proof that the broker never received the submission. Inspect
+the paper account and its order history manually. This version has no override
+for erasing an uncertain submission or declaring it safe to retry.
 
 `cancel-paper` only cancels broker orders whose identity and full terms match
 the stored plan. Cancellation may require another invocation to observe the
@@ -70,10 +73,10 @@ the active research package while a plan is running.
 - Orders/account: `https://paper-api.alpaca.markets/v2/`
 - Quotes: `https://data.alpaca.markets/v2/stocks/quotes/latest?feed=iex`
 - HTTPS redirects and proxy-environment inheritance are disabled.
-- Each command reads asset tradability once per symbol, with one listing of
-  active US equities for several symbols, and reuses an open market-clock reading
-  until a minute before the close. Before each order it still reads the account,
-  positions, open orders and current quotes.
+- A preview reads the tradability of its whole universe with one listing of
+  active US equities. Before each order, `execute-paper` reads the account,
+  positions, market clock and open orders again, and that stock's quote and
+  tradability.
 - There is no configurable trading host, live-mode flag, dynamic plug-in loader,
   package command hook, research crawler, or LLM integration.
 - Orders use whole-share quantities, DAY duration, regular sessions, and explicit

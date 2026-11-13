@@ -1,5 +1,5 @@
-"""How many requests the paper broker client makes, and how it reports refusals. A simulated venue answers every
-request; all symbols and values are fictional."""
+"""How many requests the paper broker client makes, what it reads before each order, and how it classifies refused
+submissions. A simulated venue answers every request; all symbols and values are fictional."""
 from datetime import timedelta
 from decimal import Decimal
 import json
@@ -7,13 +7,14 @@ import json
 import httpx
 import pytest
 
-from conftest import AT
 from public_pilot import cli
-from public_pilot.broker import AlpacaPaper, BrokerRefused
+from public_pilot.broker import AlpacaPaper, BrokerRefused, OrderRejected
 from public_pilot.common import Refused, iso, now
+from public_pilot.execution import client_id
 from support import call, write
 
 LISTED = ("DEMOA", "DEMOB", "DEMOC")
+ACCOUNT = ["--account", "paper-test-account"]
 
 
 @pytest.fixture(autouse=True)
@@ -25,55 +26,61 @@ def credentials(monkeypatch):
 class Venue:
     """A simulated paper venue that fills marketable orders at once and keeps every request it receives."""
 
-    def __init__(self, clock=now, close=None):
-        self.clock = clock
-        self.close = close
+    def __init__(self):
         self.requests = []
         self.cash = Decimal("1000")
         self.positions = {}
         self.orders = {}
-        self.refuse_submission = None  # (HTTP status, message) for an outright refusal of submissions
+        self.open = True
+        self.untradable = set()
+        self.refuse_submission = None  # (HTTP status, message) to answer every submission with
+        self.after_submission = lambda: None
 
     def count(self, method, path):
         return sum(1 for r in self.requests if r.method == method and r.url.path == path)
 
+    def place(self, order):
+        qty, price = Decimal(order["qty"]), Decimal(order["limit_price"])
+        self.positions[order["symbol"]] = self.positions.get(order["symbol"], 0) + qty
+        self.cash -= qty * price
+        self.orders[order["client_order_id"]] = {**order, "id": f"venue-{len(self.orders)}", "status": "filled",
+                                                 "filled_qty": order["qty"], "filled_avg_price": order["limit_price"]}
+        return self.orders[order["client_order_id"]]
+
+    def asset(self, symbol):
+        return {"symbol": symbol, "class": "us_equity", "tradable": symbol not in self.untradable}
+
     def __call__(self, request):
         self.requests.append(request)
-        path, at = request.url.path, self.clock()
+        path = request.url.path
         if path == "/v2/account":
             return httpx.Response(200, json={"id": "paper-test-account", "status": "ACTIVE", "currency": "USD",
                                              "cash": str(self.cash), "equity": "1000"})
         if path == "/v2/positions":
             return httpx.Response(200, json=[{"symbol": s, "qty": str(q)} for s, q in self.positions.items()])
         if path == "/v2/clock":
-            close = self.close or at + timedelta(hours=2)
-            return httpx.Response(200, json={"is_open": at < close, "next_close": iso(close)})
+            return httpx.Response(200, json={"is_open": self.open, "next_close": iso(now() + timedelta(hours=2))})
         if path == "/v2/orders" and request.method == "GET":
             return httpx.Response(200, json=[])
         if path == "/v2/orders" and request.method == "POST":
             if self.refuse_submission:
                 status, message = self.refuse_submission
-                return httpx.Response(status, json={"code": 40310000, "message": message})
-            order = json.loads(request.content)
-            qty, price = Decimal(order["qty"]), Decimal(order["limit_price"])
-            self.positions[order["symbol"]] = self.positions.get(order["symbol"], 0) + qty
-            self.cash -= qty * price
-            created = {**order, "id": f"venue-{len(self.orders)}", "status": "filled",
-                       "filled_qty": order["qty"], "filled_avg_price": order["limit_price"]}
-            self.orders[order["client_order_id"]] = created
-            return httpx.Response(200, json=created)
+                return httpx.Response(status, json={"code": 40010001, "message": message})
+            placed = self.place(json.loads(request.content))
+            self.after_submission()
+            return httpx.Response(200, json=placed)
         if path == "/v2/orders:by_client_order_id":
             order = self.orders.get(request.url.params["client_order_id"])
             return httpx.Response(200, json=order) if order else httpx.Response(404, json={"message": "not found"})
         if path == "/v2/assets":
-            return httpx.Response(200, json=[{"symbol": s, "class": "us_equity", "tradable": True} for s in LISTED])
+            return httpx.Response(200, json=[self.asset(s) for s in LISTED])
         if path.startswith("/v2/assets/"):
             symbol = path.rsplit("/", 1)[1]
             if symbol in LISTED:
-                return httpx.Response(200, json={"symbol": symbol, "class": "us_equity", "tradable": True})
+                return httpx.Response(200, json=self.asset(symbol))
             return httpx.Response(404, json={"message": "asset not found"})
         if path == "/v2/stocks/quotes/latest":
-            return httpx.Response(200, json={"quotes": {s: {"bp": 99.9, "ap": 100, "t": iso(at)}
+            return httpx.Response(200, json={"quotes": {s: {"bp": 99.9, "ap": 100, "t": iso(now())}
                                                         for s in request.url.params["symbols"].split(",")}})
         return httpx.Response(500, json={"message": "unexpected request"})
 
@@ -82,67 +89,81 @@ def client(venue):
     return AlpacaPaper(transport=httpx.MockTransport(venue))
 
 
-def test_several_symbols_cost_one_asset_listing_and_the_clock_is_read_once(monkeypatch):
-    monkeypatch.setattr("public_pilot.broker.now", lambda: AT)
-    venue = Venue(clock=lambda: AT)
+def test_several_symbols_share_one_asset_listing():
+    venue = Venue()
     broker = client(venue)
     try:
-        first = broker.snapshot(["DEMOA", "DEMOB", "DEMOX"])
-        second = broker.snapshot(["DEMOA", "DEMOB", "DEMOX"])
+        result = broker.snapshot(["DEMOA", "DEMOB", "DEMOX"])
     finally:
         broker.close()
-    tradability = {"DEMOA": {"tradable": True}, "DEMOB": {"tradable": True}, "DEMOX": {"tradable": False}}
-    assert first["assets"] == second["assets"] == tradability
-    assert first["market_open"] is True and second["market_open"] is True
-    listing = [r for r in venue.requests if r.url.path == "/v2/assets"]
-    assert len(listing) == 1
-    assert dict(listing[0].url.params) == {"status": "active", "asset_class": "us_equity"}
-    assert not [r for r in venue.requests if r.url.path.startswith("/v2/assets/")]
-    assert venue.count("GET", "/v2/clock") == 1
-    # The second observation reads only the account, positions, open orders and quotes.
-    assert len(venue.requests) == 6 + 4
+    assert result["assets"] == {"DEMOA": {"tradable": True}, "DEMOB": {"tradable": True},
+                                "DEMOX": {"tradable": False}}
+    assert [r.url.path for r in venue.requests] == ["/v2/account", "/v2/positions", "/v2/clock", "/v2/orders",
+                                                    "/v2/stocks/quotes/latest", "/v2/assets"]
+    assert dict(venue.requests[-1].url.params) == {"status": "active", "asset_class": "us_equity"}
 
 
-def test_a_single_unknown_symbol_is_looked_up_directly_and_an_unknown_one_is_not_tradable(monkeypatch):
-    monkeypatch.setattr("public_pilot.broker.now", lambda: AT)
-    venue = Venue(clock=lambda: AT)
+def test_every_observation_reads_the_market_session_and_the_stock_afresh():
+    venue = Venue()
     broker = client(venue)
     try:
-        assert broker.snapshot(["DEMOZ"])["assets"] == {"DEMOZ": {"tradable": False}}
-        assert broker.snapshot(["DEMOA"])["assets"] == {"DEMOA": {"tradable": True}}
+        before = broker.snapshot(["DEMOA"])
+        venue.open = False
+        venue.untradable.add("DEMOA")
+        after = broker.snapshot(["DEMOA"])
+        unknown = broker.snapshot(["DEMOZ"])
     finally:
         broker.close()
-    assert venue.count("GET", "/v2/assets/DEMOZ") == 1 and venue.count("GET", "/v2/assets/DEMOA") == 1
+    assert (before["market_open"], before["assets"]) == (True, {"DEMOA": {"tradable": True}})
+    assert (after["market_open"], after["assets"]) == (False, {"DEMOA": {"tradable": False}})
+    assert unknown["assets"] == {"DEMOZ": {"tradable": False}}
+    assert venue.count("GET", "/v2/clock") == 3 and venue.count("GET", "/v2/assets/DEMOA") == 2
     assert venue.count("GET", "/v2/assets") == 0
 
 
-def test_the_clock_is_read_again_from_a_minute_before_the_close(monkeypatch):
-    instant = [AT]
-    monkeypatch.setattr("public_pilot.broker.now", lambda: instant[0])
-    venue = Venue(clock=lambda: instant[0], close=AT + timedelta(minutes=30))
-    broker = client(venue)
+def answering(status, message):
+    return client(lambda request: httpx.Response(status, json={"code": 40010001, "message": message}
+                                                 if message else {}))
+
+
+@pytest.mark.parametrize("status, message", [
+    (403, "insufficient buying power"), (422, "invalid order type"), (400, "invalid limit_price"),
+    (429, "too many requests"), (401, ""),
+])
+def test_an_outright_rejection_shows_that_no_order_was_created(status, message):
+    broker = answering(status, message)
     try:
-        for minutes, is_open, readings in [(0, True, 1), (28, True, 1), (29.5, True, 2), (29.75, True, 3),
-                                           (30, False, 4), (31, False, 5)]:
-            instant[0] = AT + timedelta(minutes=minutes)
-            assert broker.snapshot(["DEMOA"])["market_open"] is is_open
-            assert venue.count("GET", "/v2/clock") == readings
+        with pytest.raises(OrderRejected) as caught:
+            broker.submit({"client_order_id": "synthetic"})
     finally:
         broker.close()
+    assert (caught.value.status_code, caught.value.detail) == (status, message)
+    assert str(caught.value) == ("Broker returned HTTP " + str(status) + (f": {message}" if message else "") +
+                                 "; no automatic submission retry")
 
 
-@pytest.mark.parametrize("status", [400, 403, 422, 429])
-def test_client_errors_are_refusals_that_carry_the_brokers_reason(status):
-    broker = client(lambda request: httpx.Response(status, json={"code": 40310000,
-                                                                 "message": "insufficient\n buying power"}))
+@pytest.mark.parametrize("status, message", [
+    (422, "client_order_id must be unique"), (400, "Client Order ID is invalid"), (422, ""), (404, "not found"),
+    (409, "conflict"),
+])
+def test_a_refusal_that_may_hide_an_order_leaves_the_submission_unresolved(status, message):
+    broker = answering(status, message)
     try:
         with pytest.raises(BrokerRefused) as caught:
             broker.submit({"client_order_id": "synthetic"})
     finally:
         broker.close()
-    assert caught.value.status_code == status and caught.value.detail == "insufficient buying power"
-    assert str(caught.value) == (f"Broker returned HTTP {status}: insufficient buying power; "
-                                 "no automatic submission retry")
+    assert not isinstance(caught.value, OrderRejected)
+
+
+def test_a_refused_read_is_never_an_order_rejection():
+    broker = answering(429, "too many requests")
+    try:
+        with pytest.raises(BrokerRefused) as caught:
+            broker.account_id()
+    finally:
+        broker.close()
+    assert not isinstance(caught.value, OrderRejected)
 
 
 @pytest.mark.parametrize("status", [408, 500, 503])
@@ -167,45 +188,87 @@ def paper_edition(tmp_path, author, payload, capsys, **changes):
     return args
 
 
-def test_a_paper_run_reads_the_clock_and_the_asset_listing_once_per_command(tmp_path, author, payload, monkeypatch,
-                                                                           capsys):
-    args = paper_edition(tmp_path, author, payload, capsys, universe=list(LISTED),
-                         targets={s: "0.3" for s in LISTED})
-    venue = Venue()
-    monkeypatch.setattr(cli, "AlpacaPaper", lambda: client(venue))
-    code, preview = call(capsys, args + ["preview", "test-research"])
-    assert code == 0 and len(preview["plan"]["orders"]) == 3
-    assert len(venue.requests) == 6  # account, positions, clock, open orders, quotes, one asset listing
-    venue.requests.clear()
-    execute = ["execute-paper", preview["plan_id"], "--account", "paper-test-account"]
-    code, result = call(capsys, args + execute)
-    assert code == 0 and result["status"] == "complete"
-    orders = len(preview["plan"]["orders"])
-    assert venue.count("GET", "/v2/clock") == 1 and venue.count("GET", "/v2/assets") == 1
-    assert venue.count("GET", "/v2/account") == 1 + orders
-    # Once per command: account binding, clock, asset listing. Per order: account, positions, open orders,
-    # quotes, the check that its client ID is unused, the submission and its lookup.
-    assert len(venue.requests) == 3 + 7 * orders
-
-
-def test_an_outright_refusal_halts_the_plan_and_a_fresh_preview_is_allowed(tmp_path, author, payload, monkeypatch,
-                                                                           capsys):
-    args = paper_edition(tmp_path, author, payload, capsys)
+def previewed(tmp_path, author, payload, monkeypatch, capsys, **changes):
+    args = paper_edition(tmp_path, author, payload, capsys, **changes)
     venue = Venue()
     monkeypatch.setattr(cli, "AlpacaPaper", lambda: client(venue))
     code, preview = call(capsys, args + ["preview", "test-research"])
     assert code == 0
+    return args, venue, preview
+
+
+def test_a_paper_run_rereads_the_session_and_the_stock_before_each_order(tmp_path, author, payload, monkeypatch,
+                                                                         capsys):
+    args, venue, preview = previewed(tmp_path, author, payload, monkeypatch, capsys, universe=list(LISTED),
+                                     targets={s: "0.3" for s in LISTED})
+    orders = len(preview["plan"]["orders"])
+    assert orders == 3
+    assert len(venue.requests) == 6  # account, positions, clock, open orders, quotes, one asset listing
+    venue.requests.clear()
+    code, result = call(capsys, args + ["execute-paper", preview["plan_id"], *ACCOUNT])
+    assert code == 0 and result["status"] == "complete"
+    assert venue.count("GET", "/v2/clock") == orders and venue.count("GET", "/v2/assets") == 0
+    assert [venue.count("GET", f"/v2/assets/{s}") for s in LISTED] == [1, 1, 1]
+    # Once per command: the account binding. Per order: account, positions, clock, open orders, quotes and the
+    # stock's tradability, the check that its client ID is unused, the submission and its lookup.
+    assert len(venue.requests) == 1 + 9 * orders
+
+
+@pytest.mark.parametrize("change, reason", [
+    ("market closes", "Regular market session is closed"),
+    ("next stock becomes untradable", "DEMOB: Asset is not tradable"),
+])
+def test_a_change_after_the_first_order_stops_the_next_one(tmp_path, author, payload, monkeypatch, capsys, change,
+                                                           reason):
+    args, venue, preview = previewed(tmp_path, author, payload, monkeypatch, capsys)
+    assert [o["symbol"] for o in preview["plan"]["orders"]] == ["DEMOA", "DEMOB"]
+
+    def after_submission():
+        if change == "market closes":
+            venue.open = False
+        else:
+            venue.untradable.add("DEMOB")
+
+    venue.after_submission = after_submission
+    code, refusal = call(capsys, args + ["execute-paper", preview["plan_id"], *ACCOUNT])
+    assert code == 2 and refusal["reason"] == reason
+    assert venue.count("POST", "/v2/orders") == 1
+
+
+def test_an_outright_rejection_halts_the_plan_and_a_fresh_preview_is_allowed(tmp_path, author, payload, monkeypatch,
+                                                                             capsys):
+    args, venue, preview = previewed(tmp_path, author, payload, monkeypatch, capsys)
     venue.refuse_submission = (403, "insufficient buying power")
-    account = ["--account", "paper-test-account"]
-    code, result = call(capsys, args + ["execute-paper", preview["plan_id"], *account])
+    code, result = call(capsys, args + ["execute-paper", preview["plan_id"], *ACCOUNT])
     assert code == 0 and result == {
-        "plan_id": preview["plan_id"], "status": "halted", "order_status": "submission_refused", "symbol": "DEMOA",
+        "plan_id": preview["plan_id"], "status": "halted", "order_status": "submission_rejected", "symbol": "DEMOA",
         "reason": "Broker returned HTTP 403: insufficient buying power; no automatic submission retry",
         "next_step": "Inspect fills and create a fresh preview"}
     halted = {"plan_id": preview["plan_id"], "status": "halted"}
-    assert call(capsys, args + ["execute-paper", preview["plan_id"], *account]) == (0, halted)
-    assert call(capsys, args + ["cancel-paper", preview["plan_id"], *account]) == (0, halted)
+    assert call(capsys, args + ["execute-paper", preview["plan_id"], *ACCOUNT]) == (0, halted)
+    assert call(capsys, args + ["cancel-paper", preview["plan_id"], *ACCOUNT]) == (0, halted)
     venue.refuse_submission = None
     code, fresh = call(capsys, args + ["preview", "test-research"])
     assert code == 0 and fresh["plan_id"] != preview["plan_id"]
     assert venue.count("POST", "/v2/orders") == 1
+
+
+def test_a_client_id_in_use_keeps_the_plan_unresolved_until_the_broker_shows_the_order(tmp_path, author, payload,
+                                                                                       monkeypatch, capsys):
+    args, venue, preview = previewed(tmp_path, author, payload, monkeypatch, capsys)
+    plan_id = preview["plan_id"]
+    venue.refuse_submission = (422, "client_order_id must be unique")
+    code, refusal = call(capsys, args + ["execute-paper", plan_id, *ACCOUNT])
+    assert code == 2 and refusal["reason"] == ("Broker returned HTTP 422: client_order_id must be unique; "
+                                               "no automatic submission retry")
+    assert call(capsys, args + ["preview", "test-research"]) == (2, {
+        "status": "refused", "reason": f"Reconcile or cancel the outstanding execution first: plan {plan_id}"})
+    assert call(capsys, args + ["cancel-paper", plan_id, *ACCOUNT]) == (2, {
+        "status": "refused",
+        "reason": "DEMOA: Submission outcome is uncertain; no retry. Inspect broker history manually"})
+    # The order that holds the ID becomes visible: the plan reconciles with it and nothing is sent twice.
+    venue.refuse_submission = None
+    venue.place({**preview["plan"]["orders"][0], "client_order_id": client_id(plan_id, 0)})
+    code, result = call(capsys, args + ["execute-paper", plan_id, *ACCOUNT])
+    assert code == 0 and result["status"] == "complete"
+    assert venue.positions == {"DEMOA": 3, "DEMOB": 3} and venue.count("POST", "/v2/orders") == 2

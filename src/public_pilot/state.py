@@ -162,8 +162,8 @@ class Store:
         self.db.execute("UPDATE orders SET observation=? WHERE plan_id=? AND idx=?",
                         (canonical(observation).decode(), identity, idx))
 
-    def refuse(self, identity, idx, observation):
-        """A submission the broker refused: record its answer and halt the plan in one transaction, so the
+    def reject(self, identity, idx, observation):
+        """A submission the broker rejected outright: record its answer and halt the plan in one transaction, so the
         attempt is never left looking uncertain."""
         self.db.execute("BEGIN IMMEDIATE")
         try:
