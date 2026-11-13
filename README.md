@@ -69,19 +69,35 @@ they came from and that they are unchanged.
 
 ## 5. Current research
 
-Current-quarter research is provided to firms that license a product. They
-receive read access to a private repository for that product, with ongoing
-scores, portfolio allocations and support, in the same format the public
-engine reads. Licence fees go to the package's author; the platform keeps a
-small share to maintain the engine and review packages. The code that produces
-an author's research is not part of what is delivered.
+**Paid research deliveries are in preparation; no signed paid release is
+available yet.** Public samples are available for reading and offline previews.
+A catalog listing does not announce a paid release or start a subscription.
+
+When a signed paid release is published, firms that license it will receive
+read access to its private delivery repository, with the research, updates and
+support described in its release terms. Supported news and execution features
+will be stated for each product; some products provide research and news only.
+Licence fees will go to the package's author, with a small platform share for
+maintaining the engine and reviewing packages. The code that produces an
+author's research is not part of the delivery.
 
 ## 6. Contributing a new theme
 
-1. Read [docs/AUTHORING.md](docs/AUTHORING.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
-2. Propose your theme by pull request to `catalog/themes.json`.
-3. Generate a signing key and ask for it to be listed in `catalog/authors.json`.
-4. Build, validate and sign your package with the commands in this repository.
+Use the current `main` branch for new contributions; older feature branches may
+predate the current catalog rules.
+
+1. Read the current [authoring guide](https://github.com/beta-blockers/beta-correcting-invest-public/blob/main/docs/AUTHORING.md)
+   and [contributor guide](https://github.com/beta-blockers/beta-correcting-invest-public/blob/main/CONTRIBUTING.md).
+2. Generate a signing key outside every Git checkout. Only its public key and
+   fingerprint belong in the repository.
+3. Submit your author/key entry in `catalog/authors.json` and your theme in
+   `catalog/themes.json` together in one pull request. Follow the contributor
+   guide's compatibility prerequisite: until the engine rollout is complete,
+   include your first product and list it in the key's `packages`; only after
+   that rollout may a new author register a theme with `packages: []`.
+4. Run the catalog checks before submitting. Register your first product when
+   ready, if it was not included already, then build, validate and sign its
+   research package as the authoring guide describes.
 
 ## 7. Getting started
 
