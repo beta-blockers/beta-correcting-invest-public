@@ -1,0 +1,13 @@
+{
+  "format": "public-pilot-release-v1",
+  "key_id": "nxyziggy-usmaterials-2026-11",
+  "package_id": "usmaterials",
+  "snapshot": "edition.snapshot.json",
+  "files": {
+    "REPORT.md": "bc1003b8aa601b32a7960a7b2b440e94a5206187d51715d0f6a6b99a3991cf6c",
+    "account.fixture.json": "99399e18352a0d8b0324e68ee57ed3bf3bfbc0680706b83f5f3edd791bcecef4",
+    "edition.snapshot.json": "baad8b65bb85ce67482a90a4d8845856fcf77e1146d4f66c859521f792759339",
+    "evaluation.json": "c178b1c3a305cb7f76e80b05fd71f86147df4cb500ea4a6e8f50481268b8851d"
+  },
+  "signature": "momEhwtWD3h4+QJAMGla05CvjocleR3m5q3iFvoqTd7maptZ9z+NnzJO3+X2s3BJSRYfSI0yBWN6JwgLCY1zCg=="
+}

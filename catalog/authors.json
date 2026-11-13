@@ -30,6 +30,16 @@
           "packages": [
             "uschips"
           ]
+        },
+        {
+          "key_id": "nxyziggy-usmaterials-2026-11",
+          "public_key": "DEWJ9bJ9itaFnjcD4ha53hiabwaEs5+Rfx4zfvS3ehQ=",
+          "fingerprint_sha256": "9e03a0cf40e2345602315953d81b63e679bef007882581b9f0922baa1b760d7a",
+          "status": "active",
+          "valid_from": "2026-11-13",
+          "packages": [
+            "usmaterials"
+          ]
         }
       ]
     }
