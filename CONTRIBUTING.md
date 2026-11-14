@@ -61,9 +61,10 @@ editions and signature-only key rotations are not re-rendered; the existing
 signature and append-only checks still apply to all editions. CI never rewrites
 research files. Merge renderer changes separately from new research.
 
-`scripts/cleanroom.sh REPOSITORY_URL BRANCH [BASE_BRANCH]` runs the same comparison
-locally; `BASE_BRANCH` defaults to `main`. It fetches that branch and uses its
-checker and renderer, comparing the proposed tree with their merge base.
+`scripts/cleanroom.sh [REPOSITORY_URL] [BRANCH] [BASE_BRANCH]` runs the same
+comparison locally. `REPOSITORY_URL` defaults to this checkout's `origin`, and
+`BRANCH` and `BASE_BRANCH` default to `main`. It fetches the base branch and uses
+its checker and renderer, comparing the proposed tree with their merge base.
 
 ## Proposing a theme
 
