@@ -2,7 +2,7 @@
 # Clean-room check: a fresh clone, a new virtual environment, and the full offline verification.
 #
 # Usage: scripts/cleanroom.sh [REPOSITORY_URL] [BRANCH] [BASE_BRANCH]
-#   REPOSITORY_URL defaults to this checkout's origin remote; BRANCH defaults to PublicRepoStaging.
+#   REPOSITORY_URL defaults to this checkout's origin remote; BRANCH defaults to main.
 #   BASE_BRANCH defaults to main; its trusted checker and renderer judge changed research.
 #   PYTHON selects the interpreter (default python3). KEEP=1 keeps the work directory.
 #
@@ -12,7 +12,7 @@
 set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 url="${1:-$(git -C "$here" remote get-url origin)}"
-branch="${2:-PublicRepoStaging}"
+branch="${2:-main}"
 base_branch="${3:-main}"
 python="${PYTHON:-python3}"
 unset APCA_API_KEY_ID APCA_API_SECRET_KEY

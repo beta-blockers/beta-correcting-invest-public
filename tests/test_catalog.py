@@ -1,5 +1,6 @@
 """Catalog checks, trust files, the history index and the append-only rule for authors.json."""
 from copy import deepcopy
+from datetime import timedelta
 import json
 from pathlib import Path
 import re
@@ -9,9 +10,9 @@ import pytest
 
 from public_pilot import authoring, catalog
 from public_pilot.bundles import verify_bundle
-from public_pilot.common import Refused, digest, now
-from support import (NOW, build_repository, call, catalog_documents, edition_payload, evaluation_payload, new_key,
-                     read, write, write_edition)
+from public_pilot.common import Refused, digest, now, timestamp
+from support import (NOW, SIGNED_AT, build_repository, call, catalog_documents, edition_payload, evaluation_payload,
+                     freeze, new_key, read, write, write_edition)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -231,15 +232,32 @@ def test_history_index_is_generated_and_checked(repo, capsys):
     assert code == 0 and output == {"status": "written", "path": "history/INDEX.md", "editions": listed}
     index = (repo / "history" / "INDEX.md").read_text()
     assert ("| demo-product | 2020-Q1 | demo-product-2020-q1 | 2019-12-31T00:00:00+00:00 | "
-            "2020-04-01T00:00:00+00:00 | 3 | yes |") in index.splitlines()
+            "2020-04-01T00:00:00+00:00 | 3 |") in index.splitlines()
     assert call(capsys, ["history", "index", repo, "--check"]) == (0, {"status": "current",
                                                                       "path": "history/INDEX.md", "editions": listed})
     assert catalog.check(repo, NOW)["status"] == "verified"
-    (repo / "history" / "INDEX.md").write_text(index.replace("| yes |", "| no |"))
+    (repo / "history" / "INDEX.md").write_text(index.replace("| 3 |", "| 4 |"))
     assert call(capsys, ["history", "index", repo, "--check"])[0] == 2
 
 
-def test_repository_history_index_is_current(capsys):
+def test_the_history_index_stays_current_when_an_edition_expires(repo, capsys, monkeypatch):
+    freeze(monkeypatch, SIGNED_AT)  # the fictional edition is current
+    code, output = call(capsys, ["history", "index", repo])
+    assert code == 0 and output["editions"][0]["expired"] is False
+    freeze(monkeypatch, NOW)  # long after it expired; the committed index is unchanged
+    code, output = call(capsys, ["history", "index", repo, "--check"])
+    assert code == 0 and output["status"] == "current" and output["editions"][0]["expired"] is True
+
+
+def latest_expiry():
+    return max(timestamp(read(path)["payload"]["valid_until"])
+               for path in (ROOT / "history").glob("*/*/edition.snapshot.json"))
+
+
+@pytest.mark.parametrize("after_expiry", [False, True], ids=["now", "after every edition expires"])
+def test_repository_history_index_is_current(capsys, monkeypatch, after_expiry):
+    if after_expiry:
+        freeze(monkeypatch, latest_expiry() + timedelta(days=1))
     assert call(capsys, ["history", "index", ROOT, "--check"])[0] == 0
 
 
