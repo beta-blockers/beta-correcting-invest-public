@@ -2,6 +2,9 @@ import base64
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+import os
+import shlex
+import shutil
 
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
@@ -13,6 +16,30 @@ from public_pilot.planning import Limits, build_plan
 from public_pilot.state import Store
 
 AT = datetime(2030, 1, 2, 15, tzinfo=timezone.utc)
+
+
+@pytest.fixture(autouse=True, scope="session")
+def mktemp_scratch(tmp_path_factory):
+    """Where a bare `mktemp -d` creates its directory while the tests run, or None on a system without mktemp.
+
+    The documented shell blocks create their scratch workspaces and throwaway keys with a bare `mktemp -d`. macOS's
+    mktemp ignores TMPDIR for that form and uses the per-user temporary folder, where nothing removes them. A wrapper
+    ahead of the real command on PATH gives that one form a template inside pytest's own temporary directory, which
+    pytest prunes. Any other use, such as a call that names its own template, reaches the real command unchanged."""
+    real = shutil.which("mktemp")
+    if real is None:
+        yield None
+        return
+    scratch = tmp_path_factory.mktemp("scratch")
+    wrapper = tmp_path_factory.mktemp("mktemp") / "mktemp"
+    template = shlex.quote(str(scratch / "tmp.XXXXXXXXXX"))
+    wrapper.write_text("#!/bin/sh\n"
+                       f'if [ "$#" -eq 1 ] && [ "$1" = "-d" ]; then exec {shlex.quote(real)} -d {template}; fi\n'
+                       f'exec {shlex.quote(real)} "$@"\n')
+    wrapper.chmod(0o755)
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setenv("PATH", f"{wrapper.parent}{os.pathsep}{os.environ['PATH']}")
+        yield scratch
 
 
 @pytest.fixture

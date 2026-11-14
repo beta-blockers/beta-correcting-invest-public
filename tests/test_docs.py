@@ -174,3 +174,16 @@ def test_sample_entry_points_identify_the_signed_report(document, prefix, produc
     assert f"]({prefix}history/{product}/2026-Q4/REPORT.md)" in text
     for suffix in ("-Q4-2026-EVIDENCE-20261112.md", "-Q4-2026-REPORT-20261113.md"):
         assert ("us" + "chips").upper() + suffix not in text
+
+
+def test_a_bare_mktemp_in_a_documented_block_stays_in_pytests_temporary_directory(tmp_path, mktemp_scratch):
+    """The walkthroughs create their workspaces and throwaway keys with a bare `mktemp -d`. macOS's mktemp ignores
+    TMPDIR for that form, so without conftest's wrapper every run left them in the per-user temporary folder."""
+    if mktemp_scratch is None:
+        pytest.skip("needs mktemp")
+    result = run('mktemp -d\nmktemp -d "$PWD/named.XXXXXX"\n', tmp_path, install_shims(tmp_path / "bin"))
+    assert result.returncode == 0, result.stderr[-3000:]
+    bare, named = (Path(line).resolve() for line in result.stdout.splitlines())
+    assert bare.is_dir() and bare.parent == mktemp_scratch.resolve()
+    # A call that names its own template, as the sample walkthrough does, reaches the real command unchanged.
+    assert named.is_dir() and named.parent == tmp_path.resolve()

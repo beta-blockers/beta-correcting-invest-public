@@ -21,8 +21,18 @@ cleanup() {
   if [ "${KEEP:-0}" = 1 ]; then echo "Work directory kept: $work"; else rm -rf -- "${work:?}"; fi
 }
 trap cleanup EXIT
-mkdir "$work/tmp"
+mkdir "$work/tmp" "$work/bin"
 export TMPDIR="$work/tmp"  # the authoring walkthrough's temporary key and workspace land here
+# macOS's mktemp ignores TMPDIR for a bare `mktemp -d`, the form the walkthrough uses, and would leave those
+# directories in the per-user temporary folder. This wrapper gives that one form a template in $TMPDIR.
+real_mktemp="$(command -v mktemp)"
+cat > "$work/bin/mktemp" <<WRAPPER
+#!/bin/sh
+if [ "\$#" -eq 1 ] && [ "\$1" = "-d" ]; then exec "$real_mktemp" -d "\$TMPDIR/tmp.XXXXXXXXXX"; fi
+exec "$real_mktemp" "\$@"
+WRAPPER
+chmod +x "$work/bin/mktemp"
+export PATH="$work/bin:$PATH"
 
 step() { printf '\n== %s\n' "$*"; }
 
